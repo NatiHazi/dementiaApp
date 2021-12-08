@@ -23,6 +23,7 @@ const styles = StyleSheet.create({
     //height: 25,
     //paddingTop:'10%',
     //check
+    //check 2
     
   },
   header:{
