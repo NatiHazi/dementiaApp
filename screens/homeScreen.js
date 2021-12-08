@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     //justifyContent: 'center',
     //height: 25,
     //paddingTop:'10%',
-    
+    //check
     
   },
   header:{
