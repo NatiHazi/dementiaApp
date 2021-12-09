@@ -8,7 +8,7 @@ export default function App() {
      <View style={styles.container}>
     {/* //   <Text>BLABLA lk lk lk lk lk BLALBA!</Text>
     //   <StatusBar style="auto" /> */}
-     {/* Nati is the best */}
+     {/* gabi is the ....*/}
     <HomeScreen/>
     </View>
   );
