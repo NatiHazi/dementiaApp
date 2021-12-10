@@ -1,76 +1,57 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button,ImageBackground } from 'react-native';
+import { Entypo  } from '@expo/vector-icons';
 
 export default function HomeScreen() {
   return (
-    <View style={styles.container1}>
-      <Text style={styles.header}> Login Screen </Text>  
-      <View style={styles.container}>
-        <Text>שם משתמש:</Text>
+    <ImageBackground source={require('../assets/backgroundForApp.png')} style={styles.container}>
+        <Text style={styles.text}>שם משתמש:</Text>
+        
         <TextInput style={styles.inputUser} placeholder='הכנס שם משתמש:'></TextInput>
-        <Text>סיסמא:</Text>
-        <TextInput style={styles.inputPass} placeholder='הכנס סיסמא:'></TextInput>
-        <Button style={styles.button} title='כניסה'></Button>
-     </View>
-    </View>
+        <Text style={styles.text}>סיסמא:</Text>
+        <View style={styles.logoEye} style={styles.inputPass} >
+        <Entypo  name="eye-with-line" size={17} color="black" />
+        <TextInput placeholder='הכנס סיסמא:' secureTextEntry={true}></TextInput>
+        </View>
+        <Button title='כניסה'></Button>
+    </ImageBackground>
+   
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'coral',
     alignItems: 'center',
     justifyContent: 'center',
-    //height: 25,
-    //paddingTop:'10%',
   },
-  container1: {
-    flex: 1,
-    backgroundColor: 'coral',
-    
-    //height: 25,
-    //paddingTop:'10%',
-    
-    
-  },
-  header:{
-   
-    backgroundColor: 'papayawhip',
-    //height: '10%',
-    paddingTop: '5%',
-    //paddingLeft:'100%',
-    textAlign: 'center',
-    fontWeight: 'bold',
-   
+  text: {
+    fontSize:16,
+    fontWeight:'bold',
   },
   inputUser:{
-    borderWidth:1,
-    backgroundColor: '#fff',
+    borderWidth:3,
     padding: 8,
     margin: 10,
-    width: 200,
+    width: 250,
     textAlign:'right',
     alignContent:'center',
-    
+    borderRadius:20,
+    padding:10,
   },
   inputPass:{
-    borderWidth:1,
-    backgroundColor: '#fff',
+    borderWidth:3,
     padding: 8,
     margin: 10,
-    width: 200,
+    width: 250,
     textAlign:'right',
     alignContent:'center',
-    
+    borderRadius:20,
+    padding:10,
+    flexDirection:'row',
   },
-  button:{
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 32,
-    borderRadius: 4,
-  
-    
-  },
+  logoEye:{
+    flexDirection:'row',
+  }
 });
