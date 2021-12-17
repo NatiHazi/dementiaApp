@@ -1,23 +1,24 @@
-import { StatusBar } from 'expo-status-bar';
+
 import React from 'react';
-import { StyleSheet, Text, View,TouchableWithoutFeedback, Keyboard } from 'react-native';
-import { TouchableNativeFeedback } from 'react-native-web';
-import HomeScreen from './screens/homeScreen';
+import {SafeAreaView, StyleSheet,TouchableWithoutFeedback, Keyboard } from 'react-native';
+import Navigation from './src/navigation';
 
-export default function App() {
-
+const App = () => {
   return (
     <TouchableWithoutFeedback onPress={() => { // dismiss the keyboard
       Keyboard.dismiss(); 
     }}>
-      <View style={styles.container}>  
-        <HomeScreen/>
-      </View>
+      <SafeAreaView style={styles.root}>  
+        <Navigation/>
+      </SafeAreaView>
     </TouchableWithoutFeedback>
   );
-}
+};
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
+    backgroundColor:'snow',
   },
 });
+
+export default App;
