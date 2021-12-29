@@ -1,6 +1,5 @@
 import React,{useState} from 'react';
-import { View ,Image, StyleSheet, useWindowDimensions,ScrollView} from 'react-native';
-import Logo from '../../../assets/logo.jpg';
+import { View ,Image, StyleSheet,ScrollView} from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
@@ -13,7 +12,7 @@ const SignInScreen = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
-    const{height} = useWindowDimensions();
+
     const navigation = useNavigation();
 
     const onSignInPressed = () =>{
@@ -31,11 +30,8 @@ const SignInScreen = () => {
     return (
         <ScrollView>
         <View style={styles.root}>
-            <Image
-             source={Logo} 
-             style={[styles.logo,{height:height * 0.3}]}
-             resizeMethod="contain" 
-              />
+            <Image style={styles.logo} source={require('../../../assets/logo.jpg')}>
+            </Image>
                 
              <CustomInput
                 iconName = "people"
@@ -79,11 +75,9 @@ const styles = StyleSheet.create({
         backgroundColor:'snow',
     },
     logo: {
-        width:'70%',
-        maxWidth:500,
-        maxHeight:700,
         
-        
+        width:300,
+        height:300,
     },
   
 })
