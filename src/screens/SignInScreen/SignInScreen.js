@@ -3,8 +3,7 @@ import { View ,Image, StyleSheet,ScrollView} from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-
-
+import {getAuth,signInWithEmailAndPassword} from '../../../db/firebase'
 
 
 
@@ -17,6 +16,20 @@ const SignInScreen = () => {
 
     const onSignInPressed = () =>{
         console.warn("Sign In")
+        const auth = getAuth();
+signInWithEmailAndPassword(auth, username, password)
+  .then((userCredential) => {
+      console.log("sucess")
+    // Signed in 
+    const user = userCredential.user;
+    console.log(user.email)
+    // ...
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    console.log("not succed")
+  });
     };
 
     const onForotPasswordPresed = () => {
@@ -36,7 +49,7 @@ const SignInScreen = () => {
              <CustomInput
                 iconName = "people"
                 iconType = "MaterialIcons"
-                placeholder="UserName"
+                placeholder="email"
                 value={username} 
                 setValue={setUsername}
                 secureTextEntry={false}
