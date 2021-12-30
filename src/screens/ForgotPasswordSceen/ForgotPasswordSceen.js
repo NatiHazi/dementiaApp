@@ -2,7 +2,8 @@ import React,{useState} from 'react';
 import { View, Text, StyleSheet, useWindowDimensions,ScrollView} from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native';
+import {getAuth, sendPasswordResetEmail } from '../../../db/firebase'
 
 
 const ConfirmEmailScreen = () => {
@@ -11,7 +12,23 @@ const ConfirmEmailScreen = () => {
     const navigation = useNavigation();
 
     const onSendPressed = () =>{
-        navigation.navigate("NewPassword");
+            const auth = getAuth();
+    sendPasswordResetEmail(auth, userName)
+    .then(() => {
+        // Password reset email sent!
+        // ..
+        console.log("Password reset email sent! ")
+        alert("Please go to mail and set new Password and then sign in with new Password")
+        navigation.navigate("signIn");
+    })
+    .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode)
+        // ..
+    });
+        //navigation.navigate("NewPassword");
+        
     };
 
     const onSignInPressed = () => {
@@ -26,7 +43,7 @@ const ConfirmEmailScreen = () => {
             <Text style={styles.title} >Reset your password  </Text>
 
              <CustomInput
-              placeholder="user name"
+              placeholder="email"
               value={userName} 
               setValue={setUserName}
               />

@@ -2,7 +2,8 @@ import React,{useState} from 'react';
 import { View, Text, StyleSheet, useWindowDimensions,ScrollView} from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native';
+import {getAuth,createUserWithEmailAndPassword,sendEmailVerification } from '../../../db/firebase'
 
 
 const SignUpScreen = () => {
@@ -14,7 +15,35 @@ const SignUpScreen = () => {
     const navigation = useNavigation();
 
     const onRegisterPressed = () =>{
+            const auth = getAuth();
+    createUserWithEmailAndPassword(auth, email, password)
+    .then((userCredential) => {
+        // Signed in 
+        const user = userCredential.user;
+            sendEmailVerification(auth.currentUser)
+            //user.emailVerified =>checks if user verified email.
+    .then(() => {
+        // Email verification sent!
+        // ...
+        console.log("email verification sent!")
         navigation.navigate("ConfirmEmail");
+       
+    });
+        
+        
+        // ...
+        console.log("created new user with mail: ", user.email)
+    })
+    .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorCode)
+        if (errorCode==="auth/email-already-in-use"){
+        alert("this email already in use")
+        }
+        // ..
+    });
+        
     };
 
     const onSignInPressed = () => {

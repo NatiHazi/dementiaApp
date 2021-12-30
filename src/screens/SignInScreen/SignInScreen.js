@@ -23,12 +23,24 @@ signInWithEmailAndPassword(auth, username, password)
     // Signed in 
     const user = userCredential.user;
     console.log(user.email)
+   
     // ...
   })
   .catch((error) => {
     const errorCode = error.code;
     const errorMessage = error.message;
-    console.log("not succed")
+    console.log(errorCode)
+    if (errorCode ==="auth/invalid-email"){
+        alert("invalid email")
+    }
+    if (errorCode ==="auth/user-not-found"){
+        alert("User not existing in the system")
+    }
+    if (errorCode ==="auth/wrong-password"){
+        alert("wrong password")
+    }
+    
+    
   });
     };
 
