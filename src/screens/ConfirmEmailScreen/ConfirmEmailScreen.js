@@ -16,7 +16,7 @@ const ConfirmEmailScreen = () => {
         <View style={styles.root}>
             <Text style={styles.title} >Confirm your email  </Text>
             <Text style={styles.text} >  </Text>
-            <Text style={styles.text} >Please go to your email and Confirm your accoumt  </Text>
+            <Text style={styles.text} >Please go to your email and Confirm your account  </Text>
             <Text style={styles.text} >  </Text>
             <CustomButton text="Got it" onPress={onConfirmPressed}/> 
         </View>
