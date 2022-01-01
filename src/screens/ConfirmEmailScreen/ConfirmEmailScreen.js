@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, useWindowDimensions,ScrollView} from 'react-nat
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native'
-
+//לשנות ככה שיהיה כתוב למשתמש שהוא צריך ללכת למייל ולהפעיל את המשתמש בקישור שנשלח. ואז אחרי שהוא ילחץ 'הבנתי' אז יעבור למסך התחברות
 const ConfirmEmailScreen = () => {
     const [code, setCode] = useState('');
 
@@ -18,10 +18,10 @@ const ConfirmEmailScreen = () => {
     };
 
     const onSResendPressed = () => {
-        console.warn("onSResendPressed");
+        console.log("onSResendPressed");
     };
     const onPrivacyPressed = () => {
-        console.warn("onPrivacyPressed");
+        console.log("onPrivacyPressed");
     };
 
     return (

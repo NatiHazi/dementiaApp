@@ -27,6 +27,7 @@ signInWithEmailAndPassword(auth, username, password)
     }
     else{
         console.log("log in succeed")
+        // .......
     }
    
     // ...
@@ -70,6 +71,7 @@ signInWithEmailAndPassword(auth, username, password)
                 value={username} 
                 setValue={setUsername}
                 secureTextEntry={false}
+                
               />
              <CustomInput 
               placeholder="Password"
