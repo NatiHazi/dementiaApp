@@ -51,10 +51,10 @@ const SignUpScreen = () => {
     };
 
     const onTermOfUsePressed = () => {
-        console.warn("onSignUpPressed");
+        console.log("onSignUpPressed");
     };
     const onPrivacyPressed = () => {
-        console.warn("onPrivacyPressed");
+        console.log("onPrivacyPressed");
     };
 
     return (

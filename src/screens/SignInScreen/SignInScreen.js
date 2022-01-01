@@ -15,14 +15,19 @@ const SignInScreen = () => {
     const navigation = useNavigation();
 
     const onSignInPressed = () =>{
-        console.warn("Sign In")
         const auth = getAuth();
 signInWithEmailAndPassword(auth, username, password)
   .then((userCredential) => {
-      console.log("sucess")
+      //console.log("sucess")
     // Signed in 
     const user = userCredential.user;
     console.log(user.email)
+    if (!user.emailVerified){
+        alert("you must verify your account in your mail")
+    }
+    else{
+        console.log("log in succeed")
+    }
    
     // ...
   })
