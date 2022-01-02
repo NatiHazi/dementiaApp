@@ -1,9 +1,7 @@
 import React,{useState} from 'react';
 import { View, Text, StyleSheet, useWindowDimensions,ScrollView} from 'react-native';
-import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native'
-//לשנות ככה שיהיה כתוב למשתמש שהוא צריך ללכת למייל ולהפעיל את המשתמש בקישור שנשלח. ואז אחרי שהוא ילחץ 'הבנתי' אז יעבור למסך התחברות
 const ConfirmEmailScreen = () => {
 
     const navigation = useNavigation();
@@ -27,7 +25,6 @@ const ConfirmEmailScreen = () => {
 const styles = StyleSheet.create({
     root:{
         alignItems:'center',
-        
         padding: 20,
     },
     title:{

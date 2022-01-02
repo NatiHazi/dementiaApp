@@ -2,6 +2,7 @@ import React,{useState} from 'react';
 import { View ,Image, StyleSheet,ScrollView} from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
+import CustomInputWithEye from '../../components/CutomInputWithEye/CustomInputWithEye';
 import { useNavigation } from '@react-navigation/native';
 import {getAuth,signInWithEmailAndPassword} from '../../../db/firebase'
 
@@ -10,10 +11,8 @@ import {getAuth,signInWithEmailAndPassword} from '../../../db/firebase'
 const SignInScreen = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-
-
     const navigation = useNavigation();
-
+    
     const onSignInPressed = () =>{
         const auth = getAuth();
 signInWithEmailAndPassword(auth, username, password)
@@ -73,7 +72,7 @@ signInWithEmailAndPassword(auth, username, password)
                 secureTextEntry={false}
                 
               />
-             <CustomInput 
+             <CustomInputWithEye 
               placeholder="Password"
               value={password}
               setValue={setPassword} 
