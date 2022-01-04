@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, useWindowDimensions,ScrollView} from 'react-nat
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-import {getAuth,createUserWithEmailAndPassword,sendEmailVerification } from '../../../db/firebase'
+import {getAuth,createUserWithEmailAndPassword,sendEmailVerification,getFirestore,collection, addDoc } from '../../../db/firebase'
 
 
 const SignUpScreen = () => {
@@ -11,6 +11,8 @@ const SignUpScreen = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [passwordRepeat, setPasswordRepeat] = useState('');
+    const [otherSideNum, setotherSideNum] = useState('');
+    const [yourNum, setYourNum] = useState('');
 
     const navigation = useNavigation();
 
@@ -20,6 +22,23 @@ const SignUpScreen = () => {
     .then((userCredential) => {
         // Signed in 
         const user = userCredential.user;
+        const db = getFirestore();
+        
+        try {
+            async function fetchFunction(){
+            const docRef = await addDoc(collection(db, 'users'), {
+              isTherapist: true,
+              myNum: yourNum,
+              otherSidePhoneNum: otherSideNum,
+              id: user.uid
+            });
+            console.log("Document written with ID: ", docRef.id);
+            }
+            fetchFunction()
+          } catch (e) {
+            console.error("Error adding document: ", e);
+          }
+        
             sendEmailVerification(auth.currentUser)
             //user.emailVerified =>checks if user verified email.
     .then(() => {
@@ -85,6 +104,18 @@ const SignUpScreen = () => {
               value={passwordRepeat}
               setValue={setPasswordRepeat} 
               secureTextEntry
+              />
+               <CustomInput
+              placeholder="your phone number"
+              value={yourNum}
+              setValue={setYourNum} 
+              secureTextEntry={false}
+              />
+              <CustomInput
+              placeholder="Patient phone number"
+              value={otherSideNum}
+              setValue={setotherSideNum} 
+              secureTextEntry={false}
               />
 
             <CustomButton text="Register" onPress={onRegisterPressed}/>

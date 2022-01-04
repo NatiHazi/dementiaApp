@@ -9,7 +9,7 @@ const MainScreeen = () => {
         navigation.navigate("signIn");
     };
     const onPatientPressed = () =>{
-        navigation.navigate("TherapistScreen");
+        navigation.navigate("signIn");
     };
     return (
         <ScrollView>

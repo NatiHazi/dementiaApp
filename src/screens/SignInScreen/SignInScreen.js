@@ -4,13 +4,14 @@ import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import CustomInputWithEye from '../../components/CutomInputWithEye/CustomInputWithEye';
 import { useNavigation } from '@react-navigation/native';
-import {getAuth,signInWithEmailAndPassword} from '../../../db/firebase'
+import {getAuth,signInWithEmailAndPassword,collection, getDocs,getFirestore} from '../../../db/firebase'
 
 
 
 const SignInScreen = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [therapist, setTherapist]=useState('');
     const navigation = useNavigation();
     
     const onSignInPressed = () =>{
@@ -26,6 +27,27 @@ signInWithEmailAndPassword(auth, username, password)
     }
     else{
         console.log("log in succeed")
+        async function fetchFunction(){
+            const db = getFirestore();
+           const querySnapshot = await getDocs(collection(db, "users"));
+            querySnapshot.forEach((doc) => {
+            console.log(`${doc.id} => ${doc.data().isTherapist}`);
+            if (doc.data().isTherapist=="true"){
+                setTherapist("true")
+            }
+            else{
+                setTherapist("false")
+            }
+            });
+        }
+        fetchFunction();
+
+        if (therapist=="true"){
+        navigation.navigate("TherapistScreen");
+        }
+        else{
+            navigation.navigate("PatientScreen"); 
+        }
         // .......
     }
    
