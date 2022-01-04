@@ -11,16 +11,17 @@ import {getAuth,signInWithEmailAndPassword,collection, getDocs,getFirestore} fro
 const SignInScreen = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
-    const [therapist, setTherapist]=useState('');
+    // const [therapist, setTherapist]=useState(false);
     const navigation = useNavigation();
     
     const onSignInPressed = () =>{
-        const auth = getAuth();
+     const auth = getAuth();
 signInWithEmailAndPassword(auth, username, password)
   .then((userCredential) => {
       //console.log("sucess")
     // Signed in 
     const user = userCredential.user;
+    const uid = user.uid;
     console.log(user.email)
     if (!user.emailVerified){
         alert("you must verify your account in your mail")
@@ -32,22 +33,27 @@ signInWithEmailAndPassword(auth, username, password)
            const querySnapshot = await getDocs(collection(db, "users"));
             querySnapshot.forEach((doc) => {
             console.log(`${doc.id} => ${doc.data().isTherapist}`);
-            if (doc.data().isTherapist=="true"){
-                setTherapist("true")
+            if (doc.data().id===uid){
+            if (doc.data().isTherapist==true){
+               navigation.navigate("TherapistScreen");
             }
             else{
-                setTherapist("false")
+              navigation.navigate("PatientScreen"); 
             }
+
+        }
+
             });
         }
         fetchFunction();
+        
 
-        if (therapist=="true"){
-        navigation.navigate("TherapistScreen");
-        }
-        else{
-            navigation.navigate("PatientScreen"); 
-        }
+        // if (therapist===true){
+        // navigation.navigate("TherapistScreen");
+        // }
+        // else{
+        //     navigation.navigate("PatientScreen"); 
+        // }
         // .......
     }
    

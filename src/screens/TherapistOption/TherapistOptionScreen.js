@@ -25,6 +25,9 @@ const TherapistOptionScreen = () => {
   
         
     };
+    const onSendReminders = () =>{
+        console.log("on send reminders pressed")
+    }
     return (
         <ScrollView>
         <View style={styles.root}>
@@ -33,9 +36,9 @@ const TherapistOptionScreen = () => {
             <CustomButtonForTherapistScreen text="Find Patient" onPress={findPatienPressed}/> 
             <CustomButtonForTherapistScreen text="Patient's Call" onPress={onTherapistPressed}/> 
             <CustomButtonForTherapistScreen text="Patient's Mesege" onPress={onTherapistPressed}/> 
-            <CustomButtonForTherapistScreen text="Patient" onPress={onTherapistPressed}/> 
-            <CustomButtonForTherapistScreen text="Therapist" onPress={onTherapistPressed}/> 
-            <CustomButtonForTherapistScreen text="Patient" onPress={onTherapistPressed}/> 
+            <CustomButtonForTherapistScreen text="SendReminders" onPress={onSendReminders}/> 
+            {/* <CustomButtonForTherapistScreen text="Therapist" onPress={onTherapistPressed}/> 
+            <CustomButtonForTherapistScreen text="Patient" onPress={onTherapistPressed}/>  */}
         </View>
         </ScrollView>
     );
