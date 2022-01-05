@@ -18,8 +18,8 @@ const MainScreeen = () => {
             <Image style={styles.logo} source={require('../../../assets/logo.jpg')}/>
             <Text style={styles.text} >  </Text>
             <Text style={styles.text} >Please login as:  </Text>
-            <CustomButton text="Therapist" onPress={onTherapistPressed}/> 
-            <CustomButton text="Patient" onPress={onPatientPressed}/> 
+            <CustomButton text="Therapist" onPress={()=>onTherapistPressed()}/> 
+            <CustomButton text="Patient" onPress={()=>onPatientPressed()}/> 
         </View>
         </ScrollView>
     );

@@ -110,7 +110,7 @@ signInWithEmailAndPassword(auth, username, password)
 
             <CustomButton
             text="Don't have an account? Create one"
-            onPress={onSignUpPressed}
+            onPress={()=>onSignUpPressed()}
             type = "TER"
             />
 

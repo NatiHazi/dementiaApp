@@ -111,7 +111,7 @@ const SignUpScreen = () => {
               secureTextEntry={false}
               />
 
-            <CustomButton text="Register" onPress={onRegisterPressed}/>
+            <CustomButton text="Register" onPress={()=>onRegisterPressed()}/>
 
             <Text style={styles.text}>
                 By registering, you confirm that you accept our 
