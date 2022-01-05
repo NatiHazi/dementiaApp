@@ -18,8 +18,6 @@ const TherapistOptionScreen = () => {
     };
     const findPatienPressed = () =>{
         console.log("find patiend pressed")
-
-
     navigation.navigate("UserLocation");
    
   

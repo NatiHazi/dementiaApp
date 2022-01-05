@@ -47,17 +47,10 @@ signInWithEmailAndPassword(auth, username, password)
         }
         fetchFunction();
         
-
-        // if (therapist===true){
-        // navigation.navigate("TherapistScreen");
-        // }
-        // else{
-        //     navigation.navigate("PatientScreen"); 
-        // }
-        // .......
+       
     }
    
-    // ...
+    
   })
   .catch((error) => {
     const errorCode = error.code;

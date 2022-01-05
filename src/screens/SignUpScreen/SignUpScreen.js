@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, useWindowDimensions,ScrollView} from 'react-nat
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-import {getAuth,createUserWithEmailAndPassword,sendEmailVerification,getFirestore,collection, addDoc } from '../../../db/firebase'
+import {getAuth,createUserWithEmailAndPassword,sendEmailVerification,getFirestore,collection, addDoc,setDoc,doc } from '../../../db/firebase'
 
 
 const SignUpScreen = () => {
@@ -23,22 +23,15 @@ const SignUpScreen = () => {
         // Signed in 
         const user = userCredential.user;
         const db = getFirestore();
+            (async () => {
+                await setDoc(doc(db, "users", user.uid), {
+                    id:  user.uid,
+                    isTherapist:true,
+                    myNum: yourNum,
+                    otherSidePhoneNum: otherSideNum
+                  });
         
-        try {
-            async function fetchFunction(){
-            const docRef = await addDoc(collection(db, 'users'), {
-              isTherapist: true,
-              myNum: yourNum,
-              otherSidePhoneNum: otherSideNum,
-              id: user.uid
-            });
-            console.log("Document written with ID: ", docRef.id);
-            }
-            fetchFunction()
-          } catch (e) {
-            console.error("Error adding document: ", e);
-          }
-        
+            })();
             sendEmailVerification(auth.currentUser)
             //user.emailVerified =>checks if user verified email.
     .then(() => {
