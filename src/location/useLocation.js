@@ -47,9 +47,9 @@
         // User is signed out
         // ...
       }
-        }, []);
+       
     });
-
+ }, []);
 
 
     return (
