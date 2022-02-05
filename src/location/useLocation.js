@@ -24,23 +24,32 @@
         if (docSnap.exists()) {
           console.log("Document data:", docSnap.data());
           var currentUserPhoneNum= docSnap.data().myNum
+          console.log("27: ", currentUserPhoneNum)
           console.log(currentUserPhoneNum);
           const q = query(collection(db, "users"), where("otherSidePhoneNum", "==", currentUserPhoneNum));
+          let nisui1=""
+          let nisui2=""
           const querySnapshot = await getDocs(q);
           querySnapshot.forEach((doc) => {
             // doc.data() is never undefined for query doc snapshots
             console.log(doc.id, " => ", doc.data());
             setlat(doc.data().latitude);
+            console.log("34: ",doc.data().latitude )
             setlongit(doc.data().longitude);
+            console.log("35: ",doc.data().longitude )
+            nisui1=doc.data().latitude
+            nisui2=doc.data().longitude
+            console.log("longitude", JSON.stringify({longit}))
           });
+          console.log(nisui1)
+          openMap({ latitude: nisui1, longitude: nisui2 });
         } else {
           // doc.data() will be undefined in this case
           console.log("No such document!");
         }
       })();
       
-        
-          openMap({ latitude: lat, longitude: longit });
+          // openMap({ latitude: lat, longitude: longit });
         
         // ...
       } else {
