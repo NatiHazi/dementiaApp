@@ -18,6 +18,7 @@ const SignUpScreen = () => {
 
     const onRegisterPressed = () =>{
             const auth = getAuth();
+            console.log("email line 21:", email)
     createUserWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
         // Signed in 
@@ -52,6 +53,9 @@ const SignUpScreen = () => {
         console.log(errorCode)
         if (errorCode==="auth/email-already-in-use"){
         alert("this email already in use")
+        }
+        else{
+            alert(errorMessage)
         }
         // ..
     });
