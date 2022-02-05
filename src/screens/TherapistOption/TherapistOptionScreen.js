@@ -20,9 +20,7 @@ const TherapistOptionScreen = () => {
     const findPatienPressed = () =>{
         console.log("find patiend pressed")
     navigation.navigate("UserLocation");
-   
   
-        
     };
     const onSendReminders = () =>{
         console.log("on send reminders pressed")
