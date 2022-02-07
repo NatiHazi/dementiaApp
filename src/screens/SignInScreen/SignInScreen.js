@@ -7,7 +7,6 @@ import { useNavigation } from '@react-navigation/native';
 import {getAuth,signInWithEmailAndPassword,collection, getDocs,getFirestore} from '../../../db/firebase'
 
 
-
 const SignInScreen = () => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');

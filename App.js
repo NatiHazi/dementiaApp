@@ -2,6 +2,10 @@
 import React from 'react';
 import {SafeAreaView, StyleSheet,TouchableWithoutFeedback, Keyboard } from 'react-native';
 import Navigation from './src/navigation';
+import { LogBox } from 'react-native';
+
+LogBox.ignoreLogs(['Setting a timer']);
+
 
 const App = () => {
   return (

@@ -1,4 +1,5 @@
   import React, { Component,useState,useEffect,useRef } from 'react'
+  import Constants from 'expo-constants';
   import { Button, View,Text } from 'react-native';
   import { useNavigation } from '@react-navigation/native';
   import * as Location from 'expo-location';
