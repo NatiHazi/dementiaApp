@@ -2,12 +2,13 @@ import React,{useState} from 'react';
 import { View, Text, StyleSheet, useWindowDimensions,ScrollView} from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native'
-const ConfirmEmailScreen = () => {
-
+const ConfirmEmailScreen = ({route}) => {
+    const { isTherapist} = route.params;
     const navigation = useNavigation();
 
     const onConfirmPressed = () =>{
-        navigation.navigate("signIn");
+        
+        navigation.navigate("signIn", {isTherapist:isTherapist});
     };
     return (
         <ScrollView>

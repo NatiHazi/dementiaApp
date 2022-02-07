@@ -7,7 +7,9 @@ import { useNavigation } from '@react-navigation/native';
 import {getAuth,signInWithEmailAndPassword,collection, getDocs,getFirestore} from '../../../db/firebase'
 
 
-const SignInScreen = () => {
+const SignInScreen = ({ route }) => {
+    const { isTherapist} = route.params;
+    console.log("line 12 sign in screen: ", isTherapist)
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     // const [therapist, setTherapist]=useState(false);
@@ -74,7 +76,7 @@ signInWithEmailAndPassword(auth, username, password)
     };
 
     const onSignUpPressed = () => {
-        navigation.navigate("signUn");
+        navigation.navigate("signUn",{isTherapist: isTherapist});
     };
 
     return (

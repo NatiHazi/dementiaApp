@@ -6,10 +6,11 @@ import { useNavigation } from '@react-navigation/native';
 const MainScreeen = () => {
     const navigation = useNavigation();
     const onTherapistPressed = () =>{
-        navigation.navigate("signIn");
+        navigation.navigate("signIn",{
+            isTherapist: true});
     };
     const onPatientPressed = () =>{
-        navigation.navigate("signIn");
+        navigation.navigate("signIn", {isTherapist: false});
     };
     return (
         <ScrollView>

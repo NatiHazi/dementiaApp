@@ -6,7 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 import {getAuth,createUserWithEmailAndPassword,sendEmailVerification,getFirestore,collection, addDoc,setDoc,doc } from '../../../db/firebase'
 
 
-const SignUpScreen = () => {
+const SignUpScreen = ({ route }) => {
+    const { isTherapist} = route.params;
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -27,7 +28,7 @@ const SignUpScreen = () => {
             (async () => {
                 await setDoc(doc(db, "users", user.uid), {
                     id:  user.uid,
-                    isTherapist:true,
+                    isTherapist:isTherapist,
                     myNum: yourNum,
                     otherSidePhoneNum: otherSideNum
                   });
@@ -39,7 +40,7 @@ const SignUpScreen = () => {
         // Email verification sent!
         // ...
         console.log("email verification sent!")
-        navigation.navigate("ConfirmEmail");
+        navigation.navigate("ConfirmEmail", {isTherapist: isTherapist});
        
     });
         
