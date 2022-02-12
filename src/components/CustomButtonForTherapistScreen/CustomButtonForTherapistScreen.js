@@ -1,11 +1,11 @@
 import React from 'react'
-import { View, Text, StyleSheet, Pressable } from 'react-native'
+import { View, Text, StyleSheet, Pressable,TouchableHighlight } from 'react-native'
 
 const CustomButtonForTherapistScreen = ({ onPress, text}) => {
     return (
-        <Pressable onPress={onPress} style={styles.container}>
+        <TouchableHighlight onPress={onPress} style={styles.container}>
             <Text style={[styles.text]}>{text}</Text>
-        </Pressable>
+        </TouchableHighlight>
     )
 }
 

@@ -1,11 +1,13 @@
 import React from 'react'
-import { View, Text, StyleSheet, Pressable } from 'react-native'
+import { View, Text, StyleSheet, Pressable,TouchableHighlight } from 'react-native'
 
 const CustomButton = ({ onPress, text, type = "PRIMARY" }) => {
     return (
-        <Pressable onPress={onPress} style={[styles.container, styles[`container_${type}`]]}>
+        <TouchableHighlight
+        TouchableHighlight
+        onPress={onPress} style={[styles.container, styles[`container_${type}`]]}>
           <Text style={[styles.text, styles[`text_${type}`]]}>{text}</Text>
-        </Pressable>
+        </TouchableHighlight>
     )
 }
 
