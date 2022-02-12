@@ -47,6 +47,7 @@
       onAuthStateChanged(auth, (user) => {
           if (user) {
             const uid = user.uid;
+            const db = getFirestore();
               console.log("in patient");
 
               (async ()=>{
@@ -61,10 +62,10 @@
               let location = await Location.getCurrentPositionAsync({});
               let long=location.coords.longitude
               let lat=location.coords.latitude
-              console.log(long)
-              console.log(lat)
+              console.log(long);
+              console.log(lat);
               
-                  const db = getFirestore();
+                  
                     (async()=>{
                       const docRef = doc(db, "users", uid);
                           await updateDoc(docRef, {
@@ -74,15 +75,21 @@
                     })();
  
         })();
-          } else {
-            console.log("user is not signed in");
-          }
-        });
+         
   //#############end premission to location##################
 
   //#############start premission to notfication##################
-  registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+  registerForPushNotificationsAsync().then(token => {setExpoPushToken(token);
+
+  (async()=>{
+    const docRef = doc(db, "users", uid);
+        await updateDoc(docRef, {
+            pushToken:token
+        });
+  })();
+  });
   //registerForPushNotificationsAsync().then(token => console.log(token));
+  
 
   notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
     setNotification(notification);
@@ -92,20 +99,34 @@
     console.log(response);
   });
 
+} else {
+  console.log("user is not signed in");
+}
+});
+
   return () => {
     Notifications.removeNotificationSubscription(notificationListener.current);
     Notifications.removeNotificationSubscription(responseListener.current);
   };
     }, []);
 
-    async function schedulePushNotification() {
-      await Notifications.scheduleNotificationAsync({
-        content: {
-          title: "You've got mail! 📬",
-          body: 'Here is the notification body',
-          data: { data: 'goes here' },
+    async function sendPushNotification(expoPushToken) {
+      const message = {
+        to: expoPushToken,
+        sound: 'default',
+        title: 'Original Title',
+        body: 'And here is the body!',
+        data: { someData: 'goes here' },
+      };
+    
+      await fetch('https://exp.host/--/api/v2/push/send', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Accept-encoding': 'gzip, deflate',
+          'Content-Type': 'application/json',
         },
-        trigger: { seconds: 2 },
+        body: JSON.stringify(message),
       });
     }
   
@@ -196,7 +217,7 @@
       <Button
         title="Press to schedule a notification"
         onPress={async () => {
-          await schedulePushNotification();
+          await sendPushNotification(expoPushToken);
         }}
       />
     </View>

@@ -22,6 +22,7 @@ const TherapistOptionScreen = () => {
     };
     const onSendReminders = () =>{
         console.log("on send reminders pressed")
+        navigation.navigate("SendNotification")
     }
     return (
         <ScrollView>
