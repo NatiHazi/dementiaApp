@@ -6,6 +6,8 @@
   import {getAuth, onAuthStateChanged, doc, updateDoc, getFirestore,getDocs,collection,getDoc } from '../../../db/firebase'
   import * as Contacts from 'expo-contacts';
   import * as Notifications from 'expo-notifications';
+  import { useBatteryLevel } from '@use-expo/battery';
+  
 
 
 
@@ -23,9 +25,14 @@
   const [notification, setNotification] = useState(false);
   const notificationListener = useRef();
   const responseListener = useRef();
-
+  
+  const [level] = useBatteryLevel();
+  
 
     useEffect(() => {
+      //#############Check battery status##################
+      let batteryStatus = percentage(level);
+      console.log(batteryStatus);
       //#############start premission to contact##################
       (async () => {
         const { status } = await Contacts.requestPermissionsAsync();
@@ -70,7 +77,8 @@
                       const docRef = doc(db, "users", uid);
                           await updateDoc(docRef, {
                               longitude: long,
-                              latitude: lat
+                              latitude: lat,
+                              battery:batteryStatus
                           });
                     })();
  
@@ -109,6 +117,10 @@
     Notifications.removeNotificationSubscription(responseListener.current);
   };
     }, []);
+
+    function percentage(level) {
+      return `${Math.floor(level * 100)}%`;
+  }
 
     async function sendPushNotification(expoPushToken) {
       const message = {

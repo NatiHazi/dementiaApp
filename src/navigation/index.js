@@ -12,6 +12,7 @@ import TherapistOption from '../screens/TherapistOption';
 import UseLocation from '../location/useLocation'
 import PatientOption from '../screens/PatientOption';
 import SendNotification from '../screens/SendNotification/SendNotification'
+import Battery from '../screens/Battery'
 
 const Stack = createNativeStackNavigator();
 
@@ -29,6 +30,7 @@ const Navigation = () => {
                 <Stack.Screen name="UserLocation" component={UseLocation}/>
                 <Stack.Screen name="PatientScreen" component={PatientOption}/>
                 <Stack.Screen name="SendNotification" component={SendNotification}/>
+                <Stack.Screen name="Battery" component={Battery}/>
             </Stack.Navigator>
         </NavigationContainer>
     )
