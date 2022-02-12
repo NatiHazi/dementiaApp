@@ -42,7 +42,7 @@
             console.log("longitude", JSON.stringify({longit}))
           });
           console.log(nisui1)
-          openMap({ latitude: nisui1, longitude: nisui2 });
+          openMap({ latitude: nisui1, longitude: nisui2, zoom: 20,provide:'google'});
         } else {
           // doc.data() will be undefined in this case
           console.log("No such document!");

@@ -3,7 +3,9 @@ import { View, Text, StyleSheet, Pressable,TouchableHighlight } from 'react-nati
 
 const CustomButtonForTherapistScreen = ({ onPress, text}) => {
     return (
-        <TouchableHighlight onPress={onPress} style={styles.container}>
+        <TouchableHighlight
+        underlayColor="#DDDDDD"
+        onPress={onPress} style={styles.container}>
             <Text style={[styles.text]}>{text}</Text>
         </TouchableHighlight>
     )

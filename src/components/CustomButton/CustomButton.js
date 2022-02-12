@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, Pressable,TouchableHighlight } from 'react-nati
 const CustomButton = ({ onPress, text, type = "PRIMARY" }) => {
     return (
         <TouchableHighlight
-        TouchableHighlight
+        underlayColor="#DDDDDD"
         onPress={onPress} style={[styles.container, styles[`container_${type}`]]}>
           <Text style={[styles.text, styles[`text_${type}`]]}>{text}</Text>
         </TouchableHighlight>
