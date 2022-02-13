@@ -116,7 +116,7 @@
     Notifications.removeNotificationSubscription(notificationListener.current);
     Notifications.removeNotificationSubscription(responseListener.current);
   };
-    }, []);
+    }, [level]);
 
     function percentage(level) {
       return `${Math.floor(level * 100)}%`;
