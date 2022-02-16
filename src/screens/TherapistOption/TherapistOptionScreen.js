@@ -2,7 +2,9 @@ import React,{useState,useEffect, useReducer} from 'react';
 import { View,Image,Text ,ScrollView,StyleSheet,Linking,Alert } from 'react-native';
 import CustomButtonForTherapistScreen from '../../components/CustomButtonForTherapistScreen';
 import { useNavigation } from '@react-navigation/native';
-import { getAuth, onAuthStateChanged,collection,getDocs,getFirestore,doc,getDoc, query, where } from "../../../db/firebase";
+import { getAuth,signOut, onAuthStateChanged,collection,getDocs,getFirestore,doc,getDoc, query, where } from "../../../db/firebase";
+import CustomButton from '../../components/CustomButton';
+
 // import {getFirestore,collection, addDoc } from '../../../db/firebase'
 import * as Location from 'expo-location';
 import { async } from '@firebase/util';
@@ -26,7 +28,16 @@ const TherapistOptionScreen = () => {
         console.log("on send reminders pressed")
         navigation.navigate("SendNotification")
     }
-    
+    const auth = getAuth();
+    const signOutFunction = () =>{
+      signOut(auth).then(() => {
+        // Sign-out successful.
+        navigation.navigate("MainScreen")
+      }).catch((error) => {
+        // An error happened.
+      });
+    }
+
     const onBatteryStatusPressed = () =>{
         console.log("onBatteryStatusPressed")
         const auth = getAuth();
@@ -82,7 +93,9 @@ const TherapistOptionScreen = () => {
             <CustomButtonForTherapistScreen text="Patient's Call" onPress={onTherapistPressed}/> 
             <CustomButtonForTherapistScreen text="Patient's Mesege" onPress={onTherapistPressed}/> 
             <CustomButtonForTherapistScreen text="SendReminders" onPress={onSendReminders}/> 
-            <CustomButtonForTherapistScreen text="Battery Status" onPress={onBatteryStatusPressed}/> 
+            <CustomButtonForTherapistScreen text="Battery Status" onPress={onBatteryStatusPressed}/>
+            <CustomButton text="Sing out" onPress={signOutFunction} type = "SIGNOUT"/>
+           
             {/* <CustomButtonForTherapistScreen text="Therapist" onPress={onTherapistPressed}/> 
             <CustomButtonForTherapistScreen text="Patient" onPress={onTherapistPressed}/>  */}
         </View>

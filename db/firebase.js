@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getFirestore,collection, addDoc,getDocs,doc, updateDoc,setDoc,getDoc, query, where  } from "firebase/firestore";
 import {
-   getAuth,
+   getAuth,signOut,
     signInWithEmailAndPassword,
     createUserWithEmailAndPassword,
     sendEmailVerification,
@@ -25,7 +25,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 
 
-export {getAuth,
+export {getAuth,signOut,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
   sendEmailVerification,

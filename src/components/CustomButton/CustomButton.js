@@ -36,12 +36,19 @@ const styles = StyleSheet.create({
 
     text_TERTIARY:{
         color:'gray',
+        
     },
     text_TER:{
         color:'gray',
     },
     text_SECONDARY:{
         color:'#3B71F3',
+    },
+    text_SIGNOUT:{
+        color:'gray',
+        width:'100%',
+        alignItems: 'flex-start',
+     
     },
     
 });
