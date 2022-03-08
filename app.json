@@ -24,7 +24,12 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
       },
-      "package": "com.natihazi.dementiaApp"
+
+      "package": "com.natihazi.dementiaApp",
+
+      "package": "com.gabigut27.dementiaApp",
+      "android.googleServicesFile": "./google-services.json"
+
     },
     "web": {
       "favicon": "./assets/favicon.png"
