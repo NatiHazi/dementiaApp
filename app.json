@@ -27,7 +27,7 @@
 
       "package": "com.natihazi.dementiaApp",
 
-      "package": "com.gabigut27.dementiaApp",
+     
       "android.googleServicesFile": "./google-services.json"
 
     },
