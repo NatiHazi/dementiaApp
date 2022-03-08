@@ -6,7 +6,8 @@ import { useNavigation } from '@react-navigation/native';
 import {getAuth, sendPasswordResetEmail } from '../../../db/firebase'
 
 
-const ConfirmEmailScreen = () => {
+const ConfirmEmailScreen = ({ route }) => {
+    const { isTherapist} = route.params;
     const [userName, setUserName] = useState('');
 
     const navigation = useNavigation();
@@ -19,7 +20,7 @@ const ConfirmEmailScreen = () => {
         // ..
         console.log("Password reset email sent! ")
         alert("Please go to mail and set new Password and then sign in with new Password")
-        navigation.navigate("signIn");
+        navigation.navigate("signIn", {isTherapist: isTherapist});
     })
     .catch((error) => {
         const errorCode = error.code;
@@ -32,7 +33,7 @@ const ConfirmEmailScreen = () => {
     };
 
     const onSignInPressed = () => {
-        navigation.navigate("signIn");
+        navigation.navigate("signIn", {isTherapist: isTherapist});
     };
 
 

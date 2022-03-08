@@ -2,7 +2,7 @@ import React,{useState,useEffect, useReducer} from 'react';
 import { View,Image,Text ,ScrollView,StyleSheet,Linking,Alert } from 'react-native';
 import CustomButtonForTherapistScreen from '../../components/CustomButtonForTherapistScreen';
 import { useNavigation } from '@react-navigation/native';
-import { getAuth,signOut, onAuthStateChanged,collection,getDocs,getFirestore,doc,getDoc, query, where } from "../../../db/firebase";
+//import { getAuth,signOut, onAuthStateChanged,collection,getDocs,getFirestore,doc,getDoc, query, where } from "../../../db/firebase";
 import CustomButton from '../../components/CustomButton';
 
 // import {getFirestore,collection, addDoc } from '../../../db/firebase'
@@ -10,11 +10,17 @@ import * as Location from 'expo-location';
 import { async } from '@firebase/util';
 import UseLocation from '../../location/useLocation'
 import * as Battery from 'expo-battery';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
 
 
 
 const TherapistOptionScreen = () => {
+
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
+
      const navigation = useNavigation();
     const onTherapistPressed = () =>{
         navigation.navigate("signIn");
@@ -27,63 +33,67 @@ const TherapistOptionScreen = () => {
     const onSendReminders = () =>{
         console.log("on send reminders pressed")
         navigation.navigate("SendNotification")
-    }
-    const auth = getAuth();
-    const signOutFunction = () =>{
-      signOut(auth).then(() => {
-        // Sign-out successful.
-        navigation.navigate("MainScreen")
-      }).catch((error) => {
-        // An error happened.
-      });
-    }
+    } 
 
+    const signOutFunction = () =>{
+    
+        auth()
+        .signOut()
+        .then(() => navigation.navigate("MainScreen"));
+    
+  }
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if (initializing) setInitializing(false);
+  }
     const onBatteryStatusPressed = () =>{
-        console.log("onBatteryStatusPressed")
-        const auth = getAuth();
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-              // User is signed in, see docs for a list of available properties
-              // https://firebase.google.com/docs/reference/js/firebase.User
-              const uid = user.uid;
-              const db = getFirestore();
-              const docRef = doc(db, "users", uid);
-              (async ()=>{
-              const docSnap = await getDoc(docRef);
-              if (docSnap.exists()) {
-                console.log("Document data:", docSnap.data());
-                var currentUserPhoneNum= docSnap.data().myNum
-                const q = query(collection(db, "users"), where("otherSidePhoneNum", "==", currentUserPhoneNum));
-                let batteryStatus=""
-                const querySnapshot = await getDocs(q);
-                querySnapshot.forEach((doc) => {
-                  // doc.data() is never undefined for query doc snapshots
-                  batteryStatus=doc.data().battery
-                  console.log("battery", JSON.stringify({batteryStatus}))
-                });
-                console.log(batteryStatus)
-                Alert.alert(
+      console.log("onBatteryStatusPressed");
+      const subscriber = auth().onAuthStateChanged(onAuthStateChanged);  
+      if (initializing) return null;
+      if(user){
+        console.log("test if inside user");
+        const uid = user.uid;
+        let phoneNumber = "";
+        let persentBattery = "";
+        //let idPatient = "";
+        firestore()
+        .collection('users')
+        .doc(uid)
+        .get()
+        .then(documentSnapshot => {
+          if (documentSnapshot.exists) {
+            phoneNumber = documentSnapshot.data().myNum;
+            console.log("line 62 : ",phoneNumber);
+          }
+          });
+            firestore()
+            .collection('users')
+            .get()
+            .then(querySnapshot => {
+               querySnapshot.forEach(documentSnapshot => {
+                 if(documentSnapshot.data().otherSidePhoneNum == phoneNumber){
+                  persentBattery = documentSnapshot.data().battery;
+                  //console.log("line 76 ",persentBattery)
+                  Alert.alert(
                     "Patient Battery Status",
-                    batteryStatus,
+                    persentBattery,
                     [
                       
                       { text: "OK", onPress: () => console.log("OK Pressed") }
                     ]
                   );
-              } else {
-                // doc.data() will be undefined in this case
-                console.log("No such document!");
-              }
-            })();  
-              // ...
-            } else {
-                console.log("user is sing out");
-              // User is signed out
-              // ...
-            }
-             
-          });
-    }
+
+                 }
+                //console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
+              });
+            });
+        }
+        else {
+        console.log("user is not signed in");
+        } 
+      }
+   
+      
     return (
         <ScrollView>
         <View style={styles.root}>

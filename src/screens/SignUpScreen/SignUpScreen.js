@@ -17,7 +17,8 @@ const SignUpScreen = ({ route }) => {
 
     const navigation = useNavigation();
 
-    const onRegisterPressed = () =>{
+    const onRegisterPressed = ({ route }) =>{
+        const { isTherapist} = route.params;
         console.log("test");
             const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)
@@ -65,7 +66,7 @@ const SignUpScreen = ({ route }) => {
     };
 
     const onSignInPressed = () => {
-        navigation.navigate("signIn");
+        navigation.navigate("signIn", {isTherapist: isTherapist});
     };
 
     const onTermOfUsePressed = () => {
