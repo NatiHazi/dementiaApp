@@ -1,72 +1,76 @@
-  import React, { useState, useEffect } from 'react';
-  import { Platform, Text, View, StyleSheet } from 'react-native';
-  import * as Location from 'expo-location';
-  import openMap from 'react-native-open-maps';
-  import { getAuth, onAuthStateChanged,collection,getDocs,getFirestore,doc,getDoc, query, where } from "../../db/firebase";
+import React, { useState, useEffect } from 'react';
+import { Platform, Text, View, StyleSheet } from 'react-native';
+import * as Location from 'expo-location';
+import openMap from 'react-native-open-maps';
+// import { getAuth, onAuthStateChanged,collection,getDocs,getFirestore,doc,getDoc, query, where } from "../../db/firebase";
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
 
-  export default function UseLocation() {
-    const [location, setLocation] = useState(null);
-    const [errorMsg, setErrorMsg] = useState(null);
-    const [lat, setlat]=useState(null);
-    const[longit,setlongit]=useState(null);
+export default function UseLocation() {
+  const [location, setLocation] = useState(null);
+  const [errorMsg, setErrorMsg] = useState(null);
+  const [lat, setlat]=useState(null);
+  const[longit,setlongit]=useState(null);
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
 
-    const auth = getAuth();
-    useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // User is signed in, see docs for a list of available properties
-        // https://firebase.google.com/docs/reference/js/firebase.User
-        const uid = user.uid;
-        const db = getFirestore();
-        const docRef = doc(db, "users", uid);
-        (async ()=>{
-        const docSnap = await getDoc(docRef);
-        if (docSnap.exists()) {
-          console.log("Document data:", docSnap.data());
-          var currentUserPhoneNum= docSnap.data().myNum
-          console.log("27: ", currentUserPhoneNum)
-          console.log(currentUserPhoneNum);
-          const q = query(collection(db, "users"), where("otherSidePhoneNum", "==", currentUserPhoneNum));
-          let nisui1=""
-          let nisui2=""
-          const querySnapshot = await getDocs(q);
-          querySnapshot.forEach((doc) => {
-            // doc.data() is never undefined for query doc snapshots
-            console.log(doc.id, " => ", doc.data());
-            setlat(doc.data().latitude);
-            console.log("34: ",doc.data().latitude )
-            setlongit(doc.data().longitude);
-            console.log("35: ",doc.data().longitude )
-            nisui1=doc.data().latitude
-            nisui2=doc.data().longitude
-            console.log("longitude", JSON.stringify({longit}))
-          });
-          console.log(nisui1)
-          openMap({ latitude: nisui1, longitude: nisui2, zoom: 20,provide:'google'});
-        } else {
-          // doc.data() will be undefined in this case
-          console.log("No such document!");
-        }
-      })();
-      
-          // openMap({ latitude: lat, longitude: longit });
-        
-        // ...
-      } else {
-        // User is signed out
-        // ...
-      }
-       
-    });
- }, []);
-
-
-    return (
-      <View style={styles.container}>
-        {/* <Text>{text}</Text> */}
-      </View>
-    );
+  function onAuthStateChanged(user) {
+    setUser(user);
+    if (initializing) setInitializing(false);
   }
-  const styles = StyleSheet.create({ container:{
-      flex: 1
-  }}); 
+
+  //##############################################################
+  // const auth = getAuth();
+  useEffect(() => {
+    console.log("line 45 in asjdskj")
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    
+    // if (initializing){ 
+    //   console.log("BLABLAL");
+    //   return null;}
+    
+    if (user){
+      console.log("line 30 in POJAGOJSGOIJ")
+      const uid = user.uid;
+      firestore()
+      .collection('users')
+      .doc(uid)
+      .get()
+      .then(documentSnapshot => {
+        if (documentSnapshot.exists) {
+         let phoneNumber = documentSnapshot.data().myNum;
+          firestore()
+          .collection('users')
+          .get()
+          .then(querySnapshot => {
+             querySnapshot.forEach(documentSnapshot => {
+               if(documentSnapshot.data().otherSidePhoneNum == phoneNumber){
+               let patinetlat = documentSnapshot.data().latitude;
+               let patientlong= documentSnapshot.data().longitude;
+                console.log("patientlat: ", patinetlat)
+                console.log("patientlong: ", patientlong)
+                openMap({ latitude: patinetlat, longitude: patientlong, zoom: 20,provide:'google'});
+
+               }
+            });
+          });
+        }
+        });
+    }
+    else{
+      console.log("user is not sigend in")
+    }
+    // return subscriber;
+}, [user]);
+
+
+
+  return (
+    <View style={styles.container}>
+      {/* <Text>{text}</Text> */}
+    </View>
+  );
+}
+const styles = StyleSheet.create({ container:{
+    flex: 1
+}}); 

@@ -3,6 +3,7 @@ import { View,Image,Text ,ScrollView,StyleSheet} from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 
+
 const MainScreeen = () => {
     const navigation = useNavigation();
     const onTherapistPressed = () =>{

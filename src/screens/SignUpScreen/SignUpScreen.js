@@ -17,8 +17,7 @@ const SignUpScreen = ({ route }) => {
 
     const navigation = useNavigation();
 
-    const onRegisterPressed = ({ route }) =>{
-        const { isTherapist} = route.params;
+    const onRegisterPressed = () =>{
         console.log("test");
             const auth = getAuth();
     createUserWithEmailAndPassword(auth, email, password)

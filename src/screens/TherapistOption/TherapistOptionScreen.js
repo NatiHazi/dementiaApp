@@ -4,7 +4,6 @@ import CustomButtonForTherapistScreen from '../../components/CustomButtonForTher
 import { useNavigation } from '@react-navigation/native';
 //import { getAuth,signOut, onAuthStateChanged,collection,getDocs,getFirestore,doc,getDoc, query, where } from "../../../db/firebase";
 import CustomButton from '../../components/CustomButton';
-
 // import {getFirestore,collection, addDoc } from '../../../db/firebase'
 import * as Location from 'expo-location';
 import { async } from '@firebase/util';
@@ -16,6 +15,7 @@ import firestore from '@react-native-firebase/firestore';
 
 
 
+
 const TherapistOptionScreen = () => {
 
   const [initializing, setInitializing] = useState(true);
@@ -23,7 +23,8 @@ const TherapistOptionScreen = () => {
 
      const navigation = useNavigation();
     const onTherapistPressed = () =>{
-        navigation.navigate("signIn");
+        // navigation.navigate("signIn");
+        console.log("patient's call/message pressed")
     };
     const findPatienPressed = () =>{
         console.log("find patiend pressed")
