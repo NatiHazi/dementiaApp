@@ -12,7 +12,10 @@ import firestore from '@react-native-firebase/firestore';
 import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
 import { PermissionsAndroid } from 'react-native';
-import CallLogs from 'react-native-call-log'
+import CallLogs from 'react-native-call-log';
+import SystemSetting from 'react-native-system-setting';
+
+
 
 
 Notifications.setNotificationHandler({
@@ -26,110 +29,88 @@ Notifications.setNotificationHandler({
 const PatientOptionScreen = () => {
 const [initializing, setInitializing] = useState(true);
 const [user, setUser] = useState();
-
-const [expoPushToken, setExpoPushToken] = useState('');
-const [notification, setNotification] = useState(false);
-const notificationListener = useRef();
-const responseListener = useRef();
+const [batteryStatus, setBatteryStatus]=useState('');
+const [lon, setLon]=useState('');
+const [lat, setLat]=useState('');
 
 const [level] = useBatteryLevel();
+
+ 
+  useEffect(() => {
+  //   SystemSetting.getVolume().then((volume)=>{
+  //     console.log('Current volume is ' + volume);
+  // });
+  // SystemSetting.setVolume(0.65);
+
+
+  
+
+    //#############start premission to contact##################
+ //permissionContacts();
+  getLocation(); //get user location and set in in useState 
+  //#############start premission to call log##################
+     
+    //#############Check battery status##################
+    setBatteryStatus(percentage(level));
+    console.log(batteryStatus);
+ 
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);  
+    if (initializing) return null;
+    if(user){
+      console.log("test if inside user");
+      const uid = user.uid;
+      updateBatteryandLocation(uid); //update in firebase battery and location
+      updateTokenMessage(uid); //update user token for messaging cloud
+      permessionCallLog(uid);
+
+
+    const unsubscribe = messaging().onMessage(async remoteMessage => {
+      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
+    });
+    //  return unsubscribe; 
+     console.log("nati is the best"); 
+  }
+ 
+      else {
+      console.log("user is not signed in");
+      }
+      return()=>{
+        console.log("CLEAN USEEFFECT")
+      }
+
+  }, [level, lon, lat, batteryStatus]);
+
+
+  function percentage(level) {
+    return `${Math.floor(level * 100)}%`;
+    
+}
 
 function onAuthStateChanged(user) {
   setUser(user);
   if (initializing) setInitializing(false);
 }
 
-  useEffect(() => {
-    //#############Check battery status##################
-    let batteryStatus = percentage(level);
-    console.log(batteryStatus);
-    //#############start premission to contact##################
-    (async () => {
-      const { status } = await Contacts.requestPermissionsAsync();
-      if (status === 'granted') {
-        const { data } = await Contacts.getContactsAsync({
-          fields: [Contacts.Fields.Emails],
-        });
-
-        if (data.length > 0) {
-          const contact = data[0];
-          alert(JSON.stringify(contact));
-        }
-      }
-    })();
-    //#############end premission to contact##################
-
-    //#############start premission to location##################
-    // const auth = getAuth();
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);  
-    if (initializing) return null;
-    if(user){
-      console.log("test if inside user");
-      const uid = user.uid;
-      (async ()=>{
-        let { status } = await Location.requestForegroundPermissionsAsync();
-        console.log("717171771177111771171717711")
-        if (status !== 'granted') {
-          console.log("kdsjfdffsj.fsdfjsdlfsdf")
-          setErrorMsg('Permission to access location was denied');
-          return;
-        }
-    })();
-
-    (async ()=>{
-      console.log("testtttttttttttttttttttttttttttttttt");
-      let location = await Location.getCurrentPositionAsync({});
-      console.log("testtttttttttttttttttttttttttttttttt");
-      let long=location.coords.longitude
-      let lat=location.coords.latitude
-      console.log("line 81 ",long);
-      console.log("line 82 ",lat);
-      (async()=>{
-                  firestore()
-                  .collection('users')
-                  .doc(uid)
-                  .update({
-                    longitude: "long",
-                    latitude: "lat",
-                    battery:batteryStatus
-                  })
-                  .then(() => {
-                    console.log('User updated!');
-                  });
-            })();
-
-      })();
-      //#############end premission to location##################
-
-      //#############start premission to notfication##################
-   
-  
-      firebase.messaging().getToken()
-      .then(fcmToken => {
-      if (fcmToken) {
-      console.log("gabi yexxxxssss",fcmToken);
-      firestore()
-      .collection('users')
-      .doc(uid)
-      .update({
-        pushToken:fcmToken
-      })
-      .then(() => {
-        console.log('User updated!');
+function permissionContacts(){
+  (async () => {
+    const { status } = await Contacts.requestPermissionsAsync();
+    if (status === 'granted') {
+      const { data } = await Contacts.getContactsAsync({
+        fields: [Contacts.Fields.Emails],
       });
-      // user has a device token
-    } else {
-      console.log("nati yexxxxssss");
-      // user doesn't have a device token yet
-    } 
-  });
-  const unsubscribe = messaging().onMessage(async remoteMessage => {
-    Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-  });
-   //#############end premission to notfication##################
 
-    //#############start premission to call##################
-    (async ()=>{
+      if (data.length > 0) {
+        const contact = data[0];
+        console.log("line 56 pateinet: ",JSON.stringify(contact))
+        alert(JSON.stringify(contact));
+      }
+    }
+  })();
+}
+
+
+function permessionCallLog(uid){
+  (async ()=>{
     try {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
@@ -143,8 +124,28 @@ function onAuthStateChanged(user) {
         }
       )
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log(CallLogs);
-        CallLogs.load(5).then(c => console.log("ccccccccccccccccccccccccccccccccc",c));
+        //console.log(CallLogs);
+        CallLogs.load(5).then(c => {
+          let i=0;
+          let save_unknown_calls=[]
+          for (i; i<c.length; i++){
+            // console.log("i: ", c[i])
+            if (!c[i]["name"]){
+              save_unknown_calls.push(c[i]["dateTime"],c[i]["phoneNumber"])
+            }
+          }
+          console.log("the arrrayyyyy: ", save_unknown_calls)
+          firestore()
+            .collection('users')
+            .doc(uid)
+            .update({
+              unknown_calls: save_unknown_calls,
+            })
+            .then(() => {
+              console.log('User updated!');
+            });
+
+        });
 
       } else {
         console.log('Call Log permission denied');
@@ -155,51 +156,68 @@ function onAuthStateChanged(user) {
       console.log(e);
     }
   })();
-
-
-
-     return unsubscribe; 
-     console.log("nati is the best"); 
-  }
- 
-      else {
-      console.log("user is not signed in");
-      }
-
-  }, [level]);
-
-  function percentage(level) {
-    return `${Math.floor(level * 100)}%`;
 }
-  // async function registerForPushNotificationsAsync() {
-  //   let token;
-  //   if (Constants.isDevice) {
-  //     const { status: existingStatus } = await Notifications.getPermissionsAsync();
-  //     let finalStatus = existingStatus;
-  //     if (existingStatus !== 'granted') {
-  //       const { status } = await Notifications.requestPermissionsAsync();
-  //       finalStatus = status;
-  //     }
-  //     if (finalStatus !== 'granted') {
-  //       alert('Failed to get push token for push notification!');
-  //       return;
-  //     }
-  //     token = (await Notifications.getExpoPushTokenAsync()).data;
-  //     console.log(token);
-  //   } else {
-  //     alert('Must use physical device for Push Notifications');
-  //   }
+
+function getLocation(){
+  (async ()=>{
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== 'granted') {
+      setErrorMsg('Permission to access location was denied');
+      return;
+    }
+    else{
+      (async ()=>{
+    let location = await Location.getCurrentPositionAsync({});
+    setLon(location.coords.longitude);
+    setLat(location.coords.latitude);
+  })();
+    }
+})();
+
   
-  //   if (Platform.OS === 'android') {
-  //     Notifications.setNotificationChannelAsync('default', {
-  //       name: 'default',
-  //       importance: Notifications.AndroidImportance.MAX,
-  //       vibrationPattern: [0, 250, 250, 250],
-  //       lightColor: '#FF231F7C',
-  //     });
-  //   }
-  //   return token;
-  // }  
+
+}
+
+function updateBatteryandLocation(uid){
+  console.log("lon, lat, batt: ", {lon}, lat, batteryStatus);
+  (async()=>{
+    firestore()
+    .collection('users')
+    .doc(uid)
+    .update({
+      longitude: lon,
+      latitude: lat,
+      battery:batteryStatus
+    })
+    .then(() => {
+      console.log('User updated!');
+    });
+})();
+}
+
+function updateTokenMessage(uid){
+  firebase.messaging().getToken()
+  .then(fcmToken => {
+  if (fcmToken) {
+  //console.log("gabi yexxxxssss",fcmToken);
+  firestore()
+  .collection('users')
+  .doc(uid)
+  .update({
+    pushToken:fcmToken
+  })
+  .then(() => {
+    console.log('User updated!');
+  });
+  // user has a device token
+} else {
+  console.log("nati yexxxxssss");
+  // user doesn't have a device token yet
+} 
+});
+}
+  
+
   return (
     <View
     style={{

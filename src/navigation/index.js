@@ -1,5 +1,5 @@
-import React from 'react'
-import { View, Text } from 'react-native'
+import React from 'react';
+import { View, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import SignInScreen from '../screens/SignInScreen';
@@ -11,7 +11,8 @@ import MainScreen from '../screens/MainScreen';
 import TherapistOption from '../screens/TherapistOption';
 import UseLocation from '../location/useLocation'
 import PatientOption from '../screens/PatientOption';
-import SendNotification from '../screens/SendNotification/SendNotification'
+import SendNotification from '../screens/SendNotification/SendNotification';
+import ShowLogCall from '../screens/ShowCallLogPage/ShowCallLogPage';
 
 
 const Stack = createNativeStackNavigator();
@@ -30,6 +31,7 @@ const Navigation = () => {
                 <Stack.Screen name="UserLocation" component={UseLocation}/>
                 <Stack.Screen name="PatientScreen" component={PatientOption}/>
                 <Stack.Screen name="SendNotification" component={SendNotification}/>
+                <Stack.Screen name="ShowCallLogPage" component={ShowLogCall}/>
                 
             </Stack.Navigator>
         </NavigationContainer>

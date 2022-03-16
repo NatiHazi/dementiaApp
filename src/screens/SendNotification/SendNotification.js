@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, TextInput, View,ScrollView,StyleSheet,Alert } from 'react-native';
+import { Text, TextInput, View,ScrollView,StyleSheet,Alert,Linking } from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 //import { getAuth, onAuthStateChanged,collection,getDocs,getFirestore,doc,getDoc, query, where } from "../../../db/firebase";
@@ -14,7 +14,9 @@ import messaging from '@react-native-firebase/messaging';
 const SendNotification = () => {
     const [title, setTitle] = useState('');
     const [body, setBody] = useState('');
-    // async function sendPushNotification(expoPushToken) {
+    const [user,setUser]=useState();
+    const [initializing, setInitializing] = useState(true);
+        // async function sendPushNotification(expoPushToken) {
     //     console.log("in 17")
     //     const message = {
     //       to: expoPushToken,
@@ -34,9 +36,71 @@ const SendNotification = () => {
     //       body: JSON.stringify(message),
     //     });
     //   }
-    const onSendNotificationPressed = () =>{
 
-   
+    function onAuthStateChanged(user) {
+        setUser(user);
+        if (initializing) setInitializing(false);
+      }
+
+    const onSendNotificationPressed = () =>{
+        const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+        if (initializing) return null;
+        if (user){
+            console.log("line 30 in POJAGOJSGOIJ");
+            const uid = user.uid;
+            firestore()
+            .collection('users')
+            .doc(uid)
+            .get()
+            .then(documentSnapshot => {
+              if (documentSnapshot.exists) {
+               let phoneNumber = documentSnapshot.data().myNum;
+                firestore()
+                .collection('users')
+                .get()
+                .then(querySnapshot => {
+                   querySnapshot.forEach(documentSnapshot => {
+                     if(documentSnapshot.data().otherSidePhoneNum == phoneNumber){
+                    //  let patinetlat = documentSnapshot.data().latitude;
+                    //  let patientlong= documentSnapshot.data().longitude;
+                    //   console.log("patientlat: ", patinetlat)
+                    //   console.log("patientlong: ", patientlong)
+                    //   openMap({ latitude: patinetlat, longitude: patientlong, zoom: 20,provide:'google'});
+                    let pushToken=documentSnapshot.data().pushToken;
+
+                    console.log(pushToken);
+                    Linking.openURL('https://testfcm.com/');
+                    //                 const message = {
+                    //                 to: pushToken,
+                    //                 sound: 'default',
+                    //                 title:title,
+                    //                 body: body,
+                    //                 data: { someData: 'goes here' },
+                    //                 };
+                    // (async () =>{
+                    //     await fetch('https://fcm.googleapis.com/v1/projects/myproject-b5ae1/messages:send HTTP/1.1', {
+                    //         method: 'POST',
+                    //         headers: {
+                    //             Accept: 'application/json',
+                    //             'Accept-encoding': 'gzip, deflate',
+                    //             'Content-Type': 'application/json',
+                    //         },
+                    //         body: JSON.stringify(message),
+                    //         });
+                  
+                    // })();
+                     
+      
+                     }
+                  });
+                });
+              }
+              });
+          }
+          else{
+            console.log("user is not sigend in")
+          }
+            return subscriber;
 
         // console.log("in onSendNotificationPressed");
         // const auth = getAuth();

@@ -31,6 +31,7 @@
     "react-hook-form": "^7.27.0",
     "react-native": "0.64.3",
     "react-native-call-log": "^2.1.2",
+    "react-native-device-info": "^8.5.0",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-maps": "0.28.1",
     "react-native-open-maps": "^0.4.0",
@@ -38,6 +39,7 @@
     "react-native-reanimated": "~2.2.0",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.8.0",
+    "react-native-system-setting": "^1.7.6",
     "react-native-web": "0.17.1"
   },
   "devDependencies": {

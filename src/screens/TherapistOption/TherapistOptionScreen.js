@@ -14,10 +14,7 @@ import firestore from '@react-native-firebase/firestore';
 
 
 
-
-
 const TherapistOptionScreen = () => {
-
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
 
@@ -26,6 +23,57 @@ const TherapistOptionScreen = () => {
         // navigation.navigate("signIn");
         console.log("patient's call/message pressed")
     };
+
+    const onPatientCallPressed = () =>{
+      // navigation.navigate("signIn");
+      console.log("patient's call/message pressed")
+      // const subscriber = auth().onAuthStateChanged(onAuthStateChanged);  
+      // if (initializing) return null;
+      // if(user){
+      //   console.log("test if inside user");
+      //   const uid = user.uid;
+      //   let phoneNumber = "";
+      //   let unknown_calls = "";
+      //   //let idPatient = "";
+      //   firestore()
+      //   .collection('users')
+      //   .doc(uid)
+      //   .get()
+      //   .then(documentSnapshot => {
+      //     if (documentSnapshot.exists) {
+      //       phoneNumber = documentSnapshot.data().myNum;
+      //       console.log("line 62 : ",phoneNumber);
+      //     }
+      //     });
+      //       firestore()
+      //       .collection('users')
+      //       .get()
+      //       .then(querySnapshot => {
+      //          querySnapshot.forEach(documentSnapshot => {
+      //            if(documentSnapshot.data().otherSidePhoneNum == phoneNumber){
+      //             unknown_calls = documentSnapshot.data().unknown_calls;
+      //             //console.log("line 76 ",persentBattery)
+      //             Alert.alert(
+      //               "שיחות לא מזוהות שהתקבלו:",
+      //               JSON.stringify(unknown_calls),
+      //               [
+                      
+      //                 { text: "OK", onPress: () => console.log("OK Pressed") }
+      //               ]
+      //             );
+      //            }
+      //           //console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
+      //         });
+      //       });
+      //       navigation.navigate("ShowCallLogPage");
+      //   }
+      //   else {
+      //   console.log("user is not signed in");
+      //   } 
+      navigation.navigate("ShowCallLogPage");
+
+  };
+
     const findPatienPressed = () =>{
         console.log("find patiend pressed")
     navigation.navigate("UserLocation");
@@ -101,7 +149,7 @@ const TherapistOptionScreen = () => {
             <Text style={styles.title} >DementiaApp  </Text>
             <Text style={styles.text} > </Text>
             <CustomButtonForTherapistScreen text="Find Patient" onPress={findPatienPressed}/> 
-            <CustomButtonForTherapistScreen text="Patient's Call" onPress={onTherapistPressed}/> 
+            <CustomButtonForTherapistScreen text="Patient's Call" onPress={onPatientCallPressed}/> 
             <CustomButtonForTherapistScreen text="Patient's Mesege" onPress={onTherapistPressed}/> 
             <CustomButtonForTherapistScreen text="SendReminders" onPress={onSendReminders}/> 
             <CustomButtonForTherapistScreen text="Battery Status" onPress={onBatteryStatusPressed}/>
