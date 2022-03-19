@@ -13,7 +13,7 @@ import UseLocation from '../location/useLocation'
 import PatientOption from '../screens/PatientOption';
 import SendNotification from '../screens/SendNotification/SendNotification';
 import ShowLogCall from '../screens/ShowCallLogPage/ShowCallLogPage';
-
+import ShowSMSLog from '../screens/ShowSMSLogPage/ShowSMSLogPage';
 
 const Stack = createNativeStackNavigator();
 
@@ -32,6 +32,7 @@ const Navigation = () => {
                 <Stack.Screen name="PatientScreen" component={PatientOption}/>
                 <Stack.Screen name="SendNotification" component={SendNotification}/>
                 <Stack.Screen name="ShowCallLogPage" component={ShowLogCall}/>
+                <Stack.Screen name="ShowSMSLogPage" component={ShowSMSLog}/>
                 
             </Stack.Navigator>
         </NavigationContainer>
