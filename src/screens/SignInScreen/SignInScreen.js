@@ -87,7 +87,7 @@ const SignInScreen = ({ route }) => {
     
   });
     };
-
+        
     const onForotPasswordPresed = () => {
         navigation.navigate("ForgotPassword", {isTherapist: isTherapist});
     };

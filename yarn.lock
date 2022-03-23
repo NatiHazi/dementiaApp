@@ -6344,6 +6344,11 @@
   "resolved" "https://registry.npmjs.org/react-is/-/react-is-17.0.2.tgz"
   "version" "17.0.2"
 
+"react-native-android-sms-listener-background@^0.0.1":
+  "integrity" "sha512-PLf73LuLYRXQvj9/krElVSPLulcf3TFxiecFHIQLqyGFxmfIy2GQ7SXkRsEguf6yyaqWxRUjTQWy3RUL4saKdg=="
+  "resolved" "https://registry.npmjs.org/react-native-android-sms-listener-background/-/react-native-android-sms-listener-background-0.0.1.tgz"
+  "version" "0.0.1"
+
 "react-native-call-log@^2.1.2":
   "integrity" "sha512-nWHmb+QMN/AbbZFEuUGiQePssPgjQr5dibNAURDlqO4S5wuLk1XzxxsLUAVHZnB0FdJoMlajD7tUAXtaoxYwUQ=="
   "resolved" "https://registry.npmjs.org/react-native-call-log/-/react-native-call-log-2.1.2.tgz"
@@ -6373,6 +6378,11 @@
     "hoist-non-react-statics" "^3.3.0"
     "invariant" "^2.2.4"
     "prop-types" "^15.7.2"
+
+"react-native-get-sms-android@^2.1.0":
+  "integrity" "sha512-yYPlJ4DkuC9HnUL0ni644pDjRFnSQkdGHowIY5ab56YFDKHIEZ1rKuBCEbCWF0HALyvH6qCyfdHqwpzTtIj97w=="
+  "resolved" "https://registry.npmjs.org/react-native-get-sms-android/-/react-native-get-sms-android-2.1.0.tgz"
+  "version" "2.1.0"
 
 "react-native-maps@0.28.1":
   "integrity" "sha512-Ytcc8ZK7Pp5oU1gbRgtXKvl5hIlTa1F7J/bEPeS1Ch/ad9/3gHP+uC/pNfe2Ava90nXqZ+ATIFTF2uVcTMogWg=="

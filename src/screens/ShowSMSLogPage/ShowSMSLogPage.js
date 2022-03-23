@@ -4,7 +4,7 @@ import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-import SmsReader from "react-native-sms-reader";
+
 
 
 const ShowSMSLog = () => {

@@ -1,4 +1,8 @@
 rootProject.name = 'dementiaApp'
+include ':react-native-get-sms-android'
+project(':react-native-get-sms-android').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-get-sms-android/android')
+include ':react-native-android-sms-listener-background'
+project(':react-native-android-sms-listener-background').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-android-sms-listener-background/android')
 
 apply from: new File(["node", "--print", "require.resolve('expo/package.json')"].execute(null, rootDir).text.trim(), "../scripts/autolinking.gradle");
 useExpoModules()

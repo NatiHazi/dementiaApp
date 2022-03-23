@@ -4,6 +4,8 @@ import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import SmsAndroid from 'react-native-get-sms-android';
+
 
 
 const ShowLogCall = () => {
@@ -18,19 +20,35 @@ const ShowLogCall = () => {
     if (initializing) setInitializing(false);
   }
   useEffect(() => {
-
+  
     getDataFirebase();
     
   }, [user]);
  //#######################################################
 // dunction for updates call from firebase
-  function updateCalls(id){
-    let unknown_calls = "";
+  function updateCalls(id,phoneNumber){
+    let firstFire = true;
     const subscriber = firestore()
     .collection('users')
     .doc(id)
     .onSnapshot(documentSnapshot => {
+      if (!firstFire){
       console.log('User data: ', documentSnapshot.data().unknown_calls);
+      
+      SmsAndroid.autoSend(
+        phoneNumber,
+        "Patient got another message",
+        (fail) => {
+          console.log('Failed with this error: ' + fail);
+        },
+        (success) => {
+          console.log('SMS sent successfully');
+        },
+      );  
+      }
+      firstFire=false;
+
+
       return () => subscriber(); 
     });
   }
@@ -69,8 +87,10 @@ const ShowLogCall = () => {
               setthelist(thelist=>[...thelist, {key:newCall+ unknown_calls[i]}]);
                 else
               setthelist(thelist=>[...thelist, {key:NumberOfCall+ unknown_calls[i]}]);
-                }   
-             updateCalls(idPatient); 
+                } 
+
+             
+             updateCalls(idPatient,phoneNumber); 
              }
           });
         }); 
@@ -80,9 +100,8 @@ const ShowLogCall = () => {
     console.log("user is not signed in");
     };
   }
-  
-  
-  
+
+
     return (
       <View style={styles.container}>
         

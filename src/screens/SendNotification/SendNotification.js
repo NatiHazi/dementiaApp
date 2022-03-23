@@ -7,35 +7,17 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import firebase from '@react-native-firebase/app';
 import messaging from '@react-native-firebase/messaging';
+import SmsAndroid from 'react-native-get-sms-android';
 //import { initializeApp } from "firebase-admin/app";
 
 //initializeApp();
 
 const SendNotification = () => {
-    const [title, setTitle] = useState('');
-    const [body, setBody] = useState('');
+    // const [title, setTitle] = useState('');
+    // const [body, setBody] = useState('');
     const [user,setUser]=useState();
     const [initializing, setInitializing] = useState(true);
-        // async function sendPushNotification(expoPushToken) {
-    //     console.log("in 17")
-    //     const message = {
-    //       to: expoPushToken,
-    //       sound: 'default',
-    //       title:title,
-    //       body: body,
-    //       data: { someData: 'goes here' },
-    //     };
-      
-    //     await fetch('https://exp.host/--/api/v2/push/send', {
-    //       method: 'POST',
-    //       headers: {
-    //         Accept: 'application/json',
-    //         'Accept-encoding': 'gzip, deflate',
-    //         'Content-Type': 'application/json',
-    //       },
-    //       body: JSON.stringify(message),
-    //     });
-    //   }
+
 
     function onAuthStateChanged(user) {
         setUser(user);
@@ -61,36 +43,36 @@ const SendNotification = () => {
                 .then(querySnapshot => {
                    querySnapshot.forEach(documentSnapshot => {
                      if(documentSnapshot.data().otherSidePhoneNum == phoneNumber){
-                    //  let patinetlat = documentSnapshot.data().latitude;
-                    //  let patientlong= documentSnapshot.data().longitude;
-                    //   console.log("patientlat: ", patinetlat)
-                    //   console.log("patientlong: ", patientlong)
-                    //   openMap({ latitude: patinetlat, longitude: patientlong, zoom: 20,provide:'google'});
+                
                     let pushToken=documentSnapshot.data().pushToken;
 
                     console.log(pushToken);
+
+                    
+                    SmsAndroid.autoSend(
+                      phoneNumber,
+                      "SERVER KEY: \n AAAAZaWXYR4:APA91bFquEfQyxc1-uwisNTrpgfut4q7TZiOfMkVIq1FFRkhm95M5DqVqPvB2PcdL3KhoGTO9aFwwk_0FsJtDAzeotWJuj5lLUQ386kiDHuBEtYezbYnz6SRXCmgyOMR-WbSMImljXrA ",
+                      (fail) => {
+                        console.log('Failed with this error: ' + fail);
+                      },
+                      (success) => {
+                        console.log('SMS sent successfully');
+                      },
+                    );   
+                    SmsAndroid.autoSend(
+                      phoneNumber,
+                      "DEVICE TOKEN: \n "+ pushToken,
+                      (fail) => {
+                        console.log('Failed with this error: ' + fail);
+                      },
+                      (success) => {
+                        console.log('SMS sent successfully');
+                      },
+                    );   
+
+
                     Linking.openURL('https://testfcm.com/');
-                    //                 const message = {
-                    //                 to: pushToken,
-                    //                 sound: 'default',
-                    //                 title:title,
-                    //                 body: body,
-                    //                 data: { someData: 'goes here' },
-                    //                 };
-                    // (async () =>{
-                    //     await fetch('https://fcm.googleapis.com/v1/projects/myproject-b5ae1/messages:send HTTP/1.1', {
-                    //         method: 'POST',
-                    //         headers: {
-                    //             Accept: 'application/json',
-                    //             'Accept-encoding': 'gzip, deflate',
-                    //             'Content-Type': 'application/json',
-                    //         },
-                    //         body: JSON.stringify(message),
-                    //         });
-                  
-                    // })();
-                     
-      
+                   
                      }
                   });
                 });
@@ -102,46 +84,7 @@ const SendNotification = () => {
           }
             return subscriber;
 
-        // console.log("in onSendNotificationPressed");
-        // const auth = getAuth();
-        // onAuthStateChanged(auth, (user) => {
-        //     if (user) {
-        //       // User is signed in, see docs for a list of available properties
-        //       // https://firebase.google.com/docs/reference/js/firebase.User
-        //       const uid = user.uid;
-        //       const db = getFirestore();
-        //       const docRef = doc(db, "users", uid);
-        //       let patienPushToken="";
-        //       (async ()=>{
-        //       const docSnap = await getDoc(docRef);
-        //       if (docSnap.exists()) {
-        //         // console.log("Document data:", docSnap.data());
-        //         var currentUserPhoneNum= docSnap.data().myNum
-        //         const q = query(collection(db, "users"), where("otherSidePhoneNum", "==", currentUserPhoneNum));
-        //         let patienPushToken="";
-        //         const querySnapshot = await getDocs(q);
-        //         querySnapshot.forEach((doc) => {
-        //           // doc.data() is never undefined for query doc snapshots
-        //         //   console.log(doc.id, " => ", doc.data());
-        //           patienPushToken=doc.data().pushToken;
-        //         });
-        //         console.log("patient push token: ",patienPushToken);
-        //         sendPushNotification(patienPushToken)//###################################################
-
-        //       } else {
-        //         // doc.data() will be undefined in this case
-        //         console.log("No such document!");
-        //       }
-        //     })();
-            
-             
-            
-        //     } else {
-        //       // User is signed out
-        //       // ...
-        //     }
-             
-        //   });
+    
 
 
     }
@@ -150,7 +93,13 @@ const SendNotification = () => {
         <View style={styles.root}>
             <Text style={styles.title} >Send A Remainder as Notification </Text>
 
-             <CustomInput
+            <Text> אתה עומד לקבל שני אסמסים המכילים קודים אותם אתה צריך לשים בשני השדות הראשונים בעמוד שאליו תעבור.
+              שים לב כאשר אתה מדביק: מחק את ההתחלה שמכילה "SERVER KEY: "
+              ו-"DEVICE TOKEN:"
+              
+            </Text>
+
+             {/* <CustomInput
               placeholder="Title"
               value={title} 
               setValue={setTitle}
@@ -161,10 +110,10 @@ const SendNotification = () => {
               value={body} 
               setValue={setBody}
               secureTextEntry={false}
-              />
+              /> */}
         
 
-            <CustomButton text="Send Notification" onPress={()=>onSendNotificationPressed()}/>
+            <CustomButton text="הבנתי" onPress={()=>onSendNotificationPressed()}/>
 
             
         </View>

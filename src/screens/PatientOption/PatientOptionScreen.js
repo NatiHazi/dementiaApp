@@ -14,8 +14,7 @@ import messaging from '@react-native-firebase/messaging';
 import { PermissionsAndroid } from 'react-native';
 import CallLogs from 'react-native-call-log';
 import SystemSetting from 'react-native-system-setting';
-
-
+ import SmsListner from 'react-native-android-sms-listener-background'
 
 
 Notifications.setNotificationHandler({
@@ -29,12 +28,8 @@ Notifications.setNotificationHandler({
 const PatientOptionScreen = () => {
 const [initializing, setInitializing] = useState(true);
 const [user, setUser] = useState();
-const [batteryStatus, setBatteryStatus]=useState('');
-const [lon, setLon]=useState('');
-const [lat, setLat]=useState('');
-
 const [level] = useBatteryLevel();
-
+const [firstRender, setfirstRender]=useState(true);
  
   useEffect(() => {
   //   SystemSetting.getVolume().then((volume)=>{
@@ -43,32 +38,42 @@ const [level] = useBatteryLevel();
   // SystemSetting.setVolume(0.65);
 
 
-  
-
-    //#############start premission to contact##################
- //permissionContacts();
-  getLocation(); //get user location and set in in useState 
-  //#############start premission to call log##################
-     
-    //#############Check battery status##################
-    setBatteryStatus(percentage(level));
-    console.log(batteryStatus);
- 
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);  
-    if (initializing) return null;
+    //if (initializing) return null;
+    
     if(user){
       console.log("test if inside user");
       const uid = user.uid;
-      updateBatteryandLocation(uid); //update in firebase battery and location
-      updateTokenMessage(uid); //update user token for messaging cloud
+      if (firstRender){
+        getLocationAndUpdateFirebase(uid);
+         updateTokenMessage(uid); //update user token for messaging cloud
       permessionCallLog(uid);
+      console.log(" F I R S T R E N D E R");
+      // const testSms=SmsListner.addListener(message=>{
+      //   console.log("the sms test listner: ", message);
+        
+      // })
+      
+      
+  
+       }
+       const testSms=SmsListner.addListener(message=>{
+        console.log("the sms test listner: ", message);
+        
+      })
 
-
+      if(level)
+      updateBatteryFirebase(uid, level);
+      //updateLocationFirebase(uid);
+     
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
     });
     //  return unsubscribe; 
      console.log("nati is the best"); 
+
+     setfirstRender(false);
+
   }
  
       else {
@@ -76,15 +81,33 @@ const [level] = useBatteryLevel();
       }
       return()=>{
         console.log("CLEAN USEEFFECT")
+        
+
       }
 
-  }, [level, lon, lat, batteryStatus]);
+  }, [user,level]);
 
+   
 
   function percentage(level) {
     return `${Math.floor(level * 100)}%`;
     
 }
+function updateBatteryFirebase(uid, level){
+  let levelPercent=percentage(level);
+  console.log(" BATTERY LEVEL LEVEL : " ,levelPercent);
+  firestore()
+  .collection('users')
+  .doc(uid)
+  .update({
+    battery:levelPercent
+  })
+  .then(() => {
+    console.log('User battery updated!');
+  });
+}
+
+
 
 function onAuthStateChanged(user) {
   setUser(user);
@@ -158,7 +181,7 @@ function permessionCallLog(uid){
   })();
 }
 
-function getLocation(){
+function getLocationAndUpdateFirebase(uid){
   (async ()=>{
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
@@ -168,8 +191,16 @@ function getLocation(){
     else{
       (async ()=>{
     let location = await Location.getCurrentPositionAsync({});
-    setLon(location.coords.longitude);
-    setLat(location.coords.latitude);
+    firestore()
+  .collection('users')
+  .doc(uid)
+  .update({
+    longitude: location.coords.longitude,
+    latitude: location.coords.latitude
+  })
+  .then(() => {
+    console.log('User updated!');
+  });
   })();
     }
 })();
@@ -178,24 +209,9 @@ function getLocation(){
 
 }
 
-function updateBatteryandLocation(uid){
-  console.log("lon, lat, batt: ", {lon}, lat, batteryStatus);
-  (async()=>{
-    firestore()
-    .collection('users')
-    .doc(uid)
-    .update({
-      longitude: lon,
-      latitude: lat,
-      battery:batteryStatus
-    })
-    .then(() => {
-      console.log('User updated!');
-    });
-})();
-}
 
 function updateTokenMessage(uid){
+  console.log("I N  T O K E N  M E S S EAGE");
   firebase.messaging().getToken()
   .then(fcmToken => {
   if (fcmToken) {
