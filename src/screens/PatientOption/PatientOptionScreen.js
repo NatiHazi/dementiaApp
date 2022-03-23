@@ -3,7 +3,6 @@ import Constants from 'expo-constants';
 import { Button, View,Text,Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as Location from 'expo-location';
-//import {getAuth, onAuthStateChanged, doc, updateDoc, getFirestore,getDocs,collection,getDoc } from '../../../db/firebase'
 import * as Contacts from 'expo-contacts';
 import * as Notifications from 'expo-notifications';
 import { useBatteryLevel } from '@use-expo/battery';
@@ -14,7 +13,7 @@ import messaging from '@react-native-firebase/messaging';
 import { PermissionsAndroid } from 'react-native';
 import CallLogs from 'react-native-call-log';
 import SystemSetting from 'react-native-system-setting';
- import SmsListner from 'react-native-android-sms-listener-background'
+import SmsListner from 'react-native-android-sms-listener-background'
 
 
 Notifications.setNotificationHandler({
@@ -36,11 +35,8 @@ const [firstRender, setfirstRender]=useState(true);
   //     console.log('Current volume is ' + volume);
   // });
   // SystemSetting.setVolume(0.65);
-
-
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);  
     //if (initializing) return null;
-    
     if(user){
       console.log("test if inside user");
       const uid = user.uid;
@@ -49,31 +45,19 @@ const [firstRender, setfirstRender]=useState(true);
          updateTokenMessage(uid); //update user token for messaging cloud
       permessionCallLog(uid);
       console.log(" F I R S T R E N D E R");
-      // const testSms=SmsListner.addListener(message=>{
-      //   console.log("the sms test listner: ", message);
-        
-      // })
-      
-      
-  
        }
        const testSms=SmsListner.addListener(message=>{
-        console.log("the sms test listner: ", message);
-        
+        console.log("the sms test listner: ", message);  
       })
-
       if(level)
       updateBatteryFirebase(uid, level);
       //updateLocationFirebase(uid);
-     
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
     });
     //  return unsubscribe; 
      console.log("nati is the best"); 
-
      setfirstRender(false);
-
   }
  
       else {
@@ -167,7 +151,6 @@ function permessionCallLog(uid){
             .then(() => {
               console.log('User updated!');
             });
-
         });
 
       } else {
@@ -204,9 +187,6 @@ function getLocationAndUpdateFirebase(uid){
   })();
     }
 })();
-
-  
-
 }
 
 

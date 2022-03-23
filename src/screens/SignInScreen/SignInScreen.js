@@ -1,20 +1,19 @@
 import React,{useState} from 'react';
-import { View ,Image, StyleSheet,ScrollView} from 'react-native';
+import { View ,Image, StyleSheet,ScrollView,Text} from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import CustomInputWithEye from '../../components/CutomInputWithEye/CustomInputWithEye';
 import { useNavigation } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
-//import {getAuth,signInWithEmailAndPassword,collection, getDocs,getFirestore} from '../../../db/firebase'
-
-
+import CheckBox from '@react-native-community/checkbox';
 
 const SignInScreen = ({ route }) => {
     const { isTherapist} = route.params;
     console.log("line 12 sign in screen: ", isTherapist)
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [toggleCheckBox, setToggleCheckBox] = useState(false);
     const navigation = useNavigation();
     // const [therapist, setTherapist]=useState(false);
     //  const auth = getAuth();
@@ -33,24 +32,10 @@ const SignInScreen = ({ route }) => {
         console.log("log in succeed")
         async function fetchFunction(){ 
         const usersCollection = firestore().collection('users');
-        //const db = getFirestore();
-        //const querySnapshot = await getDocs(collection(db, "users"));
-        //     querySnapshot.forEach((doc) => {
-        //     console.log(`${doc.id} => ${doc.data().isTherapist}`);
-        //     if (doc.data().id===uid){
-        //     if (doc.data().isTherapist==true){
-        //        navigation.navigate("TherapistScreen");
-        //     }
-        //     else{
-        //       navigation.navigate("PatientScreen"); 
-        //     }
-        // }
-        //     });
         firestore()
         .collection('users')
         .get()
         .then(querySnapshot => {
-         //console.log('Total users: ', querySnapshot.size);
           querySnapshot.forEach(documentSnapshot => {
             if (documentSnapshot.data().id===uid){
                 console.log("inside id===uid");
@@ -74,6 +59,7 @@ const SignInScreen = ({ route }) => {
     const errorCode = error.code;
     const errorMessage = error.message;
     console.log(errorCode)
+   
     if (errorCode ==="auth/invalid-email"){
         alert("invalid email")
     }
@@ -88,13 +74,15 @@ const SignInScreen = ({ route }) => {
   });
     };
         
-    const onForotPasswordPresed = () => {
+    const onForgotPasswordPresed = () => {
         navigation.navigate("ForgotPassword", {isTherapist: isTherapist});
     };
 
     const onSignUpPressed = () => {
         navigation.navigate("signUn",{isTherapist: isTherapist});
     };
+    
+    
 
     return (
         <ScrollView>
@@ -111,6 +99,7 @@ const SignInScreen = ({ route }) => {
                 secureTextEntry={false}
                 
               />
+    
              <CustomInputWithEye 
               placeholder="Password"
               value={password}
@@ -118,11 +107,22 @@ const SignInScreen = ({ route }) => {
               secureTextEntry
               />
 
+
+            <View style={styles.checkboxContainer}>
+             <CheckBox style={styles.checkbox}
+              disabled={false}
+              value={toggleCheckBox}
+              onValueChange={(newValue) => setToggleCheckBox(newValue)}
+             />
+            <Text style={styles.label}>Remember Me</Text>
+            
+            </View>
+        
             <CustomButton text="Sign In" onPress={onSignInPressed}/>
 
             <CustomButton
             text="Forgot password?"
-            onPress={onForotPasswordPresed}
+            onPress={onForgotPasswordPresed}
             type = "TERTIARY"
             />
 
@@ -149,7 +149,17 @@ const styles = StyleSheet.create({
         width:300,
         height:300,
     },
-  
+    checkboxContainer: {
+        flexDirection: "row",
+        textAlign:"left",
+    },
+    checkbox: {
+        alignSelf: "center",
+        
+      },
+      label: {
+        margin: 6,
+      },
 })
 
 export default SignInScreen
