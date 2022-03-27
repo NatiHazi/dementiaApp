@@ -1,4 +1,4 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import { View ,Image, StyleSheet,ScrollView,Text} from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
@@ -7,6 +7,8 @@ import { useNavigation } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import CheckBox from '@react-native-community/checkbox';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const SignInScreen = ({ route }) => {
     const { isTherapist} = route.params;
@@ -15,10 +17,27 @@ const SignInScreen = ({ route }) => {
     const [password, setPassword] = useState('');
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
     const navigation = useNavigation();
+
+    useEffect(() => {
+      
+      getData();
+    }, []);
+
+   // console.log(username);
     // const [therapist, setTherapist]=useState(false);
     //  const auth = getAuth();
-    const onSignInPressed = () =>{
-    auth().signInWithEmailAndPassword(username, password)
+    const onSignInPressed = (whoCalledMe, value1,value2) =>{
+       let username1="";
+       let password1="";
+        if (whoCalledMe==="called from asyncstorage"){
+         username1=value1;
+         password1=value2;
+        }
+        else{
+            username1=username;
+            password1=password;
+        }
+    auth().signInWithEmailAndPassword(username1, password1)
     .then((userCredential) => {
     //console.log("sucess")
     // Signed in 
@@ -81,8 +100,36 @@ const SignInScreen = ({ route }) => {
     const onSignUpPressed = () => {
         navigation.navigate("signUn",{isTherapist: isTherapist});
     };
-    
-    
+    const storeData = async (value) => {
+        try {
+          await AsyncStorage.multiSet(value)
+          //getData();
+        } catch (e) {
+          // saving error
+        }
+      }
+      
+const getData = async () => {
+    try {
+      const value = await AsyncStorage.multiGet(['userkey', 'passkey'])
+      if(value[0][1] !== null && value[0][1]!=='' &&  value[1][1]!=='' && value[1][1]!==null) {
+        // value previously stored
+        console.log("E M A I L: ", value[0][1], value[1][1]);
+        console.log(typeof(password));
+        setUsername(value[0][1]);
+        setPassword(value[1][1]);
+        console.log(typeof(value[1][1]));
+        console.log(typeof(password));
+        console.log("username", username);
+        onSignInPressed("called from asyncstorage",value[0][1], value[1][1]);
+      }
+    } catch(e) {
+      // error reading value
+      return;
+    }
+  }
+
+
 
     return (
         <ScrollView>
@@ -112,13 +159,16 @@ const SignInScreen = ({ route }) => {
              <CheckBox style={styles.checkbox}
               disabled={false}
               value={toggleCheckBox}
-              onValueChange={(newValue) => setToggleCheckBox(newValue)}
+              onValueChange={(newValue) => {setToggleCheckBox(newValue)
+                storeData([['userkey', username],['passkey', password]]);
+              }
+            }
              />
             <Text style={styles.label}>Remember Me</Text>
             
             </View>
         
-            <CustomButton text="Sign In" onPress={onSignInPressed}/>
+            <CustomButton text="Sign In" onPress={()=>onSignInPressed("called from log in regular","stam", "stam2")}/>
 
             <CustomButton
             text="Forgot password?"
@@ -132,10 +182,17 @@ const SignInScreen = ({ route }) => {
             type = "TER"
             />
 
+                {/* <CustomButton
+            text="CONNECT ME"
+            onPress={()=>getData()}
+            type = "TERTIARY"
+            /> */}
+
             
         </View>
         </ScrollView>
     );
+
 };
 
 const styles = StyleSheet.create({

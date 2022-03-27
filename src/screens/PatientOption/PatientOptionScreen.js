@@ -13,7 +13,11 @@ import messaging from '@react-native-firebase/messaging';
 import { PermissionsAndroid } from 'react-native';
 import CallLogs from 'react-native-call-log';
 import SystemSetting from 'react-native-system-setting';
-import SmsListner from 'react-native-android-sms-listener-background'
+import SmsListner from 'react-native-android-sms-listener-background';
+import CallDetectorManager from 'react-native-call-detection';
+import SmsAndroid from 'react-native-get-sms-android';
+import CustomButton from '../../components/CustomButton';
+
 
 
 Notifications.setNotificationHandler({
@@ -45,10 +49,24 @@ const [firstRender, setfirstRender]=useState(true);
          updateTokenMessage(uid); //update user token for messaging cloud
       permessionCallLog(uid);
       console.log(" F I R S T R E N D E R");
-       }
-       const testSms=SmsListner.addListener(message=>{
-        console.log("the sms test listner: ", message);  
+      startListenerTapped(uid);
+           const testSms=SmsListner.addListener(message=>{
+        console.log("the sms test listner: ", message);
+        SmsAndroid.autoSend(
+          "54654654654",
+          "new SMS received to the patient",
+          (fail) => {
+            console.log('Failed with this error: ' + fail);
+          },
+          (success) => {
+            console.log('SMS sent successfully');
+          },
+        ); 
+
       })
+    }
+  
+      
       if(level)
       updateBatteryFirebase(uid, level);
       //updateLocationFirebase(uid);
@@ -66,10 +84,94 @@ const [firstRender, setfirstRender]=useState(true);
       return()=>{
         console.log("CLEAN USEEFFECT")
         
-
+        
+        
+        
       }
 
   }, [user,level]);
+
+ function startListenerTapped(uid) {
+    this.callDetector = new CallDetectorManager((event, phoneNumber)=> {
+    // For iOS event will be either "Connected",
+    // "Disconnected","Dialing" and "Incoming"
+ 
+    // For Android event will be either "Offhook",
+    // "Disconnected", "Incoming" or "Missed"
+    // phoneNumber should store caller/called number
+ 
+ 
+    if (event === 'Disconnected') {
+    // Do something call got disconnected
+    console.log("DISCONNETED")
+    SmsAndroid.autoSend(
+      "54654654654",
+      "new call recieved and ended",
+      (fail) => {
+        console.log('Failed with this error: ' + fail);
+      },
+      (success) => {
+        console.log('SMS sent successfully');
+      },
+    ); 
+    permessionCallLog(uid);
+    
+    }
+    // else if (event === 'Connected') {
+    // // Do something call got connected
+    // // This clause will only be executed for iOS
+
+    // }
+    else if (event === 'Incoming') {
+    // Do something call got incoming
+    console.log("Incoming")
+    }
+    // else if (event === 'Dialing') {
+    // // Do something call got dialing
+    // // This clause will only be executed for iOS
+    // }
+    else if (event === 'Offhook') {
+    //Device call state: Off-hook.
+    // At least one call exists that is dialing,
+    // active, or on hold,
+    // and no calls are ringing or waiting.
+    // This clause will only be executed for Android
+    console.log("Offhook")
+    }
+    else if (event === 'Missed') {
+    	// Do something call got missed
+    	// This clause will only be executed for Android
+      console.log("Missed")
+      SmsAndroid.autoSend(
+        "54654654654",
+        "new call recieved and missed",
+        (fail) => {
+          console.log('Failed with this error: ' + fail);
+        },
+        (success) => {
+          console.log('SMS sent successfully');
+        },
+      ); 
+      permessionCallLog(uid);
+
+  }
+  console.log("event: ", event, "phone: ", phoneNumber);
+
+  
+},
+false, // if you want to read the phone number of the incoming call [ANDROID], otherwise false
+()=>{}, // callback if your permission got denied [ANDROID] [only if you want to read incoming number] default: console.error
+{
+title: 'Phone State Permission',
+message: 'This app needs access to your phone state in order to react and/or to adapt to incoming calls.'
+} // a custom permission request message to explain to your user, why you need the permission [recommended] - this is the default one
+)
+};
+ 
+function stopListenerTapped() {
+    this.callDetector && this.callDetector.dispose();
+    
+};
 
    
 
@@ -212,6 +314,14 @@ function updateTokenMessage(uid){
 } 
 });
 }
+const signOutFunction = () =>{
+    
+  auth()
+  .signOut()
+  .then(() => navigation.navigate("MainScreen"));
+
+}
+
   
 
   return (
@@ -221,7 +331,8 @@ function updateTokenMessage(uid){
       alignItems: 'center',
       justifyContent: 'space-around',
     }}>
-    <Text>"בדיקה"</Text>
+    <Text>"׳‘׳“׳™׳§׳”"</Text>
+    <CustomButton text="Sing out" onPress={()=>signOutFunction()} type = "SIGNOUT"/>
   </View>
   )
 }
