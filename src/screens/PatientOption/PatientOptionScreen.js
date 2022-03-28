@@ -33,7 +33,7 @@ const [initializing, setInitializing] = useState(true);
 const [user, setUser] = useState();
 const [level] = useBatteryLevel();
 const [firstRender, setfirstRender]=useState(true);
- 
+const navigation = useNavigation();
   useEffect(() => {
   //   SystemSetting.getVolume().then((volume)=>{
   //     console.log('Current volume is ' + volume);
@@ -331,8 +331,8 @@ const signOutFunction = () =>{
       alignItems: 'center',
       justifyContent: 'space-around',
     }}>
-    <Text>"׳‘׳“׳™׳§׳”"</Text>
-    <CustomButton text="Sing out" onPress={()=>signOutFunction()} type = "SIGNOUT"/>
+    <Text>"בדיקה"</Text>
+    <CustomButton text="Sing out" onPress={signOutFunction} type = "SIGNOUT"/>
   </View>
   )
 }

@@ -6373,6 +6373,11 @@
   "resolved" "https://registry.npmjs.org/react-native-android-sms-listener-background/-/react-native-android-sms-listener-background-0.0.1.tgz"
   "version" "0.0.1"
 
+"react-native-audio@^4.3.0":
+  "integrity" "sha512-QQYq28eSJy+y/Ukvry0AkbwMVELAj+LcEwCVRH+7sKLqlnoBBxGd4ilhgJHjwOiC70192LueGbjXJjPPEwW3iA=="
+  "resolved" "https://registry.npmjs.org/react-native-audio/-/react-native-audio-4.3.0.tgz"
+  "version" "4.3.0"
+
 "react-native-call-detection@^1.9.0":
   "integrity" "sha512-UaF/I1cp2UnIbdCh3UmrFIA4an8El1gIBM6uIbM+OYCrfe5btIj7DYtjqtNoeKOtF7fap32m37v6lafQ9SZHpg=="
   "resolved" "https://registry.npmjs.org/react-native-call-detection/-/react-native-call-detection-1.9.0.tgz"
@@ -6454,6 +6459,11 @@
   dependencies:
     "warn-once" "^0.1.0"
 
+"react-native-sound@^0.11.2":
+  "integrity" "sha512-LmGc8lgOK3qecYMVQpyHvww/C+wgT6sWeMpVbOe4NCRGC2yKd4fo4U0KBUo9PO7AqKESO3I/2GZg1/C0+bwiiA=="
+  "resolved" "https://registry.npmjs.org/react-native-sound/-/react-native-sound-0.11.2.tgz"
+  "version" "0.11.2"
+
 "react-native-system-setting@^1.7.6":
   "integrity" "sha512-nBnIK5Xnyu8XRRA3BMzRI54oYlSBKc0oOTQdZOCEeOvn4ltS1nk2shj/vtMQe6khXvuhai3vIc+g7DcsOcr5+w=="
   "resolved" "https://registry.npmjs.org/react-native-system-setting/-/react-native-system-setting-1.7.6.tgz"
@@ -6472,7 +6482,7 @@
     "normalize-css-color" "^1.0.2"
     "prop-types" "^15.6.0"
 
-"react-native@*", "react-native@^0.0.0-0 || 0.60 - 0.67 || 1000.0.0", "react-native@>= 0.51", "react-native@>= 0.62", "react-native@>=0.26.0", "react-native@>=0.33", "react-native@>=0.58.4", "react-native@>=0.64.0-rc.0 || 0.0.0-*", "react-native@0.64.3":
+"react-native@*", "react-native@^0.0.0-0 || 0.60 - 0.67 || 1000.0.0", "react-native@>= 0.51", "react-native@>= 0.62", "react-native@>=0.26.0", "react-native@>=0.33", "react-native@>=0.58.4", "react-native@>=0.64.0-rc.0 || 0.0.0-*", "react-native@>=0.8.0", "react-native@0.64.3":
   "integrity" "sha512-2OEU74U0Ek1/WeBzPbg6XDsCfjF/9fhrNX/5TFgEiBKd5mNc9LOZ/OlMmkb7iues/ZZ/oc51SbEfLRQdcW0fVw=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.64.3.tgz"
   "version" "0.64.3"

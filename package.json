@@ -33,6 +33,7 @@
     "react-hook-form": "^7.27.0",
     "react-native": "0.64.3",
     "react-native-android-sms-listener-background": "^0.0.1",
+    "react-native-audio": "^4.3.0",
     "react-native-call-detection": "^1.9.0",
     "react-native-call-log": "^2.1.2",
     "react-native-device-info": "^8.5.0",
@@ -44,6 +45,7 @@
     "react-native-reanimated": "~2.2.0",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.8.0",
+    "react-native-sound": "^0.11.2",
     "react-native-system-setting": "^1.7.6",
     "react-native-web": "0.17.1"
   },

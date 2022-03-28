@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.rnim.rn.audio.ReactNativeAudioPackage;
 import com.reactnativecommunity.checkbox.ReactCheckBoxPackage;
 import com.react.SmsPackage;
 import com.centaurwarchief.smslistener.SmsListenerPackage;

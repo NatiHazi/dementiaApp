@@ -12,6 +12,11 @@
    <uses-permission android:name="android.permission.READ_SMS" />
   <uses-permission android:name="android.permission.WRITE_SMS" />
   <uses-permission android:name="android.permission.SEND_SMS" />
+
+  <uses-permission android:name="android.permission.RECORD_AUDIO" />
+<uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+<uses-permission android:name="android.permission.READ_PHONE_STATE" />
+<uses-permission android:name="android.permission.WAKE_LOCK" />
   <queries>
     <intent>
       <action android:name="android.intent.action.VIEW"/>
