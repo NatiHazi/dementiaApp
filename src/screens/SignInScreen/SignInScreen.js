@@ -18,26 +18,17 @@ const SignInScreen = ({ route }) => {
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
     const navigation = useNavigation();
 
-    useEffect(() => {
+    // useEffect(() => {
       
-      getData();
-    }, []);
+    //   getData();
+    // }, []);
 
    // console.log(username);
     // const [therapist, setTherapist]=useState(false);
     //  const auth = getAuth();
-    const onSignInPressed = (whoCalledMe, value1,value2) =>{
-       let username1="";
-       let password1="";
-        if (whoCalledMe==="called from asyncstorage"){
-         username1=value1;
-         password1=value2;
-        }
-        else{
-            username1=username;
-            password1=password;
-        }
-    auth().signInWithEmailAndPassword(username1, password1)
+    const onSignInPressed = () =>{
+     
+    auth().signInWithEmailAndPassword(username, password)
     .then((userCredential) => {
     //console.log("sucess")
     // Signed in 
@@ -109,25 +100,25 @@ const SignInScreen = ({ route }) => {
         }
       }
       
-const getData = async () => {
-    try {
-      const value = await AsyncStorage.multiGet(['userkey', 'passkey'])
-      if(value[0][1] !== null && value[0][1]!=='' &&  value[1][1]!=='' && value[1][1]!==null) {
-        // value previously stored
-        console.log("E M A I L: ", value[0][1], value[1][1]);
-        console.log(typeof(password));
-        setUsername(value[0][1]);
-        setPassword(value[1][1]);
-        console.log(typeof(value[1][1]));
-        console.log(typeof(password));
-        console.log("username", username);
-        onSignInPressed("called from asyncstorage",value[0][1], value[1][1]);
-      }
-    } catch(e) {
-      // error reading value
-      return;
-    }
-  }
+// const getData = async () => {
+//     try {
+//       const value = await AsyncStorage.multiGet(['userkey', 'passkey'])
+//       if(value[0][1] !== null && value[0][1]!=='' &&  value[1][1]!=='' && value[1][1]!==null) {
+//         // value previously stored
+//         console.log("E M A I L: ", value[0][1], value[1][1]);
+//         console.log(typeof(password));
+//         setUsername(value[0][1]);
+//         setPassword(value[1][1]);
+//         console.log(typeof(value[1][1]));
+//         console.log(typeof(password));
+//         console.log("username", username);
+//         onSignInPressed("called from asyncstorage",value[0][1], value[1][1]);
+//       }
+//     } catch(e) {
+//       // error reading value
+//       return;
+//     }
+//   }
 
 
 
@@ -168,7 +159,7 @@ const getData = async () => {
             
             </View>
         
-            <CustomButton text="Sign In" onPress={()=>onSignInPressed("called from log in regular","stam", "stam2")}/>
+            <CustomButton text="Sign In" onPress={()=>onSignInPressed()}/>
 
             <CustomButton
             text="Forgot password?"

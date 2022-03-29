@@ -11,6 +11,8 @@ import UseLocation from '../../location/useLocation'
 import * as Battery from 'expo-battery';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 
 
@@ -46,11 +48,25 @@ const TherapistOptionScreen = () => {
         navigation.navigate("SendNotification")
     } 
 
+    const storeData = async (value) => {
+      try {
+        await AsyncStorage.multiSet(value)
+        navigation.navigate("MainScreen");
+        //getData();
+      } catch (e) {
+        // saving error
+      }
+    }
+
     const signOutFunction = () =>{
     
         auth()
         .signOut()
-        .then(() => navigation.navigate("MainScreen"));
+        .then(() => {
+          storeData([['userkey', ''],['passkey', '']]);
+          //navigation.navigate("MainScreen")
+        
+        });
     
   }
   function onAuthStateChanged(user) {

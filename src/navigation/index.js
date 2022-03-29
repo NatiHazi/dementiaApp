@@ -14,6 +14,8 @@ import PatientOption from '../screens/PatientOption';
 import SendNotification from '../screens/SendNotification/SendNotification';
 import ShowLogCall from '../screens/ShowCallLogPage/ShowCallLogPage';
 import ShowSMSLog from '../screens/ShowSMSLogPage/ShowSMSLogPage';
+import FirstScreen from '../screens/FirstScreen/FirstScreen'
+
 
 const Stack = createNativeStackNavigator();
 
@@ -21,6 +23,7 @@ const Navigation = () => {
     return (
         <NavigationContainer>
             <Stack.Navigator screenOptions={{headerShown: false}}>
+            <Stack.Screen name="FirstScreen" component={FirstScreen}/>
                 <Stack.Screen name="MainScreen" component={MainScreen}/>
                 <Stack.Screen name="TherapistScreen" component={TherapistOption}/>
                 <Stack.Screen name="signIn" component={SignInScreen}/>

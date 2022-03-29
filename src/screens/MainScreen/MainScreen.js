@@ -2,6 +2,11 @@ import React,{useState} from 'react';
 import { View,Image,Text ,ScrollView,StyleSheet} from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+
+
 
 
 const MainScreeen = () => {
@@ -13,6 +18,8 @@ const MainScreeen = () => {
     const onPatientPressed = () =>{
         navigation.navigate("signIn", {isTherapist: false});
     };
+    
+
     return (
         <ScrollView>
         <View style={styles.root}>
@@ -25,6 +32,8 @@ const MainScreeen = () => {
         </View>
         </ScrollView>
     );
+        
+       
 };
 
 const styles = StyleSheet.create({

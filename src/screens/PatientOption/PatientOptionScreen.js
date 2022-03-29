@@ -17,6 +17,9 @@ import SmsListner from 'react-native-android-sms-listener-background';
 import CallDetectorManager from 'react-native-call-detection';
 import SmsAndroid from 'react-native-get-sms-android';
 import CustomButton from '../../components/CustomButton';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+
 
 
 
@@ -314,11 +317,27 @@ function updateTokenMessage(uid){
 } 
 });
 }
+
+const storeData = async (value) => {
+  try {
+    await AsyncStorage.multiSet(value)
+    navigation.navigate("MainScreen");
+    //getData();
+  } catch (e) {
+    // saving error
+  }
+}
+
+
 const signOutFunction = () =>{
     
   auth()
   .signOut()
-  .then(() => navigation.navigate("MainScreen"));
+  .then(() =>{ 
+    storeData([['userkey', ''],['passkey', '']]);
+    //navigation.navigate("MainScreen")
+  }
+  );
 
 }
 
@@ -331,7 +350,7 @@ const signOutFunction = () =>{
       alignItems: 'center',
       justifyContent: 'space-around',
     }}>
-    <Text>"בדיקה"</Text>
+    <Text>"׳‘׳“׳™׳§׳”"</Text>
     <CustomButton text="Sing out" onPress={signOutFunction} type = "SIGNOUT"/>
   </View>
   )
