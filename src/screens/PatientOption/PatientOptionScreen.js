@@ -67,6 +67,9 @@ const navigation = useNavigation();
         ); 
 
       })
+
+      listenerForUpdates();
+
     }
   
       
@@ -93,6 +96,43 @@ const navigation = useNavigation();
       }
 
   }, [user,level]);
+
+  function listenerForUpdates(uid){
+    let firstFire = true;
+    let phoneNumber = "";
+    let idPatient = "";
+    firestore()
+    .collection('users')
+    .doc(uid)
+    .get()
+    .then(documentSnapshot => {
+      if (documentSnapshot.exists) {
+        phoneNumber = documentSnapshot.data().myNum;
+        firestore()
+        .collection('users')
+        .get()
+        .then(querySnapshot => {
+           querySnapshot.forEach(documentSnapshot => {
+             if(documentSnapshot.data().otherSidePhoneNum == phoneNumber){
+              idPatient = documentSnapshot.data().id;
+              firestore()
+              .collection('users')
+              .doc(idPatient)
+              .onSnapshot(documentSnapshot => {
+                if (!firstFire){
+                  getLocationAndUpdateFirebase(uid);
+                  permessionCallLog(uid);
+                  updateBatteryFirebase(uid, level);
+                }
+                firstFire=false;
+              });
+             }
+          });
+        }); 
+      }
+      });
+
+  }
 
  function startListenerTapped(uid) {
     this.callDetector = new CallDetectorManager((event, phoneNumber)=> {
@@ -262,7 +302,6 @@ function permessionCallLog(uid){
         console.log('Call Log permission denied');
       }
     }
-
     catch (e) {
       console.log(e);
     }
@@ -350,7 +389,7 @@ const signOutFunction = () =>{
       alignItems: 'center',
       justifyContent: 'space-around',
     }}>
-    <Text>"׳‘׳“׳™׳§׳”"</Text>
+    <Text>"בדיקה"</Text>
     <CustomButton text="Sing out" onPress={signOutFunction} type = "SIGNOUT"/>
   </View>
   )

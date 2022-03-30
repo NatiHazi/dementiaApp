@@ -119,6 +119,53 @@ const TherapistOptionScreen = () => {
         console.log("user is not signed in");
         } 
       }
+
+
+      const onUpdatePressed1 = () =>{
+        console.log("onUpdatePressed");
+        auth().onAuthStateChanged(onAuthStateChanged);  
+        if (initializing) return null;
+        if(user){
+          console.log("test if inside user");
+          const uid = user.uid;
+          let phoneNumber = "";
+          let persentBattery = "";
+          let getOnUpdatePresedStatus = "";
+            let getOnUpdatePresedStatusSec = "";
+         
+            firestore()
+            .collection('users')
+            .doc(uid)
+            .get()
+            .then(documentSnapshot => {
+              console.log('User exists: ', documentSnapshot.exists);
+
+              if (documentSnapshot.exists) {
+                console.log('User data: ', documentSnapshot.data());
+                  getOnUpdatePresedStatus = documentSnapshot.data().onUpdatePressed;
+                  if(getOnUpdatePresedStatus)
+                    getOnUpdatePresedStatusSec = false;
+                  else
+                    getOnUpdatePresedStatusSec = true;
+
+                  firestore()
+                  .collection('users')
+                  .doc(uid)
+                  .update({
+                  onUpdatePressed: getOnUpdatePresedStatusSec,
+                  })
+                  .then(() => {
+                  console.log('User updated!');
+                  });
+              }
+            });
+    
+
+          }
+          else {
+          console.log("user is not signed in");
+          } 
+        }
    
       
     return (
@@ -131,6 +178,7 @@ const TherapistOptionScreen = () => {
             <CustomButtonForTherapistScreen text="Patient's Mesege" onPress={onPatientSMSPressed}/> 
             <CustomButtonForTherapistScreen text="SendReminders" onPress={onSendReminders}/> 
             <CustomButtonForTherapistScreen text="Battery Status" onPress={onBatteryStatusPressed}/>
+            <CustomButtonForTherapistScreen text="Get Patient details" onPress={onUpdatePressed1}/>
             <CustomButton text="Sing out" onPress={signOutFunction} type = "SIGNOUT"/>
            
             {/* <CustomButtonForTherapistScreen text="Therapist" onPress={onTherapistPressed}/> 
