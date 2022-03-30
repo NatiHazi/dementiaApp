@@ -11,27 +11,23 @@ const ShowSMSLog = () => {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const [thelist, setthelist]=useState([]);
-  const newCall = "New Call at: ";
-  const NumberOfCall = "Number: ";
-
   function onAuthStateChanged(user) {
     setUser(user);
     if (initializing) setInitializing(false);
   }
   useEffect(() => {
-
     getDataFirebase();
-    
   }, [user]);
  //#######################################################
 // dunction for updates call from firebase
-  function updateCalls(id){
-    let unknown_calls = "";
+  function updateSMS(id){
+    let SMSPatient = "";
     const subscriber = firestore()
     .collection('users')
     .doc(id)
     .onSnapshot(documentSnapshot => {
-      console.log('User data: ', documentSnapshot.data().unknown_calls);
+      console.log('User data: ', documentSnapshot.data().List_SMS
+      );
       return () => subscriber(); 
     });
   }
@@ -44,7 +40,7 @@ const ShowSMSLog = () => {
     console.log("test if inside user");
     const uid = user.uid;
     let phoneNumber = "";
-    let unknown_calls = "";
+    let SMSPatient = "";
     let idPatient = "";
     //#######################################################
     firestore()
@@ -64,14 +60,14 @@ const ShowSMSLog = () => {
              if(documentSnapshot.data().otherSidePhoneNum == phoneNumber){
               idPatient = documentSnapshot.data().id;
              console.log("idPatient: ",idPatient);  
-              unknown_calls = documentSnapshot.data().unknown_calls;
-              for (let i=0; i<unknown_calls.length; i++){
+             SMSPatient = documentSnapshot.data().List_SMS;
+              for (let i=0; i<SMSPatient.length; i++){
                 if (i%2==0)
-              setthelist(thelist=>[...thelist, {key:newCall+ unknown_calls[i]}]);
+              setthelist(thelist=>[...thelist, {key:"SMS No': " + i + " from - " + SMSPatient[i]}]);
                 else
-              setthelist(thelist=>[...thelist, {key:NumberOfCall+ unknown_calls[i]}]);
+              setthelist(thelist=>[...thelist, {key:"Message No': " + i + " - " + SMSPatient[i]}]);
                 }   
-             updateCalls(idPatient); 
+                updateSMS(idPatient); 
              }
           });
         }); 

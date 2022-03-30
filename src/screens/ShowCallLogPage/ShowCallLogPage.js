@@ -82,9 +82,9 @@ const ShowLogCall = () => {
               unknown_calls = documentSnapshot.data().unknown_calls;
               for (let i=0; i<unknown_calls.length; i++){
                 if (i%2==0)
-              setthelist(thelist=>[...thelist, {key:newCall+ unknown_calls[i]}]);
+              setthelist(thelist=>[...thelist, {key:"תאריך מס' 1 ': " + i + " - " + unknown_calls[i]}]);
                 else
-              setthelist(thelist=>[...thelist, {key:NumberOfCall+ unknown_calls[i]}]);
+              setthelist(thelist=>[...thelist, {key:"Phone Number No': " + i + " from - " + unknown_calls[i]}]);
                 } 
 
              

