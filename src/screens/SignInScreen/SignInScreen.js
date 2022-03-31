@@ -129,17 +129,18 @@ const SignInScreen = ({ route }) => {
             </Image>
                 
              <CustomInput
-                iconName = "people"
+                
                 iconType = "MaterialIcons"
-                placeholder="email"
+                placeholder="הכנס מייל"
                 value={username} 
                 setValue={setUsername}
+                
                 secureTextEntry={false}
                 
               />
     
              <CustomInputWithEye 
-              placeholder="Password"
+              placeholder="הכנס סיסמא"
               value={password}
               setValue={setPassword} 
               secureTextEntry
@@ -147,6 +148,7 @@ const SignInScreen = ({ route }) => {
 
 
             <View style={styles.checkboxContainer}>
+          
              <CheckBox style={styles.checkbox}
               disabled={false}
               value={toggleCheckBox}
@@ -155,31 +157,24 @@ const SignInScreen = ({ route }) => {
               }
             }
              />
-            <Text style={styles.label}>Remember Me</Text>
+              <Text style={styles.label}>זכור אותי</Text>
+           
             
             </View>
         
-            <CustomButton text="Sign In" onPress={()=>onSignInPressed()}/>
+            <CustomButton text="לחץ להתחברות" onPress={()=>onSignInPressed()}/>
 
             <CustomButton
-            text="Forgot password?"
+            text="שכחת סיסמא?"
             onPress={onForgotPasswordPresed}
             type = "TERTIARY"
             />
 
             <CustomButton
-            text="Don't have an account? Create one"
+            text="אין לך חשבון? לחץ להרשם!"
             onPress={()=>onSignUpPressed()}
             type = "TER"
-            />
-
-                {/* <CustomButton
-            text="CONNECT ME"
-            onPress={()=>getData()}
-            type = "TERTIARY"
-            /> */}
-
-            
+            />    
         </View>
         </ScrollView>
     );
@@ -199,7 +194,8 @@ const styles = StyleSheet.create({
     },
     checkboxContainer: {
         flexDirection: "row",
-        textAlign:"left",
+        textAlign:"right",
+      
     },
     checkbox: {
         alignSelf: "center",

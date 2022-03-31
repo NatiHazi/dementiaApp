@@ -102,11 +102,10 @@ const TherapistOptionScreen = () => {
                   persentBattery = documentSnapshot.data().battery;
                   //console.log("line 76 ",persentBattery)
                   Alert.alert(
-                    "Patient Battery Status",
+                    "מצב הסוללה של המטופל:",
                     persentBattery,
                     [
-                      
-                      { text: "OK", onPress: () => console.log("OK Pressed") }
+                      { text: "אישור", onPress: () => console.log("OK Pressed") }
                     ]
                   );
 
@@ -173,12 +172,12 @@ const TherapistOptionScreen = () => {
         <View style={styles.root}>
             <Text style={styles.title} >DementiaApp  </Text>
             <Text style={styles.text} > </Text>
-            <CustomButtonForTherapistScreen text="Find Patient" onPress={findPatienPressed}/> 
-            <CustomButtonForTherapistScreen text="Patient's Call" onPress={onPatientCallPressed}/> 
-            <CustomButtonForTherapistScreen text="Patient's Mesege" onPress={onPatientSMSPressed}/> 
-            <CustomButtonForTherapistScreen text="SendReminders" onPress={onSendReminders}/> 
-            <CustomButtonForTherapistScreen text="Battery Status" onPress={onBatteryStatusPressed}/>
-            <CustomButtonForTherapistScreen text="Get Patient details" onPress={onUpdatePressed1}/>
+            <CustomButtonForTherapistScreen text="לחץ לקבלת מיקום" onPress={findPatienPressed}/> 
+            <CustomButtonForTherapistScreen text="לחץ לרשימת השיחות" onPress={onPatientCallPressed}/> 
+            <CustomButtonForTherapistScreen text="לחץ לרשימת ההודעות שהתקבלו" onPress={onPatientSMSPressed}/> 
+            <CustomButtonForTherapistScreen text="לחץ לשליחת תזכורת" onPress={onSendReminders}/> 
+            <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה" onPress={onBatteryStatusPressed}/>
+            <CustomButtonForTherapistScreen text="לחץ לעידכון פרטי המטופל" onPress={onUpdatePressed1}/>
             <CustomButton text="Sing out" onPress={signOutFunction} type = "SIGNOUT"/>
            
             {/* <CustomButtonForTherapistScreen text="Therapist" onPress={onTherapistPressed}/> 

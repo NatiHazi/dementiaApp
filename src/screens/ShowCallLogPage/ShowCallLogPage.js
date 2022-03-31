@@ -80,11 +80,17 @@ const ShowLogCall = () => {
               idPatient = documentSnapshot.data().id;
              console.log("idPatient: ",idPatient);  
               unknown_calls = documentSnapshot.data().unknown_calls;
+              let emptyStr = "";
+              let count = 1;
               for (let i=0; i<unknown_calls.length; i++){
-                if (i%2==0)
-              setthelist(thelist=>[...thelist, {key:"תאריך מס' 1 ': " + i + " - " + unknown_calls[i]}]);
-                else
-              setthelist(thelist=>[...thelist, {key:"Phone Number No': " + i + " from - " + unknown_calls[i]}]);
+                if (i%2==0){
+                  emptyStr = " " + count + ") התקבלה בתאריך - " + unknown_calls[i];
+                }
+                else{
+                  emptyStr+="\n ממספר טלפון - " + unknown_calls[i];
+                    setthelist(thelist=>[...thelist, {key:emptyStr}]);
+                    count+=1;
+                }
                 } 
 
              
@@ -102,17 +108,22 @@ const ShowLogCall = () => {
 
     return (
       <View style={styles.container}>
-        
+        <Text style= {styles.text}>רשימת שיחות של המטופל</Text>
         <FlatList
          data={thelist}
-          renderItem={({item}) => <Text style={styles.item}>{item.key}</Text>}
+         //<Text style={styles.item}>{item.key}</Text>
+          renderItem={({item}) =>{
+            return <View style={{flexDirection:'row'}}>
+        <View>
+          
+            <Text style= {styles.item}>{item.key}</Text>
+        </View>
+        </View>
+          }
+        }
         />
-         
-      </View>
-    );
-    
-};
-
+      </View>   
+)};
 
 
   
@@ -121,7 +132,7 @@ const styles = StyleSheet.create({
     flex: 1,
     fontStyle:'normal',
     fontWeight:'bold',
-    fontSize: 22,
+    fontSize: 24,
     textAlign:'center',
     color:'#051C60',
 },
@@ -130,12 +141,19 @@ const styles = StyleSheet.create({
    paddingTop: 22
   },
   item: {
-    marginTop:16,
-    padding: 10,
-    fontSize: 18,
-    height: 44,
-    backgroundColor:'#F0F8FF',
-    textAlign: 'right',
+    flex: 1 ,
+    marginRight: "10%",
+    marginLeft: "11%",
+    marginTop: 10,
+    paddingTop: 20,
+    paddingBottom: 20,
+    backgroundColor: '#F0FFFF',
+    borderRadius: 10,
+     borderWidth: 1,
+    borderColor: '#000',
+    fontWeight: 'bold',
+    color:'black',
+ 
   },
 });
 

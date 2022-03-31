@@ -1,14 +1,14 @@
 import React from 'react'
-import { View, Text, TextInput, StyleSheet } from 'react-native'
-
+import { View, Text, TextInput, StyleSheet,I18nManager } from 'react-native'
 
 
 const CustomInput = ({value, setValue, placeholder,secureTextEntry}) => {
+  
     return (
+      
         <View style={styles.container}>
-           
             
-            
+        
             <TextInput           
             value={value}
             onChangeText={setValue}
@@ -23,17 +23,16 @@ const CustomInput = ({value, setValue, placeholder,secureTextEntry}) => {
 };
 
 const styles = StyleSheet.create({
-
  
     container: {
         backgroundColor: 'white',
         width: '100%',
         height:50,
+        writingDirection: 'rtl',
         borderColor: '#e8e8e8',
         borderWidth:1,
         borderRadius:5,
         padding:15,
-        paddingHorizontal:10,
         marginVertical: 5,
         flexDirection:'row',
     },

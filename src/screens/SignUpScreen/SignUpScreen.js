@@ -78,55 +78,50 @@ const SignUpScreen = ({ route }) => {
     return (
         <ScrollView>
         <View style={styles.root}>
-            <Text style={styles.title} >Create an account </Text>
+            <Text style={styles.title} >יצירת חשבון חדש </Text>
 
              <CustomInput
-              placeholder="UserName"
+              placeholder=" שם משתמש"
               value={username} 
               setValue={setUsername}
               secureTextEntry={false}
               />
               <CustomInput
-              placeholder="Email"
+              placeholder="מייל"
               value={email} 
               setValue={setEmail}
               secureTextEntry={false}
               />
              <CustomInput
-              placeholder="Password"
+              placeholder="סיסמא"
               value={password}
               setValue={setPassword} 
               secureTextEntry
               />
               <CustomInput
-              placeholder="Password Repeat"
+              placeholder="אימות סיסמא"
               value={passwordRepeat}
               setValue={setPasswordRepeat} 
               secureTextEntry
               />
                <CustomInput
-              placeholder="your phone number"
+              placeholder="מספר טלפון שלך"
               value={yourNum}
               setValue={setYourNum} 
               secureTextEntry={false}
               />
               <CustomInput
-              placeholder="Patient phone number"
+              placeholder="מספר טלפון של המטופל"
               value={otherSideNum}
               setValue={setotherSideNum} 
               secureTextEntry={false}
               />
 
-            <CustomButton text="Register" onPress={()=>onRegisterPressed()}/>
+            <CustomButton text="הרשם" onPress={()=>onRegisterPressed()}/>
 
-            <Text style={styles.text}>
-                By registering, you confirm that you accept our 
-                <Text styles={styles.link} onPress={onTermOfUsePressed} > Term of Use</Text> and 
-                <Text styles={styles.link} onPress={onPrivacyPressed} > Privacy Policy</Text>
-            </Text>
 
             <CustomButton
-            text="Have have an account? Sign in"
+            text="יש לך חשבון? לחץ לכניסה"
             onPress={onSignInPressed}
             type = "TER"
             />
@@ -137,6 +132,9 @@ const SignUpScreen = ({ route }) => {
     );
 };
 
+
+
+ 
 const styles = StyleSheet.create({
     root:{
         alignItems:'center',

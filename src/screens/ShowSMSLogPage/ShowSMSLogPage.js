@@ -61,11 +61,17 @@ const ShowSMSLog = () => {
               idPatient = documentSnapshot.data().id;
              console.log("idPatient: ",idPatient);  
              SMSPatient = documentSnapshot.data().List_SMS;
+              let emptyStr = "";
+              let count = 1;
               for (let i=0; i<SMSPatient.length; i++){
-                if (i%2==0)
-              setthelist(thelist=>[...thelist, {key:"SMS No': " + i + " from - " + SMSPatient[i]}]);
-                else
-              setthelist(thelist=>[...thelist, {key:"Message No': " + i + " - " + SMSPatient[i]}]);
+                if (i%2==0){
+                  emptyStr = " " + count + ") הודעה התקבלה ממספר - " + SMSPatient[i];
+                }
+                else{
+                  emptyStr+="\n פירוט ההודעה - " + SMSPatient[i];
+                   setthelist(thelist=>[...thelist, {key:emptyStr}]);
+                   count+=1;
+                }
                 }   
                 updateSMS(idPatient); 
              }
@@ -83,11 +89,19 @@ const ShowSMSLog = () => {
     return (
       <View style={styles.container}>
         
+        <Text style= {styles.text}>רשימת הודעות של המטופל</Text>
         <FlatList
          data={thelist}
-          renderItem={({item}) => <Text style={styles.item}>{item.key}</Text>}
+         //<Text style={styles.item}>{item.key}</Text>
+          renderItem={({item}) =>{
+            return <View style={{flexDirection:'row'}}>
+        <View>
+            <Text style= {styles.item}>{item.key}</Text>
+        </View>
+        </View>
+          }
+        }
         />
-         
       </View>
     );
     
@@ -97,14 +111,33 @@ const ShowSMSLog = () => {
 
   
 const styles = StyleSheet.create({
+  text:{
+    flex: 1,
+    fontStyle:'normal',
+    fontWeight:'bold',
+    fontSize: 24,
+    textAlign:'center',
+    color:'#051C60',
+},
   container: {
    flex: 1,
    paddingTop: 22
   },
   item: {
-    padding: 10,
-    fontSize: 18,
-    height: 44,
+    flex: 1 ,
+    marginRight: "10%",
+    marginLeft: "11%",
+    marginTop: 10,
+    paddingTop: 20,
+    paddingBottom: 10,
+    backgroundColor: '#F0FFFF',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#000',
+    fontWeight: 'bold',
+    color:'black',
+    width:315,
+ 
   },
 });
 

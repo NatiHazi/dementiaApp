@@ -26,9 +26,9 @@ const MainScreeen = () => {
             <Text style={styles.title} >DementiaApp  </Text>
             <Image style={styles.logo} source={require('../../../assets/logo.jpg')}/>
             <Text style={styles.text} >  </Text>
-            <Text style={styles.text} >Please login as:  </Text>
-            <CustomButton text="Therapist" onPress={()=>onTherapistPressed()}/> 
-            <CustomButton text="Patient" onPress={()=>onPatientPressed()}/> 
+            <Text style={styles.text} >התחברות</Text>
+            <CustomButton text="התחבר כמטפל" onPress={()=>onTherapistPressed()}/> 
+            <CustomButton text="התחבר כמטופל" onPress={()=>onPatientPressed()}/> 
         </View>
         </ScrollView>
     );

@@ -91,12 +91,14 @@ const SendNotification = () => {
   return (
     <ScrollView>
         <View style={styles.root}>
-            <Text style={styles.title} >Send A Remainder as Notification </Text>
+            <Text style={styles.title} >שליחת תזכורות </Text>
 
-            <Text> אתה עומד לקבל שני אסמסים המכילים קודים אותם אתה צריך לשים בשני השדות הראשונים בעמוד שאליו תעבור.
-              שים לב כאשר אתה מדביק: מחק את ההתחלה שמכילה "SERVER KEY: "
+            <Text style={styles.text}>
+              אתה עומד לקבל שתי הודעות SMS המכילות קודים.
+              את הקודים אתה צריך לשים בשני השדות הראשונים בעמוד שאליו תעבור.
+            </Text>
+            <Text style={styles.text}>שים לב כאשר אתה מדביק: מחק את ההתחלה שמכילה "SERVER KEY: "
               ו-"DEVICE TOKEN:"
-              
             </Text>
 
              {/* <CustomInput
@@ -131,6 +133,13 @@ const styles = StyleSheet.create({
         color:'#051C60',
         margin: 10,
     },
+    text:{
+      fontSize: 18,
+     // fontWeight:'bold',
+      color:'#000',
+     // margin: 10,
+      paddingBottom:20,
+  },
  
 })
 

@@ -41,19 +41,19 @@ const ConfirmEmailScreen = ({ route }) => {
     return (
         <ScrollView>
         <View style={styles.root}>
-            <Text style={styles.title} >Reset your password  </Text>
+            <Text style={styles.title} >איפוס סיסמא  </Text>
 
              <CustomInput
-              placeholder="email"
+              placeholder="הכנס מייל"
               value={userName} 
               setValue={setUserName}
               />
           
              
-            <CustomButton text="Send" onPress={onSendPressed}/>
+            <CustomButton text="שלח" onPress={onSendPressed}/>
 
             <CustomButton
-            text="Back to Sign in"
+            text="חזור למסך התחברות"
             onPress={onSignInPressed}
             type = "TERTIARY"
             />
