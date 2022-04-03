@@ -18,6 +18,7 @@ import CallDetectorManager from 'react-native-call-detection';
 import SmsAndroid from 'react-native-get-sms-android';
 import CustomButton from '../../components/CustomButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DeviceInfo from 'react-native-device-info';
 
 
 
@@ -65,14 +66,13 @@ const navigation = useNavigation();
         ); 
 
       })
-
       listenerForUpdates(uid);
       smsLog(uid);
     }
   
       
       if(level)
-      updateBatteryFirebase(uid, level);
+      updateSettingsFirebase(uid, level);
       //updateLocationFirebase(uid);
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
@@ -130,6 +130,7 @@ const navigation = useNavigation();
     );
   }
 
+
   function listenerForUpdates(uid){
     let firstFire = true;
     let phoneNumber = "";
@@ -153,10 +154,23 @@ const navigation = useNavigation();
               .doc(idPatient)
               .onSnapshot(documentSnapshot => {
                 if (!firstFire){
+                 if(documentSnapshot.data().onUpdatePressed){
                   getLocationAndUpdateFirebase(uid);
                   permessionCallLog(uid);
-                  updateBatteryFirebase(uid, level);
+                  updateSettingsFirebase(uid, level);
+                  firestore()
+                  .collection('users')
+                  .doc(documentSnapshot.data().id)
+                  .update({
+                    onUpdatePressed:false
+                  })
+                  .then(() => {
+                    console.log('updateeeeeeeeeeeee');
+                  });
+                 }
+                  
                 }
+              
                 firstFire=false;
               });
              }
@@ -250,14 +264,14 @@ function stopListenerTapped() {
   function percentage(level) {
     return `${Math.floor(level * 100)}%`; 
 }
-function updateBatteryFirebase(uid, level){
+function updateSettingsFirebase(uid, level){
   let levelPercent=percentage(level);
   console.log(" BATTERY LEVEL LEVEL : " ,levelPercent);
   firestore()
   .collection('users')
   .doc(uid)
   .update({
-    battery:levelPercent
+    battery:levelPercent,
   })
   .then(() => {
     console.log('User battery updated!');

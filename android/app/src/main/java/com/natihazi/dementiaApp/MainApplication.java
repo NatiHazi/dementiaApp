@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.learnium.RNDeviceInfo.RNDeviceInfo;
 import com.babisoft.ReactNativeLocalization.ReactNativeLocalizationPackage;
 import com.rnim.rn.audio.ReactNativeAudioPackage;
 import com.reactnativecommunity.checkbox.ReactCheckBoxPackage;
