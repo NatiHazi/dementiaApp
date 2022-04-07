@@ -52,20 +52,21 @@ const navigation = useNavigation();
       permessionCallLog(uid);
       console.log(" F I R S T R E N D E R");
       startListenerTapped(uid);
-           const testSms=SmsListner.addListener(message=>{
-        console.log("the sms test listner: ", message);
-        SmsAndroid.autoSend(
-          "54654654654",
-          "new SMS received to the patient",
-          (fail) => {
-            console.log('Failed with this error: ' + fail);
-          },
-          (success) => {
-            console.log('SMS sent successfully');
-          },
-        ); 
+      //      const testSms=SmsListner.addListener(message=>{
+      //   console.log("the sms test listner: ", message);
+      //   SmsAndroid.autoSend(
+      //     "54654654654",
+      //     "new SMS received to the patient",
+      //     (fail) => {
+      //       console.log('Failed with this error: ' + fail);
+      //     },
+      //     (success) => {
+      //       console.log('SMS sent successfully');
+      //     },
+      //   ); 
 
-      })
+      // })
+      listenSMSAndSend(uid)
       listenerForUpdates(uid);
       smsLog(uid);
     }
@@ -94,6 +95,46 @@ const navigation = useNavigation();
       }
 
   }, [user,level]);
+
+  function listenSMSAndSend(uid){
+    firestore()
+    .collection('users')
+    .doc(uid)
+    .get()
+    .then(documentSnapshot => {
+    console.log('User exists: ', documentSnapshot.exists);
+
+    if (documentSnapshot.exists) {
+     // console.log('User data: ', documentSnapshot.data());
+     let myPhone =  documentSnapshot.data().myNum;
+     firestore()
+    .collection('users')
+    .get()
+    .then(querySnapshot => {
+    querySnapshot.forEach(documentSnapshot => {
+     // console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
+      if(documentSnapshot.data().otherSidePhoneNum === myPhone){
+        let terapistPhone = "+972" + (documentSnapshot.data().myNum).slice(1) ;
+        console.log(terapistPhone);
+        SmsListner.addListener(message=>{
+          console.log("the sms test listner: ", message);
+          SmsAndroid.autoSend(
+            terapistPhone,
+            "התקבלה הודעה חדשה למטופל",
+            (fail) => {
+              console.log('Failed with this error: ' + fail);
+            },
+            (success) => {
+              console.log('SMS sent successfully');
+            },
+          ); 
+        })
+      }
+    });
+  });
+    }
+  });
+  }
 
   function smsLog(uid){
     let save_SMS=[]
@@ -180,6 +221,8 @@ const navigation = useNavigation();
       });
 
   }
+
+
 
  function startListenerTapped(uid) {
     this.callDetector = new CallDetectorManager((event, phoneNumber)=> {

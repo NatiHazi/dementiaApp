@@ -19,8 +19,18 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const TherapistOptionScreen = () => {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
+  const navigation = useNavigation();
 
-     const navigation = useNavigation();
+
+  useEffect(
+    () => {
+      auth().onAuthStateChanged(onAuthStateChanged);  
+     if(user){
+       console.log("user conected useEffect");
+     }
+    },
+    [user]
+  )
     const onTherapistPressed = () =>{
         // navigation.navigate("signIn");
         console.log("patient's call/message pressed")
@@ -75,8 +85,9 @@ const TherapistOptionScreen = () => {
   }
     const onBatteryStatusPressed = () =>{
       console.log("onBatteryStatusPressed");
-      const subscriber = auth().onAuthStateChanged(onAuthStateChanged);  
+     // auth().onAuthStateChanged(onAuthStateChanged);  
       if (initializing) return null;
+      console.log("checkkkkkkkkkkkkkkk");
       if(user){
         console.log("test if inside user");
         const uid = user.uid;
@@ -122,7 +133,7 @@ const TherapistOptionScreen = () => {
 
       const onUpdatePressed1 = () =>{
         console.log("onUpdatePressed");
-        auth().onAuthStateChanged(onAuthStateChanged);  
+       // auth().onAuthStateChanged(onAuthStateChanged);  
         if (initializing) return null;
         if(user){
           console.log("test if inside user");
@@ -130,7 +141,7 @@ const TherapistOptionScreen = () => {
           let phoneNumber = "";
           let persentBattery = "";
           let getOnUpdatePresedStatus = "";
-            let getOnUpdatePresedStatusSec = "";
+          let getOnUpdatePresedStatusSec = "";
          
             firestore()
             .collection('users')
@@ -168,16 +179,16 @@ const TherapistOptionScreen = () => {
    
       
     return (
-        <ScrollView>
+        <ScrollView keyboardShouldPersistTaps='handled'>
         <View style={styles.root}>
             <Text style={styles.title} >DementiaApp  </Text>
             <Text style={styles.text} > </Text>
-            <CustomButtonForTherapistScreen text="לחץ לקבלת מיקום" onPress={findPatienPressed}/> 
-            <CustomButtonForTherapistScreen text="לחץ לרשימת השיחות" onPress={onPatientCallPressed}/> 
-            <CustomButtonForTherapistScreen text="לחץ לרשימת ההודעות שהתקבלו" onPress={onPatientSMSPressed}/> 
-            <CustomButtonForTherapistScreen text="לחץ לשליחת תזכורת" onPress={onSendReminders}/> 
-            <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה" onPress={onBatteryStatusPressed}/>
-            <CustomButtonForTherapistScreen text="לחץ לעידכון פרטי המטופל" onPress={onUpdatePressed1}/>
+            <CustomButtonForTherapistScreen text="לחץ לקבלת מיקום" onPress={()=>{findPatienPressed()}}/> 
+            <CustomButtonForTherapistScreen text="לחץ לרשימת השיחות" onPress={()=>{onPatientCallPressed()}}/> 
+            <CustomButtonForTherapistScreen text="לחץ לרשימת ההודעות שהתקבלו" onPress={()=>{onPatientSMSPressed()}}/> 
+            <CustomButtonForTherapistScreen text="לחץ לשליחת תזכורת" onPress={()=>{onSendReminders()}}/> 
+            <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה" onPress={()=>{onBatteryStatusPressed()}}/>
+            <CustomButtonForTherapistScreen text="לחץ לעידכון פרטי המטופל" onPress={()=>{onUpdatePressed1()}}/>
             <CustomButton text="Sing out" onPress={signOutFunction} type = "SIGNOUT"/>
            
             {/* <CustomButtonForTherapistScreen text="Therapist" onPress={onTherapistPressed}/> 

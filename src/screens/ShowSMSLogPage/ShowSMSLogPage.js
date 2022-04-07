@@ -19,7 +19,7 @@ const ShowSMSLog = () => {
     getDataFirebase();
   }, [user]);
  //#######################################################
-// dunction for updates call from firebase
+// function for updates call from firebase
   function updateSMS(id){
     let SMSPatient = "";
     const subscriber = firestore()
