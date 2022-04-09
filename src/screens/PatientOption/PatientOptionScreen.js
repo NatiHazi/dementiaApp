@@ -22,19 +22,14 @@ import DeviceInfo from 'react-native-device-info';
 
 
 
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-  }),
-});
+
 
 const PatientOptionScreen = () => {
 const [initializing, setInitializing] = useState(true);
 const [user, setUser] = useState();
 const [level] = useBatteryLevel();
 const [firstRender, setfirstRender]=useState(true);
+const [therapistPhone, settherapistPhone]=useState();
 const navigation = useNavigation();
   useEffect(() => {
   //   SystemSetting.getVolume().then((volume)=>{
@@ -50,30 +45,23 @@ const navigation = useNavigation();
         getLocationAndUpdateFirebase(uid);
          updateTokenMessage(uid); //update user token for messaging cloud
       permessionCallLog(uid);
+      findTherapitNum(uid);
       console.log(" F I R S T R E N D E R");
-      startListenerTapped(uid);
-      //      const testSms=SmsListner.addListener(message=>{
-      //   console.log("the sms test listner: ", message);
-      //   SmsAndroid.autoSend(
-      //     "54654654654",
-      //     "new SMS received to the patient",
-      //     (fail) => {
-      //       console.log('Failed with this error: ' + fail);
-      //     },
-      //     (success) => {
-      //       console.log('SMS sent successfully');
-      //     },
-      //   ); 
-
-      // })
-      listenSMSAndSend(uid)
+     
       listenerForUpdates(uid);
       smsLog(uid);
+      updateSettingsFirebase(uid);
+    }
+    if (therapistPhone){
+      console.log("LINE 67, AND PHONE: ", therapistPhone);
+      listenSMSAndSend(uid,therapistPhone); //listen for sms coming and notice the therapist new sms came
+      startListenerTapped(uid,therapistPhone); //same with calls
+
     }
   
       
-      if(level)
-      updateSettingsFirebase(uid, level);
+  
+      
       //updateLocationFirebase(uid);
     const unsubscribe = messaging().onMessage(async remoteMessage => {
       Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
@@ -94,9 +82,9 @@ const navigation = useNavigation();
         
       }
 
-  }, [user,level]);
+  }, [user,therapistPhone]);
 
-  function listenSMSAndSend(uid){
+  function findTherapitNum(uid){
     firestore()
     .collection('users')
     .doc(uid)
@@ -116,25 +104,38 @@ const navigation = useNavigation();
       if(documentSnapshot.data().otherSidePhoneNum === myPhone){
         let terapistPhone = "+972" + (documentSnapshot.data().myNum).slice(1) ;
         console.log(terapistPhone);
-        SmsListner.addListener(message=>{
-          console.log("the sms test listner: ", message);
-          SmsAndroid.autoSend(
-            terapistPhone,
-            "התקבלה הודעה חדשה למטופל",
-            (fail) => {
-              console.log('Failed with this error: ' + fail);
-            },
-            (success) => {
-              console.log('SMS sent successfully');
-            },
-          ); 
-        })
+        settherapistPhone(terapistPhone);
       }
     });
   });
     }
   });
   }
+  
+  function sendAutoSms(text, therapistPhone){
+    SmsAndroid.autoSend(
+      therapistPhone,
+      text,
+      (fail) => {
+        console.log('Failed with this error: ' + fail);
+      },
+      (success) => {
+        console.log('SMS sent successfully');
+       
+      },
+    );
+  }
+
+  function listenSMSAndSend(uid,therapistPhone){
+  
+        SmsListner.addListener(message=>{
+          console.log("the sms test listner: ", message);
+            sendAutoSms('׳”׳×׳§׳‘׳׳” ׳”׳•׳“׳¢׳” ׳—׳“׳©׳” ׳׳¦׳ ׳”׳׳˜׳•׳₪׳', therapistPhone);
+           smsLog(uid);
+        })
+
+    }
+ 
 
   function smsLog(uid){
     let save_SMS=[]
@@ -198,7 +199,8 @@ const navigation = useNavigation();
                  if(documentSnapshot.data().onUpdatePressed){
                   getLocationAndUpdateFirebase(uid);
                   permessionCallLog(uid);
-                  updateSettingsFirebase(uid, level);
+                  updateSettingsFirebase(uid);
+                  smsLog(uid);
                   firestore()
                   .collection('users')
                   .doc(documentSnapshot.data().id)
@@ -237,16 +239,7 @@ const navigation = useNavigation();
     if (event === 'Disconnected') {
     // Do something call got disconnected
     console.log("DISCONNETED")
-    SmsAndroid.autoSend(
-      "54654654654",
-      "new call recieved and ended",
-      (fail) => {
-        console.log('Failed with this error: ' + fail);
-      },
-      (success) => {
-        console.log('SMS sent successfully');
-      },
-    ); 
+    sendAutoSms("׳”׳×׳§׳‘׳׳” ׳©׳™׳—׳” ׳—׳“׳©׳” ׳׳¦׳ ׳”׳׳˜׳•׳₪׳", therapistPhone)
     permessionCallLog(uid);
     
     }
@@ -275,16 +268,7 @@ const navigation = useNavigation();
     	// Do something call got missed
     	// This clause will only be executed for Android
       console.log("Missed")
-      SmsAndroid.autoSend(
-        "54654654654",
-        "new call recieved and missed",
-        (fail) => {
-          console.log('Failed with this error: ' + fail);
-        },
-        (success) => {
-          console.log('SMS sent successfully');
-        },
-      ); 
+      sendAutoSms("׳”׳×׳§׳‘׳׳” ׳©׳™׳—׳” ׳—׳“׳©׳” ׳׳¦׳ ׳”׳׳˜׳•׳₪׳", therapistPhone)
       permessionCallLog(uid);
 
   }
@@ -308,17 +292,21 @@ function stopListenerTapped() {
     return `${Math.floor(level * 100)}%`; 
 }
 function updateSettingsFirebase(uid, level){
-  let levelPercent=percentage(level);
-  console.log(" BATTERY LEVEL LEVEL : " ,levelPercent);
-  firestore()
-  .collection('users')
-  .doc(uid)
-  .update({
-    battery:levelPercent,
-  })
-  .then(() => {
-    console.log('User battery updated!');
+  DeviceInfo.getBatteryLevel().then(level => {
+    let batterypercent=Math.floor(level*100)+"%";
+    console.log(" LINE 296: ", batterypercent);
+    firestore()
+    .collection('users')
+    .doc(uid)
+    .update({
+      battery:batterypercent,
+    })
+    .then(() => {
+      console.log('User battery updated!');
+    });
   });
+  
+ 
 }
 
 
@@ -362,14 +350,14 @@ function permessionCallLog(uid){
       )
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         //console.log(CallLogs);
-        CallLogs.load(5).then(c => {
+        CallLogs.load(10).then(c => {
           let i=0;
           let save_unknown_calls=[]
           for (i; i<c.length; i++){
             // console.log("i: ", c[i])
-            if (!c[i]["name"]){
+            // if (!c[i]["name"]){
               save_unknown_calls.push(c[i]["dateTime"],c[i]["phoneNumber"])
-            }
+            // }
           }
           console.log("the arrrayyyyy: ", save_unknown_calls)
           firestore()
