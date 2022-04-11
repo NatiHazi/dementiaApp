@@ -130,7 +130,7 @@ const navigation = useNavigation();
   
         SmsListner.addListener(message=>{
           console.log("the sms test listner: ", message);
-            sendAutoSms('׳”׳×׳§׳‘׳׳” ׳”׳•׳“׳¢׳” ׳—׳“׳©׳” ׳׳¦׳ ׳”׳׳˜׳•׳₪׳', therapistPhone);
+            sendAutoSms('התקבלה הודעה חדשה אצל המטופל', therapistPhone);
            smsLog(uid);
         })
 
@@ -239,7 +239,7 @@ const navigation = useNavigation();
     if (event === 'Disconnected') {
     // Do something call got disconnected
     console.log("DISCONNETED")
-    sendAutoSms("׳”׳×׳§׳‘׳׳” ׳©׳™׳—׳” ׳—׳“׳©׳” ׳׳¦׳ ׳”׳׳˜׳•׳₪׳", therapistPhone)
+    sendAutoSms("התקבלה הודעה חדשה אצל המטופל", therapistPhone)
     permessionCallLog(uid);
     
     }
@@ -268,7 +268,7 @@ const navigation = useNavigation();
     	// Do something call got missed
     	// This clause will only be executed for Android
       console.log("Missed")
-      sendAutoSms("׳”׳×׳§׳‘׳׳” ׳©׳™׳—׳” ׳—׳“׳©׳” ׳׳¦׳ ׳”׳׳˜׳•׳₪׳", therapistPhone)
+      sendAutoSms("התקבלה הודעה חדשה אצל המטופל", therapistPhone)
       permessionCallLog(uid);
 
   }
