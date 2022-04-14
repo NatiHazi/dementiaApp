@@ -19,6 +19,9 @@ import SmsAndroid from 'react-native-get-sms-android';
 import CustomButton from '../../components/CustomButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DeviceInfo from 'react-native-device-info';
+import storage from '@react-native-firebase/storage';
+import WallPaperManager from "react-native-set-wallpaper";
+
 
 
 
@@ -172,11 +175,22 @@ const navigation = useNavigation();
     );
   }
 
+  function updateListersToFalseInTherDoc(id,field){
+    firestore()
+    .collection('users')
+    .doc(id)
+    .update({
+      [field]:false
+    })
+    .then(() => {
+      console.log('updateeeeeeeeeeeee');
+    });
+  }
 
   function listenerForUpdates(uid){
     let firstFire = true;
     let phoneNumber = "";
-    let idPatient = "";
+    let idThearpist = "";
     firestore()
     .collection('users')
     .doc(uid)
@@ -190,10 +204,10 @@ const navigation = useNavigation();
         .then(querySnapshot => {
            querySnapshot.forEach(documentSnapshot => {
              if(documentSnapshot.data().otherSidePhoneNum == phoneNumber){
-              idPatient = documentSnapshot.data().id;
+              idThearpist = documentSnapshot.data().id;
               firestore()
               .collection('users')
-              .doc(idPatient)
+              .doc(idThearpist)
               .onSnapshot(documentSnapshot => {
                 if (!firstFire){
                  if(documentSnapshot.data().onUpdatePressed){
@@ -201,15 +215,26 @@ const navigation = useNavigation();
                   permessionCallLog(uid);
                   updateSettingsFirebase(uid);
                   smsLog(uid);
-                  firestore()
-                  .collection('users')
-                  .doc(documentSnapshot.data().id)
-                  .update({
-                    onUpdatePressed:false
-                  })
-                  .then(() => {
-                    console.log('updateeeeeeeeeeeee');
-                  });
+                  updateListersToFalseInTherDoc(idThearpist,"onUpdatePressed");
+
+                 }
+                 if (documentSnapshot.data().setBackground){
+                   (async()=>{
+                   try{
+                  const urlBackground = await storage().ref('image-for-background.png').getDownloadURL();
+                  if (urlBackground){
+                    console.log("line 227: ", urlBackground);
+                     WallPaperManager.setWallpaper({ uri: urlBackground }, (res) => {
+                       console.log(res);
+                       
+                        });
+                      }
+                   }
+                   catch(error){
+                     console.log(" line 232: ", error);
+                   }
+                   updateListersToFalseInTherDoc(idThearpist,"setBackground");
+                   })();
                  }
                   
                 }
@@ -239,7 +264,7 @@ const navigation = useNavigation();
     if (event === 'Disconnected') {
     // Do something call got disconnected
     console.log("DISCONNETED")
-    sendAutoSms("התקבלה הודעה חדשה אצל המטופל", therapistPhone)
+    sendAutoSms("התקבלה שיחה חדשה אצל המטופל", therapistPhone)
     permessionCallLog(uid);
     
     }
@@ -268,7 +293,7 @@ const navigation = useNavigation();
     	// Do something call got missed
     	// This clause will only be executed for Android
       console.log("Missed")
-      sendAutoSms("התקבלה הודעה חדשה אצל המטופל", therapistPhone)
+      sendAutoSms("התקבלה שיחה חדשה אצל המטופל", therapistPhone)
       permessionCallLog(uid);
 
   }

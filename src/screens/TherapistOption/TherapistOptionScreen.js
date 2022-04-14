@@ -12,6 +12,11 @@ import * as Battery from 'expo-battery';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import WallPaperManager from "react-native-set-wallpaper";
+import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
+import storage from '@react-native-firebase/storage';
+
+
 
 
 
@@ -113,7 +118,7 @@ const TherapistOptionScreen = () => {
                   persentBattery = documentSnapshot.data().battery;
                   //console.log("line 76 ",persentBattery)
                   Alert.alert(
-                    "מצב הסוללה של המטופל:",
+                    "מצב סוללה של המטופל:",
                     persentBattery,
                     [
                       { text: "אישור", onPress: () => console.log("OK Pressed") }
@@ -176,6 +181,73 @@ const TherapistOptionScreen = () => {
           console.log("user is not signed in");
           } 
         }
+
+        const simreka = () =>{
+          // WallPaperManager.setWallpaper({ uri: "https://sportsmax.tv/media/k2/items/cache/d217a9def455f84c86bbdc187da6da99_XL.jpg" }, (res) => {
+          //   console.log(res);
+          // });
+
+          if (initializing) return null;
+          if(user){
+            console.log("test if inside user");
+            const uid = user.uid;
+            let getSetBackgroundStatus = "";
+            let getSetBackgroundStatusSec = "";
+           
+              firestore()
+              .collection('users')
+              .doc(uid)
+              .get()
+              .then(documentSnapshot => {
+                console.log('User exists: ', documentSnapshot.exists);
+  
+                if (documentSnapshot.exists) {
+                  console.log('User data: ', documentSnapshot.data());
+                  getSetBackgroundStatus = documentSnapshot.data().setBackground;
+                    if(getSetBackgroundStatus)
+                    getSetBackgroundStatusSec = false;
+                    else
+                    getSetBackgroundStatusSec = true;
+  
+                    (async()=>{
+                      try{
+                       const result = await launchImageLibrary();
+                     console.log("LINE 189: ", result.assets[0].uri);
+                     const pathToFile=result.assets[0].uri;
+                     const reference = storage().ref('image-for-background.png');
+                     try{
+                     await reference.putFile(pathToFile);
+                     firestore()
+                     .collection('users')
+                     .doc(uid)
+                     .update({
+                       setBackground: getSetBackgroundStatusSec,
+                     })
+                     .then(() => {
+                     console.log('User updated!');
+                     });
+                     }
+                     catch(error){
+                       console.log(error);
+                     }
+                   } catch(error){
+                     console.log("error get image : ", error);
+                   }
+                     })();
+
+
+                }
+              });
+      
+  
+            }
+            else {
+            console.log("user is not signed in");
+            } 
+
+
+
+          }
    
       
     return (
@@ -183,12 +255,14 @@ const TherapistOptionScreen = () => {
         <View style={styles.root}>
             <Text style={styles.title} >DementiaApp  </Text>
             <Text style={styles.text} > </Text>
+                        
             <CustomButtonForTherapistScreen text="לחץ לקבלת מיקום" onPress={()=>{findPatienPressed()}}/> 
             <CustomButtonForTherapistScreen text="לחץ לרשימת השיחות" onPress={()=>{onPatientCallPressed()}}/> 
             <CustomButtonForTherapistScreen text="לחץ לרשימת ההודעות שהתקבלו" onPress={()=>{onPatientSMSPressed()}}/> 
             <CustomButtonForTherapistScreen text="לחץ לשליחת תזכורת" onPress={()=>{onSendReminders()}}/> 
             <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה" onPress={()=>{onBatteryStatusPressed()}}/>
             <CustomButtonForTherapistScreen text="לחץ לעידכון פרטי המטופל" onPress={()=>{onUpdatePressed1()}}/>
+            <CustomButtonForTherapistScreen text="לחץ להגדרת רקע" onPress={()=>{simreka()}}/>
             <CustomButton text="Sing out" onPress={signOutFunction} type = "SIGNOUT"/>
            
             {/* <CustomButtonForTherapistScreen text="Therapist" onPress={onTherapistPressed}/> 

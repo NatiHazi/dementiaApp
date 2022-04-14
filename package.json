@@ -15,6 +15,7 @@
     "@react-native-firebase/auth": "^14.5.1",
     "@react-native-firebase/firestore": "^14.5.1",
     "@react-native-firebase/messaging": "^14.5.1",
+    "@react-native-firebase/storage": "^14.7.0",
     "@react-navigation/native": "^6.0.8",
     "@react-navigation/native-stack": "^6.2.5",
     "@use-expo/battery": "^2.0.0",
@@ -40,6 +41,7 @@
     "react-native-easy-localization-and-rtl": "^1.1.0",
     "react-native-gesture-handler": "~1.10.2",
     "react-native-get-sms-android": "^2.1.0",
+    "react-native-image-picker": "^4.7.3",
     "react-native-localization": "^2.3.1",
     "react-native-maps": "0.28.1",
     "react-native-open-maps": "^0.4.0",
@@ -48,6 +50,7 @@
     "react-native-rtl-layout": "^0.0.1",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.8.0",
+    "react-native-set-wallpaper": "^1.0.4",
     "react-native-sound": "^0.11.2",
     "react-native-system-setting": "^1.7.6",
     "react-native-web": "0.17.1"
