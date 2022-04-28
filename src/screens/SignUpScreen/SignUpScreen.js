@@ -1,10 +1,11 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import { View, Text, StyleSheet, useWindowDimensions,ScrollView} from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-import {getAuth,createUserWithEmailAndPassword,sendEmailVerification,getFirestore,collection, addDoc,setDoc,doc } from '../../../db/firebase'
-
+//import {getAuth,createUserWithEmailAndPassword,sendEmailVerification,getFirestore,collection, addDoc,setDoc,doc } from '../../../db/firebase'
+import firestore from '@react-native-firebase/firestore';
+import auth from '@react-native-firebase/auth';
 
 const SignUpScreen = ({ route }) => {
     const { isTherapist} = route.params;
@@ -17,51 +18,65 @@ const SignUpScreen = ({ route }) => {
 
     const navigation = useNavigation();
 
+   //const user = userCredential.user;
+   const [initializing, setInitializing] = useState(true);
+   const [user, setUser] = useState();
+   useEffect(() => {
+    //Runs on the first render
+    //And any time any dependency value changes
+    if(user){
+        console.log('inside user line 40');
+        firestore()
+        .collection('users')
+        .doc(user.uid)
+        .set({
+            id:  user.uid,
+            isTherapist:isTherapist,
+            myNum: yourNum,
+            otherSidePhoneNum: otherSideNum
+        })
+        .then(() => {
+            console.log('User added!');
+        });
+      
+    }
+  }, [user]);
+   // Handle user state changes
+   function onAuthStateChanged(user) {
+     setUser(user);
+     if (initializing) setInitializing(false);
+   }
+
     const onRegisterPressed = () =>{
-        console.log("test");
-            const auth = getAuth();
-    createUserWithEmailAndPassword(auth, email, password)
-    .then((userCredential) => {
-        // Signed in 
-        const user = userCredential.user;
-        const db = getFirestore();
-            (async () => {
-                await setDoc(doc(db, "users", user.uid), {
-                    id:  user.uid,
-                    isTherapist:isTherapist,
-                    myNum: yourNum,
-                    otherSidePhoneNum: otherSideNum
-                  });
+        console.log("test");  
+        auth()
+        .createUserWithEmailAndPassword(email,password)
+        .then((userCredential) => {
+        console.log('User account created & signed in!');
+        userCredential.user.sendEmailVerification();
+        auth().onAuthStateChanged(onAuthStateChanged);
+   
+        // (async()=>{
+        // await auth().currentUser.sendEmailVerification({
+        //     handleCodeInApp: true,
+        //     url: email,
+        //    });
+        // })();
         
-            })();
-            sendEmailVerification(auth.currentUser)
-            //user.emailVerified =>checks if user verified email.
-    .then(() => {
-        // Email verification sent!
-        // ...
-        console.log("email verification sent!")
-        navigation.navigate("ConfirmEmail", {isTherapist: isTherapist});
-       
-    });
-        
-        
-        // ...
-        console.log("created new user with mail: ", user.email)
-    })
-    .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode)
-        if (errorCode==="auth/email-already-in-use"){
-        alert("this email already in use")
-        }
-        else{
-            console.log(errorMessage);
+           navigation.navigate("ConfirmEmail", {isTherapist: isTherapist});
+        })
+        .catch(error => {
+        if (error.code === 'auth/email-already-in-use') {
+            console.log('That email address is already in use!');
         }
 
-        // ..
-    });
-        
+        if (error.code === 'auth/invalid-email') {
+            console.log('That email address is invalid!');
+        }
+
+        console.error(error);
+        });
+
     };
 
     const onSignInPressed = () => {

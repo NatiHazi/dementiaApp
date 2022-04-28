@@ -221,7 +221,7 @@ const navigation = useNavigation();
                  if (documentSnapshot.data().setBackground){
                    (async()=>{
                    try{
-                  const urlBackground = await storage().ref('image-for-background.png').getDownloadURL();
+                  const urlBackground = await storage().ref(`${uid}image-for-background.png`).getDownloadURL();
                   if (urlBackground){
                     console.log("line 227: ", urlBackground);
                      WallPaperManager.setWallpaper({ uri: urlBackground }, (res) => {

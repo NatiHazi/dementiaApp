@@ -16,15 +16,12 @@ import WallPaperManager from "react-native-set-wallpaper";
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 
-
-
-
-
-
 const TherapistOptionScreen = () => {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const navigation = useNavigation();
+  const [firstRender, setfirstRender]=useState(true);
+  const [patientID,setPatientID]=useState("");
 
 
   useEffect(
@@ -32,10 +29,43 @@ const TherapistOptionScreen = () => {
       auth().onAuthStateChanged(onAuthStateChanged);  
      if(user){
        console.log("user conected useEffect");
+       const uid = user.uid;
+       if(firstRender){
+        findPatientID(uid);
+        setfirstRender(false);
+       }
      }
     },
     [user]
   )
+
+  function findPatientID(uid){
+    console.log('starting function findPatientID');
+    firestore()
+    .collection('users')
+    .doc(uid)
+    .get()
+    .then(documentSnapshot => {
+    console.log('User exists: ', documentSnapshot.exists);
+
+    if (documentSnapshot.exists) {
+     // console.log('User data: ', documentSnapshot.data());
+     let myPhone =  documentSnapshot.data().myNum;
+     firestore()
+    .collection('users')
+    .get()
+    .then(querySnapshot => {
+    querySnapshot.forEach(documentSnapshot => {
+     // console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
+      if(documentSnapshot.data().otherSidePhoneNum === myPhone){
+        let id = documentSnapshot.data().id;
+        setPatientID(id);
+      }
+    });
+  });
+    }
+  });
+  }
     const onTherapistPressed = () =>{
         // navigation.navigate("signIn");
         console.log("patient's call/message pressed")
@@ -214,7 +244,7 @@ const TherapistOptionScreen = () => {
                        const result = await launchImageLibrary();
                      console.log("LINE 189: ", result.assets[0].uri);
                      const pathToFile=result.assets[0].uri;
-                     const reference = storage().ref('image-for-background.png');
+                     const reference = storage().ref(`${patientID}/image-for-background.png`);
                      try{
                      await reference.putFile(pathToFile);
                      firestore()
