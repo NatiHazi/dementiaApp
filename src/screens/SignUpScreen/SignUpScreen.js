@@ -93,7 +93,7 @@ const SignUpScreen = ({ route }) => {
     return (
         <ScrollView>
         <View style={styles.root}>
-            <Text style={styles.title} >יצירת חשבון חדש </Text>
+        <Text style={styles.title} >יצירת חשבון חדש  </Text>
 
              <CustomInput
               placeholder=" שם משתמש"
@@ -126,13 +126,13 @@ const SignUpScreen = ({ route }) => {
               secureTextEntry={false}
               />
               <CustomInput
-              placeholder="מספר טלפון של המטופל"
+                placeholder="מספר טלפון של המטופל"
               value={otherSideNum}
               setValue={setotherSideNum} 
               secureTextEntry={false}
               />
 
-            <CustomButton text="הרשם" onPress={()=>onRegisterPressed()}/>
+            <CustomButton text="הרשם"  onPress={()=>onRegisterPressed()}/>
 
 
             <CustomButton
@@ -171,3 +171,4 @@ const styles = StyleSheet.create({
 })
 
 export default SignUpScreen
+

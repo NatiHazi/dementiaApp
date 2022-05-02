@@ -24,9 +24,6 @@ import WallPaperManager from "react-native-set-wallpaper";
 
 
 
-
-
-
 const PatientOptionScreen = () => {
 const [initializing, setInitializing] = useState(true);
 const [user, setUser] = useState();
@@ -42,12 +39,47 @@ const navigation = useNavigation();
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);  
     //if (initializing) return null;
     if(user){
+    
+
       console.log("test if inside user");
       const uid = user.uid;
       if (firstRender){
+
+        // (async ()=>{
+        //   try {
+        //     const granted = await PermissionsAndroid.request(
+        //       PermissionsAndroid.PERMISSIONS.SEND_SMS,
+        //       {
+        //         title: "SEND SMS PERMEISION",
+        //         message:
+        //           "SEND SMS PERMEISION",
+        //         buttonNeutral: "Ask Me Later",
+        //         buttonNegative: "Cancel",
+        //         buttonPositive: "OK"
+        //       }
+        //     );
+        //     const granted2 = await PermissionsAndroid.request(
+        //       PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
+        //       {
+        //         title: 'Call Log Example',
+        //         message:
+        //           'Access your call logs',
+        //         buttonNeutral: 'Ask Me Later',
+        //         buttonNegative: 'Cancel',
+        //         buttonPositive: 'OK',
+        //       }
+        //     );
+        //   }catch(error){
+        //     console.log("LINE 59: error", error); 
+        //   }
+
+         
+        // })();
+
         getLocationAndUpdateFirebase(uid);
          updateTokenMessage(uid); //update user token for messaging cloud
       permessionCallLog(uid);
+
       findTherapitNum(uid);
       console.log(" F I R S T R E N D E R");
      
@@ -87,6 +119,29 @@ const navigation = useNavigation();
 
   }, [user,therapistPhone]);
 
+  const requestCameraPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_SMS,
+        {
+          title: "READ SMS PERMEISION",
+          message:
+            "READ SMS PERMEISION",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK"
+        }
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log("You can use the camera");
+      } else {
+        console.log("Camera permission denied");
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
   function findTherapitNum(uid){
     firestore()
     .collection('users')
@@ -116,24 +171,50 @@ const navigation = useNavigation();
   }
   
   function sendAutoSms(text, therapistPhone){
-    SmsAndroid.autoSend(
-      therapistPhone,
-      text,
-      (fail) => {
-        console.log('Failed with this error: ' + fail);
-      },
-      (success) => {
-        console.log('SMS sent successfully');
-       
-      },
-    );
+    (async ()=>{
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.SEND_SMS,
+        {
+          title: "SEND SMS PERMEISION",
+          message:
+            "SEND SMS PERMEISION",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK"
+        }
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log("You can SEND SMS");
+
+        SmsAndroid.autoSend(
+          therapistPhone,
+          text,
+          (fail) => {
+            console.log('Failed with this error: ' + fail);
+          },
+          (success) => {
+            console.log('SMS sent successfully');
+           
+          },
+        );
+
+      } else {
+        console.log("Camera permission denied");
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  })();
+
+ 
   }
 
   function listenSMSAndSend(uid,therapistPhone){
   
         SmsListner.addListener(message=>{
           console.log("the sms test listner: ", message);
-            sendAutoSms('התקבלה הודעה חדשה אצל המטופל', therapistPhone);
+          sendAutoSms('התקבלה הודעה חדשה אצל המטופל', therapistPhone);
            smsLog(uid);
         })
 
@@ -141,38 +222,64 @@ const navigation = useNavigation();
  
 
   function smsLog(uid){
-    let save_SMS=[]
-    var filter = {
-      box: 'inbox',
-      indexFrom: 0, // start from index 0
-      maxCount: 10, // count of SMS to return each time
-    };
-    
-    SmsAndroid.list(
-      JSON.stringify(filter),
-      (fail) => {
-        console.log('Failed with this error: ' + fail);
-      },
-      (count, smsList) => {
-        console.log('Count: ', count);
-        // console.log('List: ', smsList);
-        var arr = JSON.parse(smsList);
-        arr.forEach(function(object) {
-          save_SMS.push(object.address,object.body)
-          console.log('Number of sender ' + object.address);
-          console.log('Massege ' + object.body);        
-        });
-        firestore()
-        .collection('users')
-        .doc(uid)
-        .update({
-          List_SMS: save_SMS,
-        })
-        .then(() => {
-          console.log('User updated!');
-        });
-      },
-    );
+    (async ()=>{
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_SMS,
+        {
+          title: "READ SMS PERMEISION",
+          message:
+            "READ SMS PERMEISION",
+          buttonNeutral: "Ask Me Later",
+          buttonNegative: "Cancel",
+          buttonPositive: "OK"
+        }
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log("You can use SMS READ");
+
+        let save_SMS=[]
+        var filter = {
+          box: 'inbox',
+          indexFrom: 0, // start from index 0
+          maxCount: 10, // count of SMS to return each time
+        };
+        
+        SmsAndroid.list(
+          JSON.stringify(filter),
+          (fail) => {
+            console.log('Failed with this error: ' + fail);
+          },
+          (count, smsList) => {
+            console.log('Count: ', count);
+            // console.log('List: ', smsList);
+            var arr = JSON.parse(smsList);
+            arr.forEach(function(object) {
+              save_SMS.push(object.address,object.body)
+              console.log('Number of sender ' + object.address);
+              console.log('Massege ' + object.body);        
+            });
+            firestore()
+            .collection('users')
+            .doc(uid)
+            .update({
+              List_SMS: save_SMS,
+            })
+            .then(() => {
+              console.log('User updated!');
+            });
+          },
+        );
+        
+      } else {
+        console.log("Camera permission denied");
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  })();
+
+
   }
 
   function updateListersToFalseInTherDoc(id,field){
@@ -293,7 +400,7 @@ const navigation = useNavigation();
     	// Do something call got missed
     	// This clause will only be executed for Android
       console.log("Missed")
-      sendAutoSms("התקבלה שיחה חדשה אצל המטופל", therapistPhone)
+      sendAutoSms("התקבלה שיחה חדשה אצל המטופל",  therapistPhone)
       permessionCallLog(uid);
 
   }
@@ -362,6 +469,7 @@ function permissionContacts(){
 function permessionCallLog(uid){
   (async ()=>{
     try {
+      console.log(" L I N E 365 ");
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
         {
@@ -372,8 +480,9 @@ function permessionCallLog(uid){
           buttonNegative: 'Cancel',
           buttonPositive: 'OK',
         }
-      )
+      );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        console.log(" L I N E 378 ");
         //console.log(CallLogs);
         CallLogs.load(10).then(c => {
           let i=0;
