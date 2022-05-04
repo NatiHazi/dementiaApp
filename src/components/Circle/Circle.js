@@ -12,6 +12,8 @@ const Circle = ({id, color}) => {
       alignSelf: "center",
       borderRadius: 100 / 2,
       backgroundColor: "grey",
+      alignItems:'center',
+      alignSelf: "flex-end",
     },
   });
   export default Circle;

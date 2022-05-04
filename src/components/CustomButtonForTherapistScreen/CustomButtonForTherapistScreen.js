@@ -16,12 +16,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#3B71F3',
         padding: 20,
         height: 60,
-        width:'60%',
+        width:'100%',
         flexDirection:'row',
         padding:20,
         marginVertical:10,
         borderRadius:10,
-        justifyContent: 'space-evenly' 
+        justifyContent: 'space-evenly',
+        alignSelf: "flex-start",
+        
     },
 
     text:{

@@ -289,16 +289,15 @@ const TherapistOptionScreen = () => {
         <ScrollView keyboardShouldPersistTaps='handled'>
         <View style={styles.root}>
             <Text style={styles.title} >DementiaApp  </Text>
-            <Text style={styles.text} > </Text>
-                        
+            <Text style={styles.text} ></Text>    
+            <Circle id="location" color="red"/>           
             <CustomButtonForTherapistScreen text="לחץ לקבלת מיקום" onPress={()=>{findPatienPressed()}}/> 
-            <Circle id="location" color="red"/>
-            <CustomButtonForTherapistScreen text="לחץ לרשימת השיחות" onPress={()=>{onPatientCallPressed()}}/> 
             <Circle id="calls" color="grey"/>
-            <CustomButtonForTherapistScreen text="לחץ לרשימת ההודעות שהתקבלו" onPress={()=>{onPatientSMSPressed()}}/> 
+            <CustomButtonForTherapistScreen text="לחץ לרשימת השיחות" onPress={()=>{onPatientCallPressed()}}/> 
             <Circle id="sms" color="grey"/>
-            <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה" onPress={()=>{onBatteryStatusPressed()}}/>
+            <CustomButtonForTherapistScreen text="לחץ לרשימת ההודעות שהתקבלו" onPress={()=>{onPatientSMSPressed()}}/> 
             <Circle id="battery" color="red"/>
+            <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה" onPress={()=>{onBatteryStatusPressed()}}/>
             {/* <CustomButtonForTherapistScreen text="׳׳—׳¥ ׳׳¢׳™׳“׳›׳•׳ ׳₪׳¨׳˜׳™ ׳”׳׳˜׳•׳₪׳" onPress={()=>{onUpdatePressed1()}}/> */}
             <CustomButtonForTherapistScreen text="לחץ להגדרת רקע" onPress={()=>{simreka()}}/>
             <CustomButtonForTherapistScreen text="לחץ לשליחת תזכורת" onPress={()=>{onSendReminders()}}/> 
@@ -314,21 +313,24 @@ const TherapistOptionScreen = () => {
 const styles = StyleSheet.create({
  
     root:{
-        alignItems:'center',
+        //alignItems:'center',
         backgroundColor:'snow',
-        padding: 20,
+        padding: 30,
     },
     title:{
-        fontSize: 36,
-        fontWeight:'bold',
-        color:'#051C60',
-        margin: 10,
+      paddingVertical: 6,
+      borderWidth: 4,
+      borderRadius: 8,
+      backgroundColor: "#fff",
+      color: "#20232a",
+      textAlign: "center",
+      fontSize: 40,
     },
     text:{
         flex: 1,
         fontStyle:'normal',
         fontWeight:'bold',
-        fontSize: 22,
+        fontSize: 10,
         textAlign:'center',
         color:'#051C60',
         margin: 10,
