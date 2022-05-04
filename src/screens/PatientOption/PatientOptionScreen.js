@@ -30,6 +30,7 @@ const [user, setUser] = useState();
 const [level] = useBatteryLevel();
 const [firstRender, setfirstRender]=useState(true);
 const [therapistPhone, settherapistPhone]=useState();
+const [idThearpist, setIdThearpist]=useState();
 const navigation = useNavigation();
   useEffect(() => {
   //   SystemSetting.getVolume().then((volume)=>{
@@ -45,53 +46,22 @@ const navigation = useNavigation();
       const uid = user.uid;
       if (firstRender){
 
-        // (async ()=>{
-        //   try {
-        //     const granted = await PermissionsAndroid.request(
-        //       PermissionsAndroid.PERMISSIONS.SEND_SMS,
-        //       {
-        //         title: "SEND SMS PERMEISION",
-        //         message:
-        //           "SEND SMS PERMEISION",
-        //         buttonNeutral: "Ask Me Later",
-        //         buttonNegative: "Cancel",
-        //         buttonPositive: "OK"
-        //       }
-        //     );
-        //     const granted2 = await PermissionsAndroid.request(
-        //       PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
-        //       {
-        //         title: 'Call Log Example',
-        //         message:
-        //           'Access your call logs',
-        //         buttonNeutral: 'Ask Me Later',
-        //         buttonNegative: 'Cancel',
-        //         buttonPositive: 'OK',
-        //       }
-        //     );
-        //   }catch(error){
-        //     console.log("LINE 59: error", error); 
-        //   }
-
-         
-        // })();
-
         getLocationAndUpdateFirebase(uid);
          updateTokenMessage(uid); //update user token for messaging cloud
       permessionCallLog(uid);
 
-      findTherapitNum(uid);
+      findTherapitNumAndId(uid);
       console.log(" F I R S T R E N D E R");
      
-      listenerForUpdates(uid);
+     
       smsLog(uid);
       updateSettingsFirebase(uid);
     }
-    if (therapistPhone){
+    if (therapistPhone && idThearpist){
       console.log("LINE 67, AND PHONE: ", therapistPhone);
       listenSMSAndSend(uid,therapistPhone); //listen for sms coming and notice the therapist new sms came
       startListenerTapped(uid,therapistPhone); //same with calls
-
+      listenerForUpdates(uid, idThearpist);
     }
   
       
@@ -117,7 +87,7 @@ const navigation = useNavigation();
         
       }
 
-  }, [user,therapistPhone]);
+  }, [user,therapistPhone,idThearpist]);
 
   const requestCameraPermission = async () => {
     try {
@@ -142,7 +112,7 @@ const navigation = useNavigation();
     }
   };
 
-  function findTherapitNum(uid){
+  function findTherapitNumAndId(uid){
     firestore()
     .collection('users')
     .doc(uid)
@@ -161,8 +131,10 @@ const navigation = useNavigation();
      // console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
       if(documentSnapshot.data().otherSidePhoneNum === myPhone){
         let terapistPhone = "+972" + (documentSnapshot.data().myNum).slice(1) ;
+        let therapistId=documentSnapshot.data().id;
         console.log(terapistPhone);
         settherapistPhone(terapistPhone);
+        setIdThearpist(therapistId);
       }
     });
   });
@@ -296,66 +268,49 @@ const navigation = useNavigation();
 
   function listenerForUpdates(uid){
     let firstFire = true;
-    let phoneNumber = "";
-    let idThearpist = "";
     firestore()
-    .collection('users')
-    .doc(uid)
-    .get()
-    .then(documentSnapshot => {
-      if (documentSnapshot.exists) {
-        phoneNumber = documentSnapshot.data().myNum;
-        firestore()
-        .collection('users')
-        .get()
-        .then(querySnapshot => {
-           querySnapshot.forEach(documentSnapshot => {
-             if(documentSnapshot.data().otherSidePhoneNum == phoneNumber){
-              idThearpist = documentSnapshot.data().id;
-              firestore()
-              .collection('users')
-              .doc(idThearpist)
-              .onSnapshot(documentSnapshot => {
-                if (!firstFire){
-                 if(documentSnapshot.data().onUpdatePressed){
-                  getLocationAndUpdateFirebase(uid);
-                  permessionCallLog(uid);
-                  updateSettingsFirebase(uid);
-                  smsLog(uid);
-                  updateListersToFalseInTherDoc(idThearpist,"onUpdatePressed");
+  .collection('users')
+  .doc(idThearpist)
+  .onSnapshot(documentSnapshot => {
+    if (!firstFire){
+     if(documentSnapshot.data().onUpdatePressed){
+      getLocationAndUpdateFirebase(uid);
+      permessionCallLog(uid);
+      updateSettingsFirebase(uid);
+      smsLog(uid);
+      updateListersToFalseInTherDoc(idThearpist,"onUpdatePressed");
 
-                 }
-                 if (documentSnapshot.data().setBackground){
-                   (async()=>{
-                   try{
-                  const urlBackground = await storage().ref(`${uid}image-for-background.png`).getDownloadURL();
-                  if (urlBackground){
-                    console.log("line 227: ", urlBackground);
-                     WallPaperManager.setWallpaper({ uri: urlBackground }, (res) => {
-                       console.log(res);
-                       
-                        });
-                      }
-                   }
-                   catch(error){
-                     console.log(" line 232: ", error);
-                   }
-                   updateListersToFalseInTherDoc(idThearpist,"setBackground");
-                   })();
-                 }
-                  
-                }
-              
-                firstFire=false;
-              });
-             }
-          });
-        }); 
-      }
-      });
+     }
+     if (documentSnapshot.data().setBackground){
+       (async()=>{
+       try{
+      const urlBackground = await storage().ref(`${uid}image-for-background.png`).getDownloadURL();
+      if (urlBackground){
+        console.log("line 227: ", urlBackground);
+         WallPaperManager.setWallpaper({ uri: urlBackground }, (res) => {
+           console.log(res);
+           
+            });
+          }
+       }
+       catch(error){
+         console.log(" line 232: ", error);
+       }
+       updateListersToFalseInTherDoc(idThearpist,"setBackground");
+       })();
+     }
+      
+    }
+  
+    firstFire=false;
+  });
+
+
 
   }
 
+
+  
 
 
  function startListenerTapped(uid) {

@@ -15,6 +15,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import WallPaperManager from "react-native-set-wallpaper";
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
+import Circle from '../../components/Circle/Circle';
 
 const TherapistOptionScreen = () => {
   const [initializing, setInitializing] = useState(true);
@@ -41,6 +42,7 @@ const TherapistOptionScreen = () => {
 
   function findPatientID(uid){
     console.log('starting function findPatientID');
+    onUpdatePressed1();
     firestore()
     .collection('users')
     .doc(uid)
@@ -73,13 +75,15 @@ const TherapistOptionScreen = () => {
 
     const onPatientCallPressed = () =>{
       // navigation.navigate("signIn");
-      console.log("patient's call pressed")
+      console.log("patient's call pressed");
+      onUpdatePressed1();
       navigation.navigate("ShowCallLogPage");
   };
 
   const onPatientSMSPressed = () =>{
     // navigation.navigate("signIn");
-    console.log("patient's message pressed")
+    console.log("patient's message pressed");
+    onUpdatePressed1();
     navigation.navigate("ShowSMSLogPage");
 };
 
@@ -120,6 +124,7 @@ const TherapistOptionScreen = () => {
   }
     const onBatteryStatusPressed = () =>{
       console.log("onBatteryStatusPressed");
+      onUpdatePressed1();
      // auth().onAuthStateChanged(onAuthStateChanged);  
       if (initializing) return null;
       console.log("checkkkkkkkkkkkkkkk");
@@ -286,14 +291,18 @@ const TherapistOptionScreen = () => {
             <Text style={styles.title} >DementiaApp  </Text>
             <Text style={styles.text} > </Text>
                         
-             <CustomButtonForTherapistScreen text="לחץ לקבלת מיקום" onPress={()=>{findPatienPressed()}}/> 
-             <CustomButtonForTherapistScreen text="לחץ לרשימת השיחות" onPress={()=>{onPatientCallPressed()}}/> 
-             <CustomButtonForTherapistScreen text="לחץ לרשימת ההודעות שהתקבלו" onPress={()=>{onPatientSMSPressed()}}/> 
-             <CustomButtonForTherapistScreen text="לחץ לשליחת תזכורת" onPress={()=>{onSendReminders()}}/> 
-             <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה" onPress={()=>{onBatteryStatusPressed()}}/>
-             <CustomButtonForTherapistScreen text="לחץ לעידכון פרטי המטופל" onPress={()=>{onUpdatePressed1()}}/>
-             <CustomButtonForTherapistScreen text="לחץ להגדרת רקע" onPress={()=>{simreka()}}/>
-             <CustomButton text="Sing out" onPress={signOutFunction} type = "SIGNOUT"/>
+            <CustomButtonForTherapistScreen text="לחץ לקבלת מיקום" onPress={()=>{findPatienPressed()}}/> 
+            <Circle id="location" color="red"/>
+            <CustomButtonForTherapistScreen text="לחץ לרשימת השיחות" onPress={()=>{onPatientCallPressed()}}/> 
+            <Circle id="calls" color="grey"/>
+            <CustomButtonForTherapistScreen text="לחץ לרשימת ההודעות שהתקבלו" onPress={()=>{onPatientSMSPressed()}}/> 
+            <Circle id="sms" color="grey"/>
+            <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה" onPress={()=>{onBatteryStatusPressed()}}/>
+            <Circle id="battery" color="red"/>
+            {/* <CustomButtonForTherapistScreen text="׳׳—׳¥ ׳׳¢׳™׳“׳›׳•׳ ׳₪׳¨׳˜׳™ ׳”׳׳˜׳•׳₪׳" onPress={()=>{onUpdatePressed1()}}/> */}
+            <CustomButtonForTherapistScreen text="לחץ להגדרת רקע" onPress={()=>{simreka()}}/>
+            <CustomButtonForTherapistScreen text="לחץ לשליחת תזכורת" onPress={()=>{onSendReminders()}}/> 
+            <CustomButton text="Sing out" onPress={signOutFunction} type = "SIGNOUT"/>
            
             {/* <CustomButtonForTherapistScreen text="Therapist" onPress={onTherapistPressed}/> 
             <CustomButtonForTherapistScreen text="Patient" onPress={onTherapistPressed}/>  */}
@@ -332,3 +341,4 @@ const styles = StyleSheet.create({
 
 
 export default TherapistOptionScreen
+
