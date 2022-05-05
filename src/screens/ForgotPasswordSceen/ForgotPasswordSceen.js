@@ -3,7 +3,8 @@ import { View, Text, StyleSheet, useWindowDimensions,ScrollView} from 'react-nat
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-import {getAuth, sendPasswordResetEmail } from '../../../db/firebase'
+import {getAuth, sendPasswordResetEmail } from '../../../db/firebase';
+
 
 
 const ConfirmEmailScreen = ({ route }) => {

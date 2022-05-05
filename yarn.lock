@@ -2076,10 +2076,19 @@
     "query-string" "^7.0.0"
     "react-is" "^16.13.0"
 
-"@react-navigation/elements@^1.2.1":
-  "integrity" "sha512-EnmAbKMsptrliRKf95rdgS6BhMjML+mIns06+G1Vdih6BrEo7/0iytThUv3WBf99AI76dyEq/cqLUwHPiFzXWg=="
-  "resolved" "https://registry.npmjs.org/@react-navigation/elements/-/elements-1.2.1.tgz"
-  "version" "1.2.1"
+"@react-navigation/drawer@^6.4.1":
+  "integrity" "sha512-CTVkiyhytUr4hUvWH8mEEGZ2BLcbFfWCHhanKisMBdq6qXMOIXoMX7AzOvjP8ojI1pvJZenvs8fopembGwUNUA=="
+  "resolved" "https://registry.npmjs.org/@react-navigation/drawer/-/drawer-6.4.1.tgz"
+  "version" "6.4.1"
+  dependencies:
+    "@react-navigation/elements" "^1.3.3"
+    "color" "^3.1.3"
+    "warn-once" "^0.1.0"
+
+"@react-navigation/elements@^1.2.1", "@react-navigation/elements@^1.3.3":
+  "integrity" "sha512-Lv2lR7si5gNME8dRsqz57d54m4FJtrwHRjNQLOyQO546ZxO+g864cSvoLC6hQedQU0+IJnPTsZiEI2hHqfpEpw=="
+  "resolved" "https://registry.npmjs.org/@react-navigation/elements/-/elements-1.3.3.tgz"
+  "version" "1.3.3"
 
 "@react-navigation/native-stack@^6.2.5":
   "integrity" "sha512-XCtwl4LEr06nzxMG4aXbYfbO/pAjyhGOR3QtBVBq/uGfVGkeK8utKUe925reqd1x099CiEfSJLpgeR2KzzYp+Q=="
@@ -2925,7 +2934,7 @@
     "map-visit" "^1.0.0"
     "object-visit" "^1.0.0"
 
-"color-convert@^1.9.0":
+"color-convert@^1.9.0", "color-convert@^1.9.3":
   "integrity" "sha512-QfAUtd+vFdAtFQcC8CCyYt1fYWxSqAiK2cSD6zDB8N3cpsEBAvRxp9zOGg6G/SHHJYAT88/az/IuDGALsNVbGg=="
   "resolved" "https://registry.npmjs.org/color-convert/-/color-convert-1.9.3.tgz"
   "version" "1.9.3"
@@ -2949,13 +2958,21 @@
   "resolved" "https://registry.npmjs.org/color-name/-/color-name-1.1.4.tgz"
   "version" "1.1.4"
 
-"color-string@^1.5.3":
+"color-string@^1.5.3", "color-string@^1.6.0":
   "integrity" "sha512-9Mrz2AQLefkH1UvASKj6v6hj/7eWgjnT/cVsR8CumieLoT+g900exWeNogqtweI8dxloXN9BDQTYro1oWu/5CQ=="
   "resolved" "https://registry.npmjs.org/color-string/-/color-string-1.9.0.tgz"
   "version" "1.9.0"
   dependencies:
     "color-name" "^1.0.0"
     "simple-swizzle" "^0.2.2"
+
+"color@^3.1.3":
+  "integrity" "sha512-aBl7dZI9ENN6fUGC7mWpMTPNHmWUSNan9tuWN6ahh5ZLNk9baLJOnSMlrQkHcrfFgz2/RigjUVAjdx36VcemKA=="
+  "resolved" "https://registry.npmjs.org/color/-/color-3.2.1.tgz"
+  "version" "3.2.1"
+  dependencies:
+    "color-convert" "^1.9.3"
+    "color-string" "^1.6.0"
 
 "colorette@^1.0.7":
   "integrity" "sha512-Y2oEozpomLn7Q3HFP7dpww7AtMJplbM9lGZP6RDfHqmbeRjiwRg4n6VM6j4KLmRke85uWEI7JqF17f3pqdRA0g=="
@@ -6424,7 +6441,7 @@
   "resolved" "https://registry.npmjs.org/react-native-easy-localization-and-rtl/-/react-native-easy-localization-and-rtl-1.1.0.tgz"
   "version" "1.1.0"
 
-"react-native-gesture-handler@*", "react-native-gesture-handler@~1.10.2":
+"react-native-gesture-handler@*", "react-native-gesture-handler@>= 1.0.0", "react-native-gesture-handler@~1.10.2":
   "integrity" "sha512-cBGMi1IEsIVMgoox4RvMx7V2r6bNKw0uR1Mu1o7NbuHS6BRSVLq0dP34l2ecnPlC+jpWd3le6Yg1nrdCjby2Mw=="
   "resolved" "https://registry.npmjs.org/react-native-gesture-handler/-/react-native-gesture-handler-1.10.3.tgz"
   "version" "1.10.3"
@@ -6471,7 +6488,7 @@
   "resolved" "https://registry.npmjs.org/react-native-push-notification/-/react-native-push-notification-8.1.1.tgz"
   "version" "8.1.1"
 
-"react-native-reanimated@~2.2.0":
+"react-native-reanimated@>= 1.0.0", "react-native-reanimated@~2.2.0":
   "integrity" "sha512-Nn648MfEEnTCEiWsl1YmfkojiLyV0NMY0EiRdDRbZNfJVfxBuyqhCxI/4Jd7aBi162qpgf8XK2mByYgvF4zLrQ=="
   "resolved" "https://registry.npmjs.org/react-native-reanimated/-/react-native-reanimated-2.2.4.tgz"
   "version" "2.2.4"
