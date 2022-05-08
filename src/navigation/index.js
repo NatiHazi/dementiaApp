@@ -26,7 +26,7 @@ const MyDrawer = () => {
     return (
         <Drawer.Navigator>
           <Drawer.Screen name="DementiaApp" component={TherapistOption} />
-          <Drawer.Screen name="MainScreen" component={MainScreen} />
+          {/* <Drawer.Screen name="MainScreen" component={MainScreen} /> */}
           <Drawer.Screen name="Forgot Password" component={ForgotPasswordSceen} initialParams={{ isTherapist: true }} />
           {/* <Drawer.Screen name="Sign Out" component={MainScreen} /> */}
         </Drawer.Navigator>

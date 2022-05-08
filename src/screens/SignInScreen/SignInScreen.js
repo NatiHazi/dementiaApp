@@ -198,11 +198,13 @@ const styles = StyleSheet.create({
       
     },
     checkbox: {
-        alignSelf: "center",
-        
+       alignSelf: "center",
+ 
       },
       label: {
         margin: 6,
+        marginRight: '70%',
+        color: 'grey'
       },
 })
 
