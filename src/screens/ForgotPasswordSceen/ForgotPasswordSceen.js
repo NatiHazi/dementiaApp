@@ -1,35 +1,37 @@
 import React,{useState} from 'react';
-import { View, Text, StyleSheet, useWindowDimensions,ScrollView} from 'react-native';
+import { View, Text, StyleSheet ,ScrollView} from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
-import {getAuth, sendPasswordResetEmail } from '../../../db/firebase';
+import auth from '@react-native-firebase/auth';
 
 
 
-const ConfirmEmailScreen = ({ route }) => {
+
+
+const ForgotPasswordSceen = ({ route }) => {
     const { isTherapist} = route.params;
     const [userName, setUserName] = useState('');
 
     const navigation = useNavigation();
 
     const onSendPressed = () =>{
-            const auth = getAuth();
-    sendPasswordResetEmail(auth, userName)
-    .then(() => {
-        // Password reset email sent!
-        // ..
-        console.log("Password reset email sent! ")
-        alert("Please go to mail and set new Password and then sign in with new Password")
-        navigation.navigate("signIn", {isTherapist: isTherapist});
-    })
-    .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode)
-        // ..
-    });
-        //navigation.navigate("NewPassword");
+        
+            auth().sendPasswordResetEmail(userName)
+            .then(function() {
+            // Email sent.
+            console.log("Password reset email sent! ")
+            alert("Please go to mail and set new Password and then sign in with new Password")
+            navigation.navigate("signIn", {isTherapist: isTherapist});
+            })
+            .catch(function(error) {
+            // An error happened.
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode)
+            });
+
+
         
     };
 
@@ -42,7 +44,7 @@ const ConfirmEmailScreen = ({ route }) => {
     return (
         <ScrollView>
         <View style={styles.root}>
-            <Text style={styles.title} >איפוס סיסמא  </Text>
+            <Text style={styles.title} >איפוס סיסמא</Text>
 
              <CustomInput
               placeholder="הכנס מייל"
@@ -85,4 +87,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default ConfirmEmailScreen
+export default ForgotPasswordSceen;

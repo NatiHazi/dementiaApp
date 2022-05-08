@@ -16,6 +16,7 @@ import ShowLogCall from '../screens/ShowCallLogPage/ShowCallLogPage';
 import ShowSMSLog from '../screens/ShowSMSLogPage/ShowSMSLogPage';
 import FirstScreen from '../screens/FirstScreen/FirstScreen';
 import { createDrawerNavigator } from '@react-navigation/drawer';
+import auth from '@react-native-firebase/auth';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -26,7 +27,8 @@ const MyDrawer = () => {
         <Drawer.Navigator>
           <Drawer.Screen name="DementiaApp" component={TherapistOption} />
           <Drawer.Screen name="MainScreen" component={MainScreen} />
-          <Drawer.Screen name="Forgot Password" component={ForgotPasswordSceen} />
+          <Drawer.Screen name="Forgot Password" component={ForgotPasswordSceen} initialParams={{ isTherapist: true }} />
+          {/* <Drawer.Screen name="Sign Out" component={MainScreen} /> */}
         </Drawer.Navigator>
      
     );
@@ -38,7 +40,7 @@ const Navigation = () => {
             <Stack.Navigator screenOptions={{headerShown: false}}>
             <Stack.Screen name="FirstScreen" component={FirstScreen}/>
                 <Stack.Screen name="MainScreen" component={MainScreen}/>
-                <Stack.Screen name="TherapistScreen" component={MyDrawer}/>
+                <Stack.Screen name="TherapistScreen" component={MyDrawer} />
                 <Stack.Screen name="signIn" component={SignInScreen}/>
                 <Stack.Screen name="signUn" component={SignUpScreen}/>
                 <Stack.Screen name="NewPassword" component={NewPasswordScreen}/>

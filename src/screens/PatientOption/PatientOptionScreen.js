@@ -31,7 +31,13 @@ const [level] = useBatteryLevel();
 const [firstRender, setfirstRender]=useState(true);
 const [therapistPhone, settherapistPhone]=useState();
 const [idThearpist, setIdThearpist]=useState();
+const [batteryLife, setBatterLife]=useState();
+const batteryLifeUseRef = useRef();
+// const [patientCalls, setPatientCalls]=useState();
+
+
 const navigation = useNavigation();
+
   useEffect(() => {
   //   SystemSetting.getVolume().then((volume)=>{
   //     console.log('Current volume is ' + volume);
@@ -79,38 +85,52 @@ const navigation = useNavigation();
       else {
       console.log("user is not signed in");
       }
+
+
       return()=>{
         console.log("CLEAN USEEFFECT")
         
-        
-        
+
         
       }
 
   }, [user,therapistPhone,idThearpist]);
 
-  const requestCameraPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_SMS,
-        {
-          title: "READ SMS PERMEISION",
-          message:
-            "READ SMS PERMEISION",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK"
-        }
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log("You can use the camera");
-      } else {
-        console.log("Camera permission denied");
-      }
-    } catch (err) {
-      console.warn(err);
+  useEffect(() => {
+    if (batteryLife && user && idThearpist){
+    console.log("LINE 100 BITCH");
+    firestore()
+    .collection('users')
+    .doc(user.uid)
+    .update({
+      battery:batteryLife,
+    })
+    .then(() => {
+      console.log('User battery updated!');
+      updateColorForTherapist("colorBattery");
+    });
     }
-  };
+}, [batteryLife, idThearpist]);
+
+
+
+    function updateColorForTherapist(theColorArtibute){
+      if (idThearpist){
+      firestore()
+    .collection('users')
+    .doc(idThearpist)
+    .update({
+      // [toUpdateField]: "grey",
+      [theColorArtibute]: "green",
+    })
+    .then(() => {
+      console.log('User updated!');
+    });
+    }
+    else{
+    console.log("user not connected");
+    }
+    }
 
   function findTherapitNumAndId(uid){
     firestore()
@@ -355,7 +375,7 @@ const navigation = useNavigation();
     	// Do something call got missed
     	// This clause will only be executed for Android
       console.log("Missed")
-      sendAutoSms("התקבלה שיחה חדשה אצל המטופל",  therapistPhone)
+      sendAutoSms("התקבלה שיחה חדשה אצל המטופל", therapistPhone)
       permessionCallLog(uid);
 
   }
@@ -382,15 +402,10 @@ function updateSettingsFirebase(uid, level){
   DeviceInfo.getBatteryLevel().then(level => {
     let batterypercent=Math.floor(level*100)+"%";
     console.log(" LINE 296: ", batterypercent);
-    firestore()
-    .collection('users')
-    .doc(uid)
-    .update({
-      battery:batterypercent,
-    })
-    .then(() => {
-      console.log('User battery updated!');
-    });
+    console.log("LINE 371 :: ", batteryLife);
+    if (batterypercent!==batteryLife)
+    setBatterLife(batterypercent);
+ 
   });
   
  
@@ -449,6 +464,7 @@ function permessionCallLog(uid){
             // }
           }
           console.log("the arrrayyyyy: ", save_unknown_calls)
+
           firestore()
             .collection('users')
             .doc(uid)
