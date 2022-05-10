@@ -21,6 +21,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import DeviceInfo from 'react-native-device-info';
 import storage from '@react-native-firebase/storage';
 import WallPaperManager from "react-native-set-wallpaper";
+import BackgroundTimer from 'react-native-background-timer';
+
 
 
 
@@ -32,7 +34,16 @@ const [firstRender, setfirstRender]=useState(true);
 const [therapistPhone, settherapistPhone]=useState();
 const [idThearpist, setIdThearpist]=useState();
 const [batteryLife, setBatterLife]=useState();
-const batteryLifeUseRef = useRef();
+const prevBatteryLife = useRef();
+const [userLocation, setUserLocation]=useState({
+  longitude: '',
+    latitude: '',
+});
+const prevUserLocation = useRef({
+  longitude: '',
+    latitude: '',
+});
+
 // const [patientCalls, setPatientCalls]=useState();
 
 
@@ -50,9 +61,8 @@ const navigation = useNavigation();
 
       console.log("test if inside user");
       const uid = user.uid;
-      if (firstRender){
-
-        getLocationAndUpdateFirebase(uid);
+      if (firstRender){    
+        getLocationAndUpdateFirebase();
          updateTokenMessage(uid); //update user token for messaging cloud
       permessionCallLog(uid);
 
@@ -89,15 +99,15 @@ const navigation = useNavigation();
 
       return()=>{
         console.log("CLEAN USEEFFECT")
-        
-
-        
+          
       }
 
   }, [user,therapistPhone,idThearpist]);
 
+  //USEEFFECT FOR CHECKING BATTERY STATUS AND IF NEED UPDATING IN SERVER
   useEffect(() => {
     if (batteryLife && user && idThearpist){
+      prevBatteryLife.current=batteryLife;
     console.log("LINE 100 BITCH");
     firestore()
     .collection('users')
@@ -107,21 +117,65 @@ const navigation = useNavigation();
     })
     .then(() => {
       console.log('User battery updated!');
-      updateColorForTherapist("colorBattery");
+      const index = batteryLife.indexOf('%');
+      const num_without_percent=batteryLife.substring(0, index);
+      if (num_without_percent<20)
+        updateColorForTherapist("colorBattery", "red");
+      else
+        updateColorForTherapist("colorBattery", "green");
     });
     }
 }, [batteryLife, idThearpist]);
+  //USEEFFECT FOR STARTING BACKGROUND INTERVAL FOR CHECKING BATTERY
+  useEffect(() => {
+    const intervalId = BackgroundTimer.setInterval(() => {
+  
+      updateSettingsFirebase();
+      
+  }, 3600000);
+  return () => BackgroundTimer.clearInterval(intervalId);
+
+  }, []);
+  //USEEFFECT FOR STARTING INTEVAL FOR CHECKING LOCATION
+  useEffect(() => {
+     const intervalIdLocation = BackgroundTimer.setInterval(() => {
+      getLocationAndUpdateFirebase();
+      
+  }, 3600000);
+
+  return () => BackgroundTimer.clearInterval(intervalIdLocation);
+
+  }, [user]);
+  //USEEFFECT FOR CHECKING IF LOCATION HAS CAHNGED AFTER X MILI SECONDS AND IF DOES UPDATE IN SERVER
+  useEffect(() => {
+    if (userLocation && user && idThearpist){
+      prevUserLocation.current.latitude=userLocation.latitude;
+      prevUserLocation.current.longitude=userLocation.longitude;
+
+      firestore()
+      .collection('users')
+      .doc(user.uid)
+      .update({
+        longitude: userLocation.longitude,
+        latitude: userLocation.latitude
+      })
+      .then(() => {
+        console.log('User updated!');
+      });
+    }
+
+  }, [userLocation,idThearpist]);
 
 
-
-    function updateColorForTherapist(theColorArtibute){
+  //MAKE COLORS FOR THE HERAPIST SCREEN-GREEN IS NEW DATA\GREY IS ALREADY SEEN\RED IS BATTERY UNDER 20%
+    function updateColorForTherapist(theColorArtibute, theColor){
       if (idThearpist){
       firestore()
     .collection('users')
     .doc(idThearpist)
     .update({
       // [toUpdateField]: "grey",
-      [theColorArtibute]: "green",
+      [theColorArtibute]: theColor,
     })
     .then(() => {
       console.log('User updated!');
@@ -131,7 +185,7 @@ const navigation = useNavigation();
     console.log("user not connected");
     }
     }
-
+//FIND THERAPIST NUM AND ID IN FIRERBASE COLLECTION TO MAKE QUERIES EASIER
   function findTherapitNumAndId(uid){
     firestore()
     .collection('users')
@@ -161,7 +215,7 @@ const navigation = useNavigation();
     }
   });
   }
-  
+  //A FUNCTION THAT SENDS SMS TO THE THERAPIST
   function sendAutoSms(text, therapistPhone){
     (async ()=>{
     try {
@@ -201,18 +255,20 @@ const navigation = useNavigation();
 
  
   }
-
+  //A FUNTION THAT LISTENS FOR NEW INCOMING SMS AND THEN HANDLES IT
   function listenSMSAndSend(uid,therapistPhone){
-  
-        SmsListner.addListener(message=>{
+    
+    SmsListner.addListener(message=>{
           console.log("the sms test listner: ", message);
           sendAutoSms('התקבלה הודעה חדשה אצל המטופל', therapistPhone);
            smsLog(uid);
+           updateColorForTherapist("colorSMS", "green");
         })
-
+       
+       
     }
  
-
+    //GETS THE LOG OF SMS MESSAGES OF THE PATIENT AND UPDATE IT TO THE FIREBASE
   function smsLog(uid){
     (async ()=>{
     try {
@@ -273,7 +329,7 @@ const navigation = useNavigation();
 
 
   }
-
+  // SETTING VIRABLES FROM FIREBASE THAT INDECATES ABOUT LISTNERS TO OFF
   function updateListersToFalseInTherDoc(id,field){
     firestore()
     .collection('users')
@@ -286,6 +342,7 @@ const navigation = useNavigation();
     });
   }
 
+  //FUNCTION THAT WAITS FOR BACKGROUND UPDATE FROM THERAPIST (AND ALSO FOR UPDATES FOR ANY KIND DATA, BUT LATER WILL BE EDITTED)
   function listenerForUpdates(uid){
     let firstFire = true;
     firestore()
@@ -293,14 +350,14 @@ const navigation = useNavigation();
   .doc(idThearpist)
   .onSnapshot(documentSnapshot => {
     if (!firstFire){
-     if(documentSnapshot.data().onUpdatePressed){
-      getLocationAndUpdateFirebase(uid);
-      permessionCallLog(uid);
-      updateSettingsFirebase(uid);
-      smsLog(uid);
-      updateListersToFalseInTherDoc(idThearpist,"onUpdatePressed");
+    //  if(documentSnapshot.data().onUpdatePressed){
+    //   getLocationAndUpdateFirebase();
+    //   permessionCallLog(uid);
+    //   updateSettingsFirebase(uid);
+    //   smsLog(uid);
+    //   updateListersToFalseInTherDoc(idThearpist,"onUpdatePressed");
 
-     }
+    //  }
      if (documentSnapshot.data().setBackground){
        (async()=>{
        try{
@@ -325,14 +382,10 @@ const navigation = useNavigation();
     firstFire=false;
   });
 
-
-
   }
 
 
-  
-
-
+//FUNCTION THAT LISTENRS FOR NEW INCOMING CALLS AND THEN HANDLES IT
  function startListenerTapped(uid) {
     this.callDetector = new CallDetectorManager((event, phoneNumber)=> {
     // For iOS event will be either "Connected",
@@ -346,8 +399,10 @@ const navigation = useNavigation();
     if (event === 'Disconnected') {
     // Do something call got disconnected
     console.log("DISCONNETED")
-    sendAutoSms("התקבלה שיחה חדשה אצל המטופל", therapistPhone)
+    sendAutoSms("התקבלה שיחה חדשה אצל המטופל", therapistPhone);
     permessionCallLog(uid);
+    updateColorForTherapist("colorCalls", "green");
+    updateSettingsFirebase(uid);
     
     }
     // else if (event === 'Connected') {
@@ -377,6 +432,8 @@ const navigation = useNavigation();
       console.log("Missed")
       sendAutoSms("התקבלה שיחה חדשה אצל המטופל", therapistPhone)
       permessionCallLog(uid);
+      updateColorForTherapist("colorCalls", "green");
+      updateSettingsFirebase(uid);
 
   }
   console.log("event: ", event, "phone: ", phoneNumber);
@@ -398,21 +455,23 @@ function stopListenerTapped() {
   function percentage(level) {
     return `${Math.floor(level * 100)}%`; 
 }
-function updateSettingsFirebase(uid, level){
+//FUNCTION THAT CHECKS THE BATTERY IN DEVICE AND UPDATES IT IN FIREBASE IF IT HAD CHANGED
+function updateSettingsFirebase(uid){
   DeviceInfo.getBatteryLevel().then(level => {
     let batterypercent=Math.floor(level*100)+"%";
-    console.log(" LINE 296: ", batterypercent);
-    console.log("LINE 371 :: ", batteryLife);
-    if (batterypercent!==batteryLife)
+    // console.log(" LINE 296: ", batterypercent);
+    // console.log("LINE 371 :: ", batteryLife);
+    if (batterypercent!==prevBatteryLife.current){
+      console.log("LINE 439 KINE 439 LINE 439 LINE 439", batterypercent, prevBatteryLife.current);
     setBatterLife(batterypercent);
- 
+    }
   });
   
  
 }
 
 
-
+//TO BE LOGGED IN USER
 function onAuthStateChanged(user) {
   setUser(user);
   if (initializing) setInitializing(false);
@@ -435,7 +494,7 @@ function permissionContacts(){
   })();
 }
 
-
+//FUNCTION THAT TAKES THE CALLS LOG FROM DEVICE AND PUT IT IN FIREBASE
 function permessionCallLog(uid){
   (async ()=>{
     try {
@@ -485,8 +544,10 @@ function permessionCallLog(uid){
     }
   })();
 }
-
-function getLocationAndUpdateFirebase(uid){
+//GETS THE LOCATION AND UPDATES IN FIREBASE
+function getLocationAndUpdateFirebase(){
+  if (user){
+    const uid=user.uid;
   (async ()=>{
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
@@ -496,22 +557,21 @@ function getLocationAndUpdateFirebase(uid){
     else{
       (async ()=>{
     let location = await Location.getCurrentPositionAsync({});
-    firestore()
-  .collection('users')
-  .doc(uid)
-  .update({
-    longitude: location.coords.longitude,
-    latitude: location.coords.latitude
-  })
-  .then(() => {
-    console.log('User updated!');
-  });
+    console.log(" LINE 532 LINE 532 LINE 532 LINE 532 LINE 532");
+        if (prevUserLocation.current.latitude!==location.coords.latitude || prevUserLocation.current.longitude!==location.coords.longitude){
+          console.log("CHONE CHONE CHONE CHONE CHONE CHONE");
+          setUserLocation({
+            longitude: location.coords.longitude,
+            latitude: location.coords.latitude,
+          });
+}
   })();
     }
 })();
 }
+}
 
-
+//TOKEN MESSAGE FOR NOTIFCIATIONS
 function updateTokenMessage(uid){
   console.log("I N  T O K E N  M E S S EAGE");
   firebase.messaging().getToken()
@@ -534,7 +594,7 @@ function updateTokenMessage(uid){
 } 
 });
 }
-
+//ASYNCSTORAGE TO STORE DATA FOR REMEMBERING THE USER AND AUTO CONNECT
 const storeData = async (value) => {
   try {
     await AsyncStorage.multiSet(value)

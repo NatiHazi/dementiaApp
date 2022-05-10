@@ -36,6 +36,7 @@
     "react-native": "0.64.3",
     "react-native-android-sms-listener-background": "^0.0.1",
     "react-native-audio": "^4.3.0",
+    "react-native-background-timer": "^2.4.1",
     "react-native-call-detection": "^1.9.0",
     "react-native-call-log": "^2.1.2",
     "react-native-device-info": "^8.5.0",

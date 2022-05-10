@@ -14,6 +14,10 @@ target 'cusomo' do
 
   pod 'react-native-image-picker', :path => '../node_modules/react-native-image-picker'
 
+  pod 'react-native-background-timer', :path => '../node_modules/react-native-background-timer'
+
+  pod 'RCTCallDetection', :path => '../node_modules/react-native-call-detection'
+
   target 'cusomoTests' do
     inherit! :complete
     # Pods for testing
