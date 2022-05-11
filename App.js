@@ -1,6 +1,6 @@
 
 import React from 'react';
-import {SafeAreaView, StyleSheet,TouchableWithoutFeedback, Keyboard } from 'react-native';
+import {SafeAreaView, StyleSheet,TouchableWithoutFeedback, Keyboard,View } from 'react-native';
 import Navigation from './src/navigation';
 import { LogBox } from 'react-native';
 
@@ -12,9 +12,9 @@ const App = () => {
     <TouchableWithoutFeedback onPress={() => { // dismiss the keyboard
       Keyboard.dismiss(); 
     }}>
-      <SafeAreaView style={styles.root}>  
+      <View style={styles.root}>  
         <Navigation/>
-      </SafeAreaView>
+      </View>
     </TouchableWithoutFeedback>
   );
 };

@@ -21,13 +21,26 @@ import auth from '@react-native-firebase/auth';
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
 
+const signOutFunction = () =>{
+    
+    auth()
+    .signOut()
+    .then(() => {
+      storeData([['userkey', ''],['passkey', '']]);
+      //navigation.navigate("MainScreen")
+    
+    });
+
+}
 
 const MyDrawer = () => {
     return (
-        <Drawer.Navigator>
+        <Drawer.Navigator >
           <Drawer.Screen name="DementiaApp" component={TherapistOption} />
+          
           {/* <Drawer.Screen name="MainScreen" component={MainScreen} /> */}
           <Drawer.Screen name="Forgot Password" component={ForgotPasswordSceen} initialParams={{ isTherapist: true }} />
+         
           {/* <Drawer.Screen name="Sign Out" component={MainScreen} /> */}
         </Drawer.Navigator>
      
@@ -36,7 +49,7 @@ const MyDrawer = () => {
 
 const Navigation = () => {
     return (
-        <NavigationContainer>
+        <NavigationContainer style = {{flex:1}}>
             <Stack.Navigator screenOptions={{headerShown: false}}>
             <Stack.Screen name="FirstScreen" component={FirstScreen}/>
                 <Stack.Screen name="MainScreen" component={MainScreen}/>
@@ -51,7 +64,6 @@ const Navigation = () => {
                 <Stack.Screen name="SendNotification" component={SendNotification}/>
                 <Stack.Screen name="ShowCallLogPage" component={ShowLogCall}/>
                 <Stack.Screen name="ShowSMSLogPage" component={ShowSMSLog}/>
-                
             </Stack.Navigator>
         </NavigationContainer>
     )

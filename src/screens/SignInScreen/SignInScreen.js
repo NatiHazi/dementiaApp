@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import { View ,Image, StyleSheet,ScrollView,Text} from 'react-native';
+import { View ,Image, StyleSheet,ScrollView,Text,I18nManager} from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import CustomInputWithEye from '../../components/CutomInputWithEye/CustomInputWithEye';
@@ -130,20 +130,23 @@ const SignInScreen = ({ route }) => {
                 
              <CustomInput
                 
-                iconType = "MaterialIcons"
+               
                 placeholder="הכנס מייל"
                 value={username} 
                 setValue={setUsername}
-                
+                style={styles.input}
                 secureTextEntry={false}
                 
               />
     
-             <CustomInputWithEye 
+             <CustomInput 
+             
               placeholder="הכנס סיסמא"
+              secureTextEntry 
               value={password}
-              setValue={setPassword} 
-              secureTextEntry
+              setValue={setPassword}
+              style={styles.input}
+              
               />
 
 
@@ -184,13 +187,21 @@ const SignInScreen = ({ route }) => {
 const styles = StyleSheet.create({
     root:{
         alignItems:'center',
-        padding: 20,
+        padding: 50,
         backgroundColor:'snow',
+
     },
-    logo: {
-        
-        width:300,
-        height:300,
+    input:{
+      //textAlign:'left',
+      width:"100%",
+      height:'100%',
+      textAlign: I18nManager.isRTL ? 'right' : 'left',
+
+      
+  },
+    logo: {  
+        width:250,
+        height:280,
     },
     checkboxContainer: {
         flexDirection: "row",

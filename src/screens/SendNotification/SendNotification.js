@@ -125,7 +125,7 @@ const SendNotification = () => {
 const styles = StyleSheet.create({
     root:{
         alignItems:'center',
-        padding: 20,
+        padding: 50,
     },
     title:{
         fontSize: 24,

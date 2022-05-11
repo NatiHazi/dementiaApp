@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import { View ,Text ,ScrollView,StyleSheet,Alert } from 'react-native';
+import { View ,Text ,ScrollView,StyleSheet,Alert,Image } from 'react-native';
 import CustomButtonForTherapistScreen from '../../components/CustomButtonForTherapistScreen';
 import { useNavigation } from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
@@ -331,7 +331,8 @@ const TherapistOptionScreen = () => {
     return (
         <ScrollView keyboardShouldPersistTaps='handled'>
         <View style={styles.root}>
-            <Text style={styles.title} >DementiaApp  </Text>
+        
+            <Text style={styles.title} >DementiaApp</Text>
              <Text style={styles.text} ></Text>    
              <Circle id="location" color={color.location}/>           
              <CustomButtonForTherapistScreen text="לחץ לקבלת מיקום" onPress={()=>{findPatienPressed()}}/> 
@@ -359,7 +360,8 @@ const styles = StyleSheet.create({
     root:{
         //alignItems:'center',
         backgroundColor:'snow',
-        padding: 30,
+        padding: 50,
+        paddingTop:0,
     },
     title:{
       paddingVertical: 6,
@@ -379,10 +381,7 @@ const styles = StyleSheet.create({
         color:'#051C60',
         margin: 10,
     },
-    logo: {
-        width:300,
-        height:300,
-    },
+
 })
 
 

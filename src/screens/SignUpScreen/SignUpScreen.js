@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import { View, Text, StyleSheet, useWindowDimensions,ScrollView} from 'react-native';
+import { View, Text, StyleSheet, useWindowDimensions,ScrollView,I18nManager} from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
@@ -100,36 +100,42 @@ const SignUpScreen = ({ route }) => {
               value={username} 
               setValue={setUsername}
               secureTextEntry={false}
+              style={styles.input}
               />
               <CustomInput
               placeholder="מייל"
               value={email} 
               setValue={setEmail}
               secureTextEntry={false}
+              style={styles.input}
               />
              <CustomInput
               placeholder="סיסמא"
               value={password}
               setValue={setPassword} 
               secureTextEntry
+              style={styles.input}
               />
               <CustomInput
               placeholder="אימות סיסמא"
               value={passwordRepeat}
               setValue={setPasswordRepeat} 
               secureTextEntry
+              style={styles.input}
               />
                <CustomInput
               placeholder="מספר טלפון שלך"
               value={yourNum}
               setValue={setYourNum} 
               secureTextEntry={false}
+              style={styles.input}
               />
               <CustomInput
                 placeholder="מספר טלפון של המטופל"
               value={otherSideNum}
               setValue={setotherSideNum} 
               secureTextEntry={false}
+              style={styles.input}
               />
 
             <CustomButton text="הרשם"  onPress={()=>onRegisterPressed()}/>
@@ -153,13 +159,18 @@ const SignUpScreen = ({ route }) => {
 const styles = StyleSheet.create({
     root:{
         alignItems:'center',
-        padding: 20,
+        padding: 50,
+    },
+    input:{
+        //textAlign:'left',
+        width:"100%",
+        textAlign: I18nManager.isRTL ? 'right' : 'left',
     },
     title:{
-        fontSize: 24,
+        fontSize: 30,
         fontWeight:'bold',
         color:'#051C60',
-        margin: 10,
+        margin: 20,
     },
     text:{
         color:'gray',

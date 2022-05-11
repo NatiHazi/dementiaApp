@@ -1,5 +1,5 @@
 import React,{useState} from 'react';
-import { View, Text, StyleSheet ,ScrollView} from 'react-native';
+import { View, Text, StyleSheet ,ScrollView,I18nManager} from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
@@ -50,6 +50,7 @@ const ForgotPasswordSceen = ({ route }) => {
               placeholder="הכנס מייל"
               value={userName} 
               setValue={setUserName}
+              style={styles.input}
               />
           
              
@@ -70,7 +71,12 @@ const ForgotPasswordSceen = ({ route }) => {
 const styles = StyleSheet.create({
     root:{
         alignItems:'center',
-        padding: 20,
+        padding: 50,
+    },
+    input:{
+        //textAlign:'left',
+        width:"100%",
+        textAlign: I18nManager.isRTL ? 'right' : 'left',
     },
     title:{
         fontSize: 24,

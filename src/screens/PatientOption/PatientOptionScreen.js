@@ -1,6 +1,6 @@
 import React, { Component,useState,useEffect,useRef } from 'react'
 import Constants from 'expo-constants';
-import { Button, View,Text,Alert } from 'react-native';
+import { Button, View,Text,Alert,StyleSheet,Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as Location from 'expo-location';
 import * as Contacts from 'expo-contacts';
@@ -131,7 +131,7 @@ const navigation = useNavigation();
     const intervalId = BackgroundTimer.setInterval(() => {
   
       updateSettingsFirebase();
-      
+      // 3600000
   }, 3600000);
   return () => BackgroundTimer.clearInterval(intervalId);
 
@@ -627,9 +627,18 @@ const signOutFunction = () =>{
       alignItems: 'center',
       justifyContent: 'space-around',
     }}>
+       
     <Text>"בדיקה"</Text>
     <CustomButton text="Sing out" onPress={signOutFunction} type = "SIGNOUT"/>
   </View>
   )
 }
+
+const styles = StyleSheet.create({
+  logo: {  
+      width:250,
+      height:280,
+  },
+})
+
 export default PatientOptionScreen
