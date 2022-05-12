@@ -9,7 +9,7 @@ import auth from '@react-native-firebase/auth';
 
 
 
-const ForgotPasswordSceen = ({ route }) => {
+const ForgotPasswordScreen = ({ route }) => {
     const { isTherapist} = route.params;
     const [userName, setUserName] = useState('');
 
@@ -93,4 +93,4 @@ const styles = StyleSheet.create({
     },
 })
 
-export default ForgotPasswordSceen;
+export default ForgotPasswordScreen;

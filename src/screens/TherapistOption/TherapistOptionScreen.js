@@ -10,6 +10,7 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
 import Circle from '../../components/Circle/Circle';
 
+
 const TherapistOptionScreen = () => {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();

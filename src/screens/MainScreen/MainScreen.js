@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     root:{
         alignItems:'center',
         backgroundColor:'snow',
-        padding: 20,
+        padding: 50,
     },
     title:{
         fontSize: 36,
