@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet,I18nManager } from 'react-native'
 
 
 const CustomInput = ({value, setValue, placeholder,secureTextEntry,style}) => {
-  
+ 
     return (
       
         <View style={styles.container}>

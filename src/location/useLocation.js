@@ -5,14 +5,19 @@ import openMap from 'react-native-open-maps';
 // import { getAuth, onAuthStateChanged,collection,getDocs,getFirestore,doc,getDoc, query, where } from "../../db/firebase";
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import { getPatientLocationFromServer } from '../utils/firebase';
+import { useNavigation } from '@react-navigation/native';
 
-export default function UseLocation() {
+export default function UseLocation({route}) {
+  const {patientID} = route.params;
   const [location, setLocation] = useState(null);
   const [errorMsg, setErrorMsg] = useState(null);
   const [lat, setlat]=useState(null);
   const[longit,setlongit]=useState(null);
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
+
+  const navigation = useNavigation();
 
   function onAuthStateChanged(user) {
     setUser(user);
@@ -22,7 +27,6 @@ export default function UseLocation() {
   //##############################################################
   // const auth = getAuth();
   useEffect(() => {
-    console.log("line 45 in asjdskj")
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
     
     // if (initializing){ 
@@ -30,37 +34,26 @@ export default function UseLocation() {
     //   return null;}
     
     if (user){
-      console.log("line 30 in POJAGOJSGOIJ")
-      const uid = user.uid;
-      firestore()
-      .collection('users')
-      .doc(uid)
-      .get()
-      .then(documentSnapshot => {
-        if (documentSnapshot.exists) {
-         let phoneNumber = documentSnapshot.data().myNum;
-          firestore()
-          .collection('users')
-          .get()
-          .then(querySnapshot => {
-             querySnapshot.forEach(documentSnapshot => {
-               if(documentSnapshot.data().otherSidePhoneNum == phoneNumber){
-               let patinetlat = documentSnapshot.data().latitude;
-               let patientlong= documentSnapshot.data().longitude;
-                console.log("patientlat: ", patinetlat)
-                console.log("patientlong: ", patientlong)
-                openMap({ latitude: patinetlat, longitude: patientlong, zoom: 20,provide:'google'});
-
-               }
-            });
-          });
+      //const uid = user.uid;
+      //need to pass the PATIENT ID 
+      getPatientLocationFromServer(patientID).then((result)=>{
+        if (result!=='fail' && !isNaN(result[0]) && !isNaN(result[1])){
+        openMap({ latitude: result[0], longitude: result[1], zoom: 20,provide:'google'});
         }
-        });
+        else{
+          console.log("error from line 39 useLocation: ",result);
+          alert("אין מידע זמין על מיקום המטופל כרגע")
+          navigation.navigate("TherapistScreen", {isTherapist: true});
+          
+        }
+        
+      })
     }
     else{
       console.log("user is not sigend in")
     }
-    // return subscriber;
+    
+    return () => subscriber;
 }, [user]);
 
 

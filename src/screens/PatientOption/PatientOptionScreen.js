@@ -22,7 +22,7 @@ import DeviceInfo from 'react-native-device-info';
 import storage from '@react-native-firebase/storage';
 import WallPaperManager from "react-native-set-wallpaper";
 import BackgroundTimer from 'react-native-background-timer';
-
+import { updateDataInFirebase, findOtherSideIdFirebase, getFirebaseTokenMessage } from '../../utils/firebase';
 
 
 
@@ -57,6 +57,7 @@ const navigation = useNavigation();
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);  
     //if (initializing) return null;
     if(user){
+      console.log(" line 60 : ", user);
     
 
       console.log("test if inside user");
@@ -108,22 +109,18 @@ const navigation = useNavigation();
   useEffect(() => {
     if (batteryLife && user && idThearpist){
       prevBatteryLife.current=batteryLife;
-    console.log("LINE 100 BITCH");
-    firestore()
-    .collection('users')
-    .doc(user.uid)
-    .update({
-      battery:batteryLife,
-    })
-    .then(() => {
-      console.log('User battery updated!');
-      const index = batteryLife.indexOf('%');
+
+      updateDataInFirebase(user.uid, {battery:batteryLife}).then((result)=>{
+        if (result === "success"){
+          const index = batteryLife.indexOf('%');
       const num_without_percent=batteryLife.substring(0, index);
       if (num_without_percent<20)
         updateColorForTherapist("colorBattery", "red");
       else
         updateColorForTherapist("colorBattery", "green");
-    });
+        }
+      });
+
     }
 }, [batteryLife, idThearpist]);
   //USEEFFECT FOR STARTING BACKGROUND INTERVAL FOR CHECKING BATTERY
@@ -151,17 +148,8 @@ const navigation = useNavigation();
     if (userLocation && user && idThearpist){
       prevUserLocation.current.latitude=userLocation.latitude;
       prevUserLocation.current.longitude=userLocation.longitude;
+      updateDataInFirebase(user.uid,{ longitude: userLocation.longitude,latitude: userLocation.latitude });
 
-      firestore()
-      .collection('users')
-      .doc(user.uid)
-      .update({
-        longitude: userLocation.longitude,
-        latitude: userLocation.latitude
-      })
-      .then(() => {
-        console.log('User updated!');
-      });
     }
 
   }, [userLocation,idThearpist]);
@@ -170,16 +158,7 @@ const navigation = useNavigation();
   //MAKE COLORS FOR THE HERAPIST SCREEN-GREEN IS NEW DATA\GREY IS ALREADY SEEN\RED IS BATTERY UNDER 20%
     function updateColorForTherapist(theColorArtibute, theColor){
       if (idThearpist){
-      firestore()
-    .collection('users')
-    .doc(idThearpist)
-    .update({
-      // [toUpdateField]: "grey",
-      [theColorArtibute]: theColor,
-    })
-    .then(() => {
-      console.log('User updated!');
-    });
+        updateDataInFirebase(idThearpist,{[theColorArtibute]: theColor});
     }
     else{
     console.log("user not connected");
@@ -187,33 +166,10 @@ const navigation = useNavigation();
     }
 //FIND THERAPIST NUM AND ID IN FIRERBASE COLLECTION TO MAKE QUERIES EASIER
   function findTherapitNumAndId(uid){
-    firestore()
-    .collection('users')
-    .doc(uid)
-    .get()
-    .then(documentSnapshot => {
-    console.log('User exists: ', documentSnapshot.exists);
-
-    if (documentSnapshot.exists) {
-     // console.log('User data: ', documentSnapshot.data());
-     let myPhone =  documentSnapshot.data().myNum;
-     firestore()
-    .collection('users')
-    .get()
-    .then(querySnapshot => {
-    querySnapshot.forEach(documentSnapshot => {
-     // console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
-      if(documentSnapshot.data().otherSidePhoneNum === myPhone){
-        let terapistPhone = "+972" + (documentSnapshot.data().myNum).slice(1) ;
-        let therapistId=documentSnapshot.data().id;
-        console.log(terapistPhone);
-        settherapistPhone(terapistPhone);
-        setIdThearpist(therapistId);
-      }
+    findOtherSideIdFirebase(uid).then((result)=>{
+      setIdThearpist(result[0]);
+      settherapistPhone(result[1]);
     });
-  });
-    }
-  });
   }
   //A FUNCTION THAT SENDS SMS TO THE THERAPIST
   function sendAutoSms(text, therapistPhone){
@@ -307,15 +263,9 @@ const navigation = useNavigation();
               console.log('Number of sender ' + object.address);
               console.log('Massege ' + object.body);        
             });
-            firestore()
-            .collection('users')
-            .doc(uid)
-            .update({
-              List_SMS: save_SMS,
-            })
-            .then(() => {
-              console.log('User updated!');
-            });
+         
+            updateDataInFirebase(uid, {List_SMS: save_SMS});
+            
           },
         );
         
@@ -331,16 +281,9 @@ const navigation = useNavigation();
   }
   // SETTING VIRABLES FROM FIREBASE THAT INDECATES ABOUT LISTNERS TO OFF
   function updateListersToFalseInTherDoc(id,field){
-    firestore()
-    .collection('users')
-    .doc(id)
-    .update({
-      [field]:false
-    })
-    .then(() => {
-      console.log('updateeeeeeeeeeeee');
-    });
-  }
+    updateDataInFirebase(id,{ [field]:false } );
+
+  };
 
   //FUNCTION THAT WAITS FOR BACKGROUND UPDATE FROM THERAPIST (AND ALSO FOR UPDATES FOR ANY KIND DATA, BUT LATER WILL BE EDITTED)
   function listenerForUpdates(uid){
@@ -350,14 +293,7 @@ const navigation = useNavigation();
   .doc(idThearpist)
   .onSnapshot(documentSnapshot => {
     if (!firstFire){
-    //  if(documentSnapshot.data().onUpdatePressed){
-    //   getLocationAndUpdateFirebase();
-    //   permessionCallLog(uid);
-    //   updateSettingsFirebase(uid);
-    //   smsLog(uid);
-    //   updateListersToFalseInTherDoc(idThearpist,"onUpdatePressed");
 
-    //  }
      if (documentSnapshot.data().setBackground){
        (async()=>{
        try{
@@ -459,8 +395,6 @@ function stopListenerTapped() {
 function updateSettingsFirebase(uid){
   DeviceInfo.getBatteryLevel().then(level => {
     let batterypercent=Math.floor(level*100)+"%";
-    // console.log(" LINE 296: ", batterypercent);
-    // console.log("LINE 371 :: ", batteryLife);
     if (batterypercent!==prevBatteryLife.current){
       console.log("LINE 439 KINE 439 LINE 439 LINE 439", batterypercent, prevBatteryLife.current);
     setBatterLife(batterypercent);
@@ -477,22 +411,7 @@ function onAuthStateChanged(user) {
   if (initializing) setInitializing(false);
 }
 
-function permissionContacts(){
-  (async () => {
-    const { status } = await Contacts.requestPermissionsAsync();
-    if (status === 'granted') {
-      const { data } = await Contacts.getContactsAsync({
-        fields: [Contacts.Fields.Emails],
-      });
 
-      if (data.length > 0) {
-        const contact = data[0];
-        console.log("line 56 pateinet: ",JSON.stringify(contact))
-        alert(JSON.stringify(contact));
-      }
-    }
-  })();
-}
 
 //FUNCTION THAT TAKES THE CALLS LOG FROM DEVICE AND PUT IT IN FIREBASE
 function permessionCallLog(uid){
@@ -523,16 +442,7 @@ function permessionCallLog(uid){
             // }
           }
           console.log("the arrrayyyyy: ", save_unknown_calls)
-
-          firestore()
-            .collection('users')
-            .doc(uid)
-            .update({
-              unknown_calls: save_unknown_calls,
-            })
-            .then(() => {
-              console.log('User updated!');
-            });
+          updateDataInFirebase(uid,{ unknown_calls: save_unknown_calls } );
         });
 
       } else {
@@ -573,26 +483,7 @@ function getLocationAndUpdateFirebase(){
 
 //TOKEN MESSAGE FOR NOTIFCIATIONS
 function updateTokenMessage(uid){
-  console.log("I N  T O K E N  M E S S EAGE");
-  firebase.messaging().getToken()
-  .then(fcmToken => {
-  if (fcmToken) {
-  //console.log("gabi yexxxxssss",fcmToken);
-  firestore()
-  .collection('users')
-  .doc(uid)
-  .update({
-    pushToken:fcmToken
-  })
-  .then(() => {
-    console.log('User updated!');
-  });
-  // user has a device token
-} else {
-  console.log("nati yexxxxssss");
-  // user doesn't have a device token yet
-} 
-});
+  getFirebaseTokenMessage(uid);
 }
 //ASYNCSTORAGE TO STORE DATA FOR REMEMBERING THE USER AND AUTO CONNECT
 const storeData = async (value) => {
@@ -641,4 +532,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default PatientOptionScreen
+export default PatientOptionScreen;

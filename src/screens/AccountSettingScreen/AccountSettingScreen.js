@@ -1,30 +1,78 @@
-import React,{useState} from 'react';
+import React,{useState, useEffect} from 'react';
 import { View, Text, StyleSheet, useWindowDimensions,ScrollView,I18nManager} from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
-import { useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native';
+import auth from '@react-native-firebase/auth';
+import firestore from '@react-native-firebase/firestore';
+import { updateDataInFirebase, findOtherSideIdFirebase } from '../../utils/firebase';
+
 
 
 
 const AccountSettingScreen = () => {
-    const [code, setCode] = useState('');
-    const [newPassword, setNewPassword] = useState('');
-    const [user, setUser] = useState();
     const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [passwordRepeat, setPasswordRepeat] = useState('');
+    const [usernameSec, setUsernameSec] = useState('');
+    const [user, setUser] = useState();
     const [otherSideNum, setotherSideNum] = useState('');
     const [yourNum, setYourNum] = useState('');
+    const [initializing, setInitializing] = useState(true);
+    const [userNameFirebase, setUserNameFirebase]=useState('');
     const navigation = useNavigation();
-    
 
+    useEffect(
+        () => {
+          subscriber=auth().onAuthStateChanged(onAuthStateChanged);  
+         if(user){
+            firestore()
+            .collection('users')
+            .doc(user.uid)
+            .get()
+            .then(documentSnapshot => {
+              console.log('User exists: ', documentSnapshot.exists);
+    
+              if (documentSnapshot.exists) {
+                setUsername(documentSnapshot.data().userName);
+                setUsernameSec(documentSnapshot.data().userName);
+                setYourNum(documentSnapshot.data().myNum);
+                setotherSideNum(documentSnapshot.data().otherSidePhoneNum);
+
+
+
+              }
+            });
+         }
+         
+         return () => subscriber;
+        },
+        [user]
+      );
+
+      function onAuthStateChanged(user) {
+        setUser(user);
+        if (initializing) setInitializing(false);
+      }
+
+      function updateDetails(){
+          if (user){
+            findOtherSideIdFirebase(user.uid).then((result)=>{
+              const saveOtherSideID=result[0];
+              updateDataInFirebase(user.uid, {userName: username, myNum: yourNum, otherSidePhoneNum: otherSideNum }).then((reuslt)=>{
+            
+                 updateDataInFirebase(saveOtherSideID, {userName: username, myNum: otherSideNum , otherSidePhoneNum: yourNum }).then((result)=>{
+                navigation.navigate("TherapistScreen");  
+              })
+            });
+          });
+           
+          }
+      };
 
     return (
         <ScrollView>
         <View style={styles.root}>
         <Text style={styles.title} >עריכת פרטי חשבון</Text>
-
+        <Text style={styles.subtitle} >שם משתמש</Text>
              <CustomInput
               placeholder=" שם משתמש"
               value={username} 
@@ -32,13 +80,7 @@ const AccountSettingScreen = () => {
               secureTextEntry={false}
               style={styles.input}
               />
-              <CustomInput
-              placeholder="מייל"
-              value={email} 
-              setValue={setEmail}
-              secureTextEntry={false}
-              style={styles.input}
-              />
+             <Text style={styles.subtitle} > מספר הטלפון של {usernameSec}</Text>
                <CustomInput
               placeholder="מספר טלפון שלך"
               value={yourNum}
@@ -46,15 +88,16 @@ const AccountSettingScreen = () => {
               secureTextEntry={false}
               style={styles.input}
               />
+              <Text style={styles.subtitle} > מספר הטלפון של המטופל</Text>
               <CustomInput
-                placeholder="מספר טלפון של המטופל"
+              placeholder="מספר טלפון של המטופל"
               value={otherSideNum}
               setValue={setotherSideNum} 
               secureTextEntry={false}
               style={styles.input}
               />
 
-            <CustomButton text="שמור" />
+            <CustomButton text="שמור" onPress={()=>{updateDetails()}}/>
     
         </View>
         </ScrollView>
@@ -63,7 +106,7 @@ const AccountSettingScreen = () => {
  
 const styles = StyleSheet.create({
     root:{
-        alignItems:'center',
+        // alignItems:'center',
         padding: 50,
     },
     input:{
@@ -77,6 +120,13 @@ const styles = StyleSheet.create({
         color:'#051C60',
         margin: 20,
     },
+    subtitle:{
+        fontSize: 12,
+        fontWeight:'bold',
+        color:'#051C60',
+        margin: 5,
+        textAlign: 'left',
+    },
     text:{
         color:'gray',
         marginVertical:10,
@@ -88,3 +138,4 @@ const styles = StyleSheet.create({
 
 
 export default AccountSettingScreen
+

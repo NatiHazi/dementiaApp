@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 //import {getAuth,createUserWithEmailAndPassword,sendEmailVerification,getFirestore,collection, addDoc,setDoc,doc } from '../../../db/firebase'
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
+import { createUserWithEmailAndPasswordHandler, createNewDocumentForUser } from '../../utils/firebase';
 
 const SignUpScreen = ({ route }) => {
     const { isTherapist} = route.params;
@@ -19,64 +20,29 @@ const SignUpScreen = ({ route }) => {
     const navigation = useNavigation();
 
    //const user = userCredential.user;
-   const [initializing, setInitializing] = useState(true);
-   const [user, setUser] = useState();
-   useEffect(() => {
-    //Runs on the first render
-    //And any time any dependency value changes
-    if(user){
-        console.log('inside user line 40');
-        firestore()
-        .collection('users')
-        .doc(user.uid)
-        .set({
-            id:  user.uid,
-            isTherapist:isTherapist,
-            myNum: yourNum,
-            otherSidePhoneNum: otherSideNum
-        })
-        .then(() => {
-            console.log('User added!');
-        });
-      
-    }
-  }, [user]);
-   // Handle user state changes
-   function onAuthStateChanged(user) {
-     setUser(user);
-     if (initializing) setInitializing(false);
-   }
+//    const [initializing, setInitializing] = useState(true);
+//    const [user, setUser] = useState();
+
 
     const onRegisterPressed = () =>{
-        console.log("test");  
-        auth()
-        .createUserWithEmailAndPassword(email,password)
-        .then((userCredential) => {
-        console.log('User account created & signed in!');
-        userCredential.user.sendEmailVerification();
-        auth().onAuthStateChanged(onAuthStateChanged);
+        if (username==='' || email==='' || password==='' || passwordRepeat==='' || otherSideNum==='' || yourNum==='')
+        alert("כל השדות הינם חובה");
+        else{
+            createUserWithEmailAndPasswordHandler(email,password).then((result)=>{
+                console.log("AFTER");
+                if (result!=='fail'){
+                    createNewDocumentForUser(result.uid, isTherapist, yourNum, otherSideNum, username).then(()=>{
+                        navigation.navigate("signIn", {isTherapist: isTherapist});
+                    });
+                
+               
+                }
+            }).catch(error =>{
+                console.log(error);
+            })
+            console.log("BEFORE");
    
-        // (async()=>{
-        // await auth().currentUser.sendEmailVerification({
-        //     handleCodeInApp: true,
-        //     url: email,
-        //    });
-        // })();
-        
-           navigation.navigate("ConfirmEmail", {isTherapist: isTherapist});
-        })
-        .catch(error => {
-        if (error.code === 'auth/email-already-in-use') {
-            console.log('That email address is already in use!');
-        }
-
-        if (error.code === 'auth/invalid-email') {
-            console.log('That email address is invalid!');
-        }
-
-        console.error(error);
-        });
-
+    }
     };
 
     const onSignInPressed = () => {
@@ -93,7 +59,7 @@ const SignUpScreen = ({ route }) => {
     return (
         <ScrollView>
         <View style={styles.root}>
-        <Text style={styles.title} >יצירת חשבון חדש  </Text>
+        <Text style={styles.title} >יצירת חשבון חדש </Text>
 
              <CustomInput
               placeholder=" שם משתמש"
@@ -131,7 +97,7 @@ const SignUpScreen = ({ route }) => {
               style={styles.input}
               />
               <CustomInput
-                placeholder="מספר טלפון של המטופל"
+              placeholder={isTherapist? "מספר טלפון של המטופל" : "מספר טלפון של המטפל"}
               value={otherSideNum}
               setValue={setotherSideNum} 
               secureTextEntry={false}
@@ -182,4 +148,5 @@ const styles = StyleSheet.create({
 })
 
 export default SignUpScreen
+
 

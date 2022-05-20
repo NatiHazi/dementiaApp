@@ -8,80 +8,28 @@ import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import CheckBox from '@react-native-community/checkbox';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { signInFirebase } from '../../utils/firebase';
 
 
 const SignInScreen = ({ route }) => {
     const { isTherapist} = route.params;
-    console.log("line 12 sign in screen: ", isTherapist)
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
     const navigation = useNavigation();
 
-    // useEffect(() => {
-      
-    //   getData();
-    // }, []);
-
-   // console.log(username);
-    // const [therapist, setTherapist]=useState(false);
-    //  const auth = getAuth();
+ 
     const onSignInPressed = () =>{
-     
-    auth().signInWithEmailAndPassword(username, password)
-    .then((userCredential) => {
-    //console.log("sucess")
-    // Signed in 
-    const user = userCredential.user;
-    const uid = user.uid;
-    console.log(user.email)
-    if (!user.emailVerified){
-        alert("you must verify your account in your mail")
-    }
-    else{
-        console.log("log in succeed")
-        async function fetchFunction(){ 
-        const usersCollection = firestore().collection('users');
-        firestore()
-        .collection('users')
-        .get()
-        .then(querySnapshot => {
-          querySnapshot.forEach(documentSnapshot => {
-            if (documentSnapshot.data().id===uid){
-                console.log("inside id===uid");
-                if (documentSnapshot.data().isTherapist==true){
-                    console.log("inside Therapist is true");
-               navigation.navigate("TherapistScreen");
-            }
-            else{
-                console.log("inside Therapist is false");
-              navigation.navigate("PatientScreen"); 
-            }
-            }
-           // console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
-          });
-        });    
-    }
-        fetchFunction();
-    }
-  })
-  .catch((error) => {
-    const errorCode = error.code;
-    const errorMessage = error.message;
-    console.log(errorCode)
-   
-    if (errorCode ==="auth/invalid-email"){
-        alert("invalid email")
-    }
-    if (errorCode ==="auth/user-not-found"){
-        alert("User not existing in the system")
-    }
-    if (errorCode ==="auth/wrong-password"){
-        alert("wrong password")
-    }
-    
-    
-  });
+      signInFirebase(username, password).then((result)=>{
+        if (result!== 'fail'){
+          if (result === true)
+            navigation.navigate("TherapistScreen");
+          else
+            navigation.navigate("PatientScreen"); 
+
+        }
+      });
+
     };
         
     const onForgotPasswordPresed = () => {
@@ -141,7 +89,7 @@ const SignInScreen = ({ route }) => {
     
              <CustomInput 
              
-              placeholder="הכנס סיסמא"
+             placeholder="הכנס סיסמא"
               secureTextEntry 
               value={password}
               setValue={setPassword}
@@ -220,3 +168,4 @@ const styles = StyleSheet.create({
 })
 
 export default SignInScreen
+

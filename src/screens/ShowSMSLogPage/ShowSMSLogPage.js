@@ -4,10 +4,12 @@ import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
+import { getPatientSmsFirebase } from '../../utils/firebase';
 
 
 
-const ShowSMSLog = () => {
+const ShowSMSLog = ({route}) => {
+  const {patientID} = route.params;
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const [thelist, setthelist]=useState([]);
@@ -16,75 +18,50 @@ const ShowSMSLog = () => {
     if (initializing) setInitializing(false);
   }
   useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);  
+    if(user)
     getDataFirebase();
+
+    return () => subscriber;
   }, [user]);
- //#######################################################
-// function for updates call from firebase
-  function updateSMS(id){
-    let SMSPatient = "";
-    const subscriber = firestore()
-    .collection('users')
-    .doc(id)
-    .onSnapshot(documentSnapshot => {
-      console.log('User data: ', documentSnapshot.data().List_SMS
-      );
-      return () => subscriber(); 
-    });
-  }
-   //#######################################################
+
 
   function getDataFirebase(){
-  const subscriber = auth().onAuthStateChanged(onAuthStateChanged);  
-  // if (initializing){  return null;}
-  if(user){
-    console.log("test if inside user");
-    const uid = user.uid;
-    let phoneNumber = "";
-    let SMSPatient = "";
-    let idPatient = "";
-    //#######################################################
-    firestore()
-    .collection('users')
-    .doc(uid)
-    .get()
-    .then(documentSnapshot => {
-      if (documentSnapshot.exists) {
-        phoneNumber = documentSnapshot.data().myNum;
+    getPatientSmsFirebase(patientID).then((result)=>{
+      if (result){
+         // let emptyStr = "";
+          let count = 1;
+          for (let i=0; i<result.length; i++){
+            if (i%2==0){
+              emptyStr = " " + count + ") הודעה התקבלה ממספר - " + result[i];
+            }
+            else{
+              emptyStr+="\n פירוט ההודעה - " + result[i];
+              setthelist(thelist=>[...thelist, {key:emptyStr}]);
+              count+=1;
+            }
+            }  
+  
+
       }
-      });
-        firestore()
-        .collection('users')
-        .get()
-        .then(querySnapshot => {
-           querySnapshot.forEach(documentSnapshot => {
-             if(documentSnapshot.data().otherSidePhoneNum == phoneNumber){
-              idPatient = documentSnapshot.data().id;
-             console.log("idPatient: ",idPatient);  
-             SMSPatient = documentSnapshot.data().List_SMS;
-              let emptyStr = "";
-              let count = 1;
-              for (let i=0; i<SMSPatient.length; i++){
-                if (i%2==0){
-                  emptyStr = " " + count + ") הודעה התקבלה ממספר - " + SMSPatient[i];
-                }
-                else{
-                  emptyStr+="\n פירוט ההודעה - " + SMSPatient[i];
-                   setthelist(thelist=>[...thelist, {key:emptyStr}]);
-                   count+=1;
-                }
-                }   
-                updateSMS(idPatient); 
-             }
-          });
-        }); 
-        //#######################################################
-    }
-    else {
-    console.log("user is not signed in");
-    };
+    })
+
   }
   
   
+  // SMSPatient = documentSnapshot.data().List_SMS;
+  // let emptyStr = "";
+  // let count = 1;
+  // for (let i=0; i<SMSPatient.length; i++){
+  //   if (i%2==0){
+  //     emptyStr = " " + count + ") ׳”׳•׳“׳¢׳” ׳”׳×׳§׳‘׳׳” ׳׳׳¡׳₪׳¨ - " + SMSPatient[i];
+  //   }
+  //   else{
+  //     emptyStr+="\n ׳₪׳™׳¨׳•׳˜ ׳”׳”׳•׳“׳¢׳” - " + SMSPatient[i];
+  //      setthelist(thelist=>[...thelist, {key:emptyStr}]);
+  //      count+=1;
+  //   }
+  //   }  
   
     return (
       <View style={styles.container}>

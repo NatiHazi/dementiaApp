@@ -4,8 +4,7 @@ import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
-
-
+import { sendPasswordResetEmailHandler } from '../../utils/firebase';
 
 
 
@@ -16,23 +15,13 @@ const ForgotPasswordScreen = ({ route }) => {
     const navigation = useNavigation();
 
     const onSendPressed = () =>{
-        
-            auth().sendPasswordResetEmail(userName)
-            .then(function() {
-            // Email sent.
-            console.log("Password reset email sent! ")
-            alert("Please go to mail and set new Password and then sign in with new Password")
-            navigation.navigate("signIn", {isTherapist: isTherapist});
+       
+            sendPasswordResetEmailHandler(userName).then((result)=>{
+                //console.log("result:::!#!#" , result);
+                if (result==="success")
+                navigation.navigate("signIn", {isTherapist: isTherapist});
             })
-            .catch(function(error) {
-            // An error happened.
-            const errorCode = error.code;
-            const errorMessage = error.message;
-            console.log(errorCode)
-            });
-
-
-        
+           
     };
 
     const onSignInPressed = () => {
@@ -44,7 +33,7 @@ const ForgotPasswordScreen = ({ route }) => {
     return (
         <ScrollView>
         <View style={styles.root}>
-            <Text style={styles.title} >איפוס סיסמא</Text>
+        <Text style={styles.title} >איפוס סיסמא</Text>
 
              <CustomInput
               placeholder="הכנס מייל"

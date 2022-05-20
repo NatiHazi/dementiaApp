@@ -5,10 +5,12 @@ import { useNavigation } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import SmsAndroid from 'react-native-get-sms-android';
+import { getPatientCallsFirebase } from '../../utils/firebase';
 
 
 
-const ShowLogCall = () => {
+const ShowLogCall = ({route}) => {
+  const {patientID} = route.params;
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
   const [thelist, setthelist]=useState([]);
@@ -20,90 +22,34 @@ const ShowLogCall = () => {
     if (initializing) setInitializing(false);
   }
   useEffect(() => {
-  
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);  
+
+    if (user)
     getDataFirebase();
+
+    return () => subscriber;
     
   }, [user]);
- //#######################################################
-// dunction for updates call from firebase
-  function updateCalls(id,phoneNumber){
-    let firstFire = true;
-    const subscriber = firestore()
-    .collection('users')
-    .doc(id)
-    .onSnapshot(documentSnapshot => {
-      if (!firstFire){
-      console.log('User data: ', documentSnapshot.data().unknown_calls);
-      
-      SmsAndroid.autoSend(
-        phoneNumber,
-        "Patient got another message",
-        (fail) => {
-          console.log('Failed with this error: ' + fail);
-        },
-        (success) => {
-          console.log('SMS sent successfully');
-        },
-      );  
-      }
-      firstFire=false;
-      return () => subscriber(); 
-    });
-  }
-   //#######################################################
+
 
   function getDataFirebase(){
-  const subscriber = auth().onAuthStateChanged(onAuthStateChanged);  
-  // if (initializing){  return null;}
-  if(user){
-    console.log("test if inside user");
-    const uid = user.uid;
-    let phoneNumber = "";
-    let unknown_calls = "";
-    let idPatient = "";
-    //#######################################################
-    firestore()
-    .collection('users')
-    .doc(uid)
-    .get()
-    .then(documentSnapshot => {
-      if (documentSnapshot.exists) {
-        phoneNumber = documentSnapshot.data().myNum;
-      }
-      });
-        firestore()
-        .collection('users')
-        .get()
-        .then(querySnapshot => {
-           querySnapshot.forEach(documentSnapshot => {
-             if(documentSnapshot.data().otherSidePhoneNum == phoneNumber){
-              idPatient = documentSnapshot.data().id;
-             console.log("idPatient: ",idPatient);  
-              unknown_calls = documentSnapshot.data().unknown_calls;
-              let emptyStr = "";
-              let count = 1;
-              for (let i=0; i<unknown_calls.length; i++){
-                if (i%2==0){
-                  emptyStr = " " + count + ") התקבלה בתאריך - " + unknown_calls[i];
-                }
-                else{
-                  emptyStr+="\n ממספר טלפון - " + unknown_calls[i];
-                    setthelist(thelist=>[...thelist, {key:emptyStr}]);
-                    count+=1;
-                }
-                } 
-
-             
-             updateCalls(idPatient,phoneNumber); 
-             }
-          });
-        }); 
-        //#######################################################
+    getPatientCallsFirebase(patientID).then((result)=>{
+      if (result){
+        let count = 1;
+        for (let i=0; i<result.length; i++){
+           if (i%2==0){
+             emptyStr = " " + count + ") התקבלה בתאריך - " + result[i];
+              }
+      else{
+        emptyStr+="\n ממספר טלפון - " + result[i];
+        setthelist(thelist=>[...thelist, {key:emptyStr}]);
+        count+=1;
     }
-    else {
-    console.log("user is not signed in");
-    };
-  }
+    } 
+      }
+    });
+  };
+
 
 
     return (

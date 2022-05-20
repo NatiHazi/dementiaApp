@@ -8,20 +8,57 @@ import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { getUserNameDrawer } from '../utils/firebase';
 
 export function DrawerContent(props) {
+  const [user, setUser] = useState();
+  const [initializing, setInitializing] = useState(true);
+  const [userNameFirebase, setUserNameFirebase]=useState('');
   
+  const navigation = useNavigation();
+
+  useEffect(
+    () => {
+      subscriber=auth().onAuthStateChanged(onAuthStateChanged);  
+     if(user){
+      getUserNameDrawer(user.uid).then((result)=>{
+        if (result)
+        setUserNameFirebase(result);
+      })
+     }
+     
+     return () => subscriber;
+    },
+    [user]
+  );
+
     const signOutFunction = () =>{
       
         auth()
         .signOut()
         .then(() => {
           storeData([['userkey', ''],['passkey', '']]);
-          //navigation.navigate("MainScreen")
+         
         
         });
     
     }
+
+    const storeData = async (value) => {
+      try {
+        await AsyncStorage.multiSet(value)
+        navigation.navigate("MainScreen");
+        //getData();
+      } catch (e) {
+        // saving error
+      }
+    }
+
+    function onAuthStateChanged(user) {
+      setUser(user);
+      if (initializing) setInitializing(false);
+    }
+
     return(
         <View style={{flex:1}}>
             
@@ -36,7 +73,7 @@ export function DrawerContent(props) {
                                 size={50}
                             />
                             <View style={{marginLeft:15, flexDirection:'column'}}>
-                                <Title style={styles.title}>Netanel Hazi</Title>
+                                <Title style={styles.title}>{userNameFirebase}</Title>
                                 <Caption style={styles.caption}>מטפל</Caption>
                             </View>
                     </View>
@@ -52,7 +89,7 @@ export function DrawerContent(props) {
                                 />
                             )}
                             label="Change Password"
-                            onPress={() => {props.navigation.navigate('NewPassword')}}
+                            onPress={() => {props.navigation.navigate('ForgotPassword',{ isTherapist: true })}}
                         />
                         <DrawerItem 
                             icon={({color, size}) => (
