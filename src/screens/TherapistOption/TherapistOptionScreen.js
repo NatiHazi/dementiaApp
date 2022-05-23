@@ -1,6 +1,7 @@
 import React,{useState,useEffect} from 'react';
-import { View ,Text ,ScrollView,StyleSheet,Alert,Image } from 'react-native';
+import { View ,Text ,ScrollView,StyleSheet,Alert,Image,Modal,Pressable,TextInput} from 'react-native';
 import CustomButtonForTherapistScreen from '../../components/CustomButtonForTherapistScreen';
+import CustomInput from '../../components/CutomInput';
 import { useNavigation } from '@react-navigation/native';
 import CustomButton from '../../components/CustomButton';
 import auth from '@react-native-firebase/auth';
@@ -13,6 +14,7 @@ import { findOtherSideIdFirebase,
    updateColorAfterReadFirebase,
     getPatientBatteryStatus,
      setBackgroundInFirebase } from '../../utils/firebase';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 const TherapistOptionScreen = () => {
@@ -27,7 +29,10 @@ const TherapistOptionScreen = () => {
     battery:"grey"
   });
   const [patientID,setPatientID]=useState("");
-
+  const [modalVisible, setModalVisible] = useState(false);
+  const [long, setLong] = useState("");
+  const [lat, setLat] = useState("");
+  const [radius, setRadius] = useState("");
 
   useEffect(
     () => {
@@ -119,9 +124,6 @@ const TherapistOptionScreen = () => {
         console.log("on send reminders pressed")
         navigation.navigate("SendNotification")
     } 
-
-
-
   function onAuthStateChanged(user) {
     setUser(user);
     if (initializing) setInitializing(false);
@@ -148,10 +150,6 @@ const TherapistOptionScreen = () => {
           alert("זמנית המידע לא זמין. נסו מאוחר יותר");
         } 
       }
-
-
-
-
         const setBackgroundForPatient = () =>{
       
           if (initializing) return null;
@@ -169,20 +167,18 @@ const TherapistOptionScreen = () => {
 
 
           };
-
-          function testest(){
-            setColor({
-              ...color,
-              location: "red",
-              battery: "green",
-            })
+          
+          const safeAreaInput = () => {
+            console.log("line 172: ",lat,long,radius);
+            setLat("");
+            setLong("");
+            setRadius("");
           }
    
       
     return (
         <ScrollView keyboardShouldPersistTaps='handled'>
         <View style={styles.root}>
-        
             <Text style={styles.title} >DementiaApp</Text>
              <Text style={styles.text} ></Text>    
              <Circle id="location" color={color.location}/>           
@@ -195,11 +191,73 @@ const TherapistOptionScreen = () => {
              <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה" onPress={()=>{onBatteryStatusPressed()}}/>
              <CustomButtonForTherapistScreen text="לחץ להגדרת רקע" onPress={()=>{setBackgroundForPatient()}}/>
              <CustomButtonForTherapistScreen text="לחץ לשליחת תזכורת" onPress={()=>{onSendReminders()}}/> 
-             <CustomButtonForTherapistScreen text="הגדר מיקום בטוח" onPress={()=>{testest()}}/> 
-          
-           
+             {/* <CustomButtonForTherapistScreen text="הגדר מיקום בטוח" onPress={()=>{safeArea()}}/>  */}
             {/* <CustomButtonForTherapistScreen text="Therapist" onPress={onTherapistPressed}/> 
             <CustomButtonForTherapistScreen text="Patient" onPress={onTherapistPressed}/>  */}
+
+
+<Modal
+                  animationType="slide"
+                  transparent={true}
+                  visible={modalVisible}
+                  onRequestClose={() => {
+                    Alert.alert("Modal has been closed.");
+                    setModalVisible(!modalVisible);
+                  }}
+                >
+                  <View style={styles.centeredView}>
+                    <View style={styles.modalView}>
+                      <Icon style={styles.icon} name="close"
+                      onPress={() => setModalVisible(!modalVisible)}
+                      />
+                      <Text style={styles.modalText}>הכנס קורדינטות</Text>
+                  
+                      <TextInput
+                      style={styles.input}
+                      placeholder="רוחב"
+                      keyboardType="numeric"
+                      value={lat}
+                      onChangeText={(text)=>{
+                        setLat(text);
+                      }}
+
+                      />
+                      <TextInput
+                      style={styles.input}
+                      placeholder="אורך"
+                      keyboardType="numeric"
+                      value={long}
+                      onChangeText={(text)=>{
+                        setLong(text);
+                      }}
+                      />
+                       <TextInput
+                      style={styles.input}
+                      placeholder="רדיוס"
+                      keyboardType="numeric"
+                      value={radius}
+                      onChangeText={(text)=>{
+                        setRadius(text);
+                      }}
+                      />
+                      <Pressable
+                        style={[styles.button, styles.buttonClose]}
+                        onPress={() => {setModalVisible(!modalVisible);
+                        safeAreaInput();
+                        }}
+                      >
+   
+                        <Text style={styles.textStyle}>שמור מיקום</Text>
+                      </Pressable>
+                    </View>
+                  </View>
+                </Modal>
+                <Pressable
+                  style={[styles.button, styles.buttonOpen]}
+                  onPress={() => setModalVisible(true)}
+                >
+                  <Text style={styles.textStyle}>הגדר מיקום בטוח</Text>
+                </Pressable>
         </View>
         </ScrollView>
     );
@@ -230,6 +288,79 @@ const styles = StyleSheet.create({
         textAlign:'center',
         color:'#051C60',
         margin: 10,
+    },
+    icon:{
+      alignSelf: "flex-start",
+      padding:5,
+      fontSize:20
+    },
+    
+
+
+
+
+
+    input: {
+      
+      backgroundColor: 'white',
+      padding: 10,
+      width:300,
+      writingDirection: 'rtl',
+      borderColor: '#e8e8e8',
+      borderWidth:1,
+      borderRadius:5,
+      marginVertical: 5,
+      justifyContent: 'space-evenly',
+      flexDirection:'row',
+    },
+    centeredView: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: 22
+    },
+    modalView: {
+      margin: 20,
+      backgroundColor: "#F0F8FF",
+      borderRadius: 20,
+      padding: 20,
+      alignItems: "center",
+      shadowColor: "#000",
+      shadowOffset: {
+      width: 0,
+      height: 2
+      },
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5
+    },
+    button: {
+      padding: 20,
+        height: 60,
+        width:'100%',
+        flexDirection:'row',
+        padding:20,
+        marginVertical:10,
+        borderRadius:10,
+        justifyContent: 'space-evenly',
+        alignSelf: "flex-start",
+    },
+    buttonOpen: {
+      backgroundColor: '#3B71F3',
+    },
+    buttonClose: {
+      backgroundColor: '#3B71F3',
+    },
+    textStyle: {
+      color: "white",
+      fontWeight: "bold",
+      textAlign: "center"
+    },
+    modalText: {
+      marginBottom: 15,
+      textAlign: "center",
+      fontWeight:'bold',
+      fontSize: 24,
     },
 
 })
