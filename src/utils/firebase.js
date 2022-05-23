@@ -16,7 +16,7 @@ const sendPasswordResetEmailHandler = async (userName) =>{
    .then(function() {
    // Email sent.
    console.log("Password reset email sent! ");
-   alert("׳׳ ׳ ׳”׳›׳ ׳¡ ׳׳׳™׳™׳ ׳•׳‘׳—׳¨ ׳¡׳¡׳׳ ׳—׳“׳©׳” ׳‘׳׳™׳ ׳§ ׳©׳™׳©׳׳— ׳׳");
+   alert("אנא הכנס למייל ובחר סיסמא חדשה בלינק שישלח לך");
    //navigation.navigate("signIn", {isTherapist: isTherapist});
    return SUCCESS;
    })
@@ -25,7 +25,7 @@ const sendPasswordResetEmailHandler = async (userName) =>{
    const errorCode = error.code;
    const errorMessage = error.message;
    if (errorCode==='auth/invalid-email')
-   alert("׳׳™׳™׳ ׳׳ ׳—׳•׳§׳™");
+   alert("מייל לא חוקי");
    console.log(errorCode)
    return FAILURE;
    });
@@ -42,22 +42,22 @@ const sendPasswordResetEmailHandler = async (userName) =>{
     console.log('User account created & signed in!');
     userCredential.user.sendEmailVerification();
 
-    alert('׳ ׳©׳׳— ׳׳ ׳׳™׳™׳ ׳׳™׳׳•׳× ׳¢׳ ׳׳ ׳× ׳׳”׳₪׳¢׳™׳ ׳׳× ׳”׳׳©׳×׳׳©');
+    alert('נשלח לך מייל אימות על מנת להפעיל את המשתמש');
     return userCredential.user;
     })
     .catch(error => {
     if (error.code === 'auth/email-already-in-use') {
-        alert('׳׳™׳™׳ ׳–׳” ׳ ׳׳¦׳ ׳›׳‘׳¨ ׳‘׳©׳™׳׳•׳© ׳‘׳׳¢׳¨׳›׳×');
+        alert('מייל זה נמצא כבר בשימוש במערכת');
     }
 
     if (error.code === 'auth/invalid-email') {
-        alert('׳׳™׳™׳ ׳–׳” ׳׳ ׳—׳•׳§׳™');
+        alert('מייל זה לא חוקי');
     }
     if (error.code === 'The email address is badly formatted'){
-        alert ("׳”׳₪׳•׳¨׳׳˜ ׳©׳ ׳”׳׳™׳™׳ ׳׳ ׳×׳§׳™׳");
+        alert ("הפורמט של המייל לא תקין");
     }
     if (error.code === 'auth/weak-password'){
-        alert ("׳”׳¡׳¡׳׳ ׳—׳™׳™׳‘׳× ׳׳”׳›׳™׳ ׳׳₪׳—׳•׳× 6 ׳×׳•׳•׳™׳");
+        alert ("הסיסמא חייבת להכיל לפחות שישה תווים");
     }
     console.log(error.code);
     console.error(error);
@@ -341,6 +341,7 @@ const getUserNameDrawer = async (uid) =>{
       return documentSnapshot.data().userName;
     }
   });
+  return result;
 };
 
 
