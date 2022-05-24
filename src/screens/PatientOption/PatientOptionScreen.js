@@ -114,10 +114,14 @@ const navigation = useNavigation();
         if (result === "success"){
           const index = batteryLife.indexOf('%');
       const num_without_percent=batteryLife.substring(0, index);
-      if (num_without_percent<20)
+      if (num_without_percent<20){
+        // need to send SMS 
+        sendAutoSms("סוללה של המטופל מתחת ל-20 אחוזים, נדרש להטעין!", therapistPhone);
         updateColorForTherapist("colorBattery", "red");
+      }
+        
       else
-        updateColorForTherapist("colorBattery", "green");
+        updateColorForTherapist("colorBattery", "red");
         }
       });
 
@@ -148,6 +152,27 @@ const navigation = useNavigation();
     if (userLocation && user && idThearpist){
       prevUserLocation.current.latitude=userLocation.latitude;
       prevUserLocation.current.longitude=userLocation.longitude;
+      firestore()
+      .collection('users')
+      .doc(user.uid)
+      .get()
+      .then(documentSnapshot => {
+          
+        if (documentSnapshot.exists) {
+          console.log('16216216261261261261261216216216261621621621216262');
+          let latitudeSave = documentSnapshot.data().latSafe;
+          let longitudeSave = documentSnapshot.data().longSafe;
+          let radiusSave = documentSnapshot.data().radiusSafe;
+          let rediusResult = distance(latitudeSave,userLocation.latitude,longitudeSave,userLocation.longitude);
+          if(rediusResult>radiusSave){
+            console.log('rediusResult>radiusSave');
+          }
+          else{
+            console.log('171717171717171717171717117171711717171');
+          }
+        }
+      });
+
       updateDataInFirebase(user.uid,{ longitude: userLocation.longitude,latitude: userLocation.latitude });
 
     }
@@ -218,7 +243,7 @@ const navigation = useNavigation();
           console.log("the sms test listner: ", message);
           sendAutoSms('התקבלה הודעה חדשה אצל המטופל', therapistPhone);
            smsLog(uid);
-           updateColorForTherapist("colorSMS", "green");
+           updateColorForTherapist("colorSMS", "red");
         })
        
        
@@ -337,7 +362,7 @@ const navigation = useNavigation();
     console.log("DISCONNETED")
     sendAutoSms("התקבלה שיחה חדשה אצל המטופל", therapistPhone);
     permessionCallLog(uid);
-    updateColorForTherapist("colorCalls", "green");
+    updateColorForTherapist("colorCalls", "red");
     updateSettingsFirebase(uid);
     
     }
@@ -368,7 +393,7 @@ const navigation = useNavigation();
       console.log("Missed")
       sendAutoSms("התקבלה שיחה חדשה אצל המטופל", therapistPhone)
       permessionCallLog(uid);
-      updateColorForTherapist("colorCalls", "green");
+      updateColorForTherapist("colorCalls", "red");
       updateSettingsFirebase(uid);
 
   }
@@ -508,6 +533,34 @@ const signOutFunction = () =>{
   );
 
 }
+
+
+function distance(lat1,lat2, lon1, lon2)
+  {
+    // The math module contains a function
+    // named toRadians which converts from
+    // degrees to radians.
+    lon1 =  lon1 * Math.PI / 180;
+    lon2 = lon2 * Math.PI / 180;
+    lat1 = lat1 * Math.PI / 180;
+    lat2 = lat2 * Math.PI / 180;
+
+    // Haversine formula
+    let dlon = lon2 - lon1;
+    let dlat = lat2 - lat1;
+    let a = Math.pow(Math.sin(dlat / 2), 2)
+    + Math.cos(lat1) * Math.cos(lat2)
+    * Math.pow(Math.sin(dlon / 2),2);
+
+    let c = 2 * Math.asin(Math.sqrt(a));
+
+    // Radius of earth in kilometers. Use 3956
+    // for miles
+    let r = 6371;
+
+    // calculate the result
+    return(c * r);
+    }
 
   
 

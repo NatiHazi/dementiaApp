@@ -161,7 +161,7 @@ const updateColorAfterReadFirebase = async (theColorArtibute,uid) =>{
   .doc(uid)
   .update({
     // [toUpdateField]: "grey",
-    [theColorArtibute]: "grey",
+    [theColorArtibute]: "#3B71F3",
   })
   .then(() => {
     console.log('User updated!');

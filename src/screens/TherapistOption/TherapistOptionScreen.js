@@ -13,8 +13,10 @@ import Circle from '../../components/Circle/Circle';
 import { findOtherSideIdFirebase,
    updateColorAfterReadFirebase,
     getPatientBatteryStatus,
-     setBackgroundInFirebase } from '../../utils/firebase';
+     setBackgroundInFirebase,updateDataInFirebase} from '../../utils/firebase';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import IconBadge from 'react-native-icon-badge';
+
 
 
 const TherapistOptionScreen = () => {
@@ -23,16 +25,17 @@ const TherapistOptionScreen = () => {
   const navigation = useNavigation();
   const [firstRender, setfirstRender]=useState(true);
   const [color, setColor]=useState({
-    location: "grey",
-    calls: "grey",
-    sms: "grey",
-    battery:"grey"
+    location: "#3B71F3",
+    calls: "#3B71F3",
+    sms: "#3B71F3",
+    battery:"#3B71F3"
   });
   const [patientID,setPatientID]=useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [long, setLong] = useState("");
   const [lat, setLat] = useState("");
   const [radius, setRadius] = useState("");
+  const [w, setW] = useState("");
 
   useEffect(
     () => {
@@ -131,7 +134,9 @@ const TherapistOptionScreen = () => {
     const onBatteryStatusPressed = () =>{
       console.log("onBatteryStatusPressed");
       //onUpdatePressed1();
+      
       updateColorAfterRead("colorBattery");
+     
       if(patientID){
         getPatientBatteryStatus(patientID).then((result)=>{
           if (result !== 'fail'){
@@ -170,25 +175,106 @@ const TherapistOptionScreen = () => {
           
           const safeAreaInput = () => {
             console.log("line 172: ",lat,long,radius);
+            if(patientID){
+              const obj = {
+                latSafe:lat,
+                longSafe:long,
+                radiusSafe:radius
+              };
+              updateDataInFirebase(patientID,obj);
+             }
             setLat("");
             setLong("");
             setRadius("");
+         
           }
-   
-      
+ 
+          
     return (
         <ScrollView keyboardShouldPersistTaps='handled'>
         <View style={styles.root}>
             <Text style={styles.title} >DementiaApp</Text>
              <Text style={styles.text} ></Text>    
-             <Circle id="location" color={color.location}/>           
+             {/* <Circle id="location" color={color.location}/>            */}
+             
+             <IconBadge 
+              MainElement={
              <CustomButtonForTherapistScreen text="לחץ לקבלת מיקום" onPress={()=>{findPatienPressed()}}/> 
-             <Circle id="calls" color={color.calls}/>
+            //  {/* <Circle id="calls" color={color.calls}/> */}
+               }
+                IconBadgeStyle={{
+                  marginTop:9,
+                  top:1,
+                  left:0,
+                  width:20,
+                  height:20,
+                  borderRadius:15,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor:color.location,  
+                  
+                }}
+               />
+             
+             <IconBadge 
+              MainElement={
              <CustomButtonForTherapistScreen text="לחץ לרשימת השיחות" onPress={()=>{onPatientCallPressed()}}/> 
-             <Circle id="sms" color={color.sms}/>
+              }
+              IconBadgeStyle={{
+                marginTop:9,
+                top:1,
+                left:0,
+                width:20,
+                height:20,
+                borderRadius:15,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor:color.calls,  
+              }}
+              />
+             {/* <Circle id="sms" color={color.sms}/> */}
+
+             <IconBadge 
+              MainElement={
              <CustomButtonForTherapistScreen text="לחץ לרשימת ההודעות שהתקבלו" onPress={()=>{onPatientSMSPressed()}}/> 
-             <Circle id="battery" color={color.battery}/>
-             <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה" onPress={()=>{onBatteryStatusPressed()}}/>
+              }
+              IconBadgeStyle={{
+                marginTop:9,
+                top:1,
+                left:0,
+                width:20,
+                height:20,
+                borderRadius:15,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor:color.sms,  
+              }}
+              />
+
+            <IconBadge 
+              MainElement={
+                <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה"  onPress={()=>{onBatteryStatusPressed()}}              
+                />
+             }
+             
+             IconBadgeStyle={{
+              marginTop:9,
+              top:1,
+              left:0,
+              width:20,
+              height:20,
+              borderRadius:15,
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor:color.battery,  
+              
+            }}
+            
+              />
+              
+               {/* <Circle id="battery" color={color.battery}/>
+             <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה" onPress={()=>{onBatteryStatusPressed()}}
+             /> */}
              <CustomButtonForTherapistScreen text="לחץ להגדרת רקע" onPress={()=>{setBackgroundForPatient()}}/>
              <CustomButtonForTherapistScreen text="לחץ לשליחת תזכורת" onPress={()=>{onSendReminders()}}/> 
              {/* <CustomButtonForTherapistScreen text="הגדר מיקום בטוח" onPress={()=>{safeArea()}}/>  */}
@@ -233,7 +319,7 @@ const TherapistOptionScreen = () => {
                       />
                        <TextInput
                       style={styles.input}
-                      placeholder="רדיוס"
+                      placeholder="אנא הכנס רדיוס בקילומטרים"
                       keyboardType="numeric"
                       value={radius}
                       onChangeText={(text)=>{
@@ -294,14 +380,7 @@ const styles = StyleSheet.create({
       padding:5,
       fontSize:20
     },
-    
-
-
-
-
-
     input: {
-      
       backgroundColor: 'white',
       padding: 10,
       width:300,
