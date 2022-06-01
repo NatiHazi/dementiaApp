@@ -26,6 +26,7 @@ import { updateDataInFirebase, findOtherSideIdFirebase, getFirebaseTokenMessage 
 
 
 
+
 const PatientOptionScreen = () => {
 const [initializing, setInitializing] = useState(true);
 const [user, setUser] = useState();
@@ -55,6 +56,16 @@ const navigation = useNavigation();
   // });
   // SystemSetting.setVolume(0.65);
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);  
+    let smsListenrVar=SmsListner.addListener(message=>{
+      if (user && therapistPhone){
+      console.log("the sms test listner: ", message);
+      sendAutoSms('התקבלה הודעה חדשה אצל המטופל', therapistPhone);
+       smsLog(user.uid);
+       updateColorForTherapist("colorSMS", "red");
+      }
+      else
+        console.log("LINE 67 LINE 67 LINE 67 LINE 67 LINE 67 LINE 67");
+    });
     //if (initializing) return null;
     if(user){
       console.log(" line 60 : ", user);
@@ -65,6 +76,7 @@ const navigation = useNavigation();
       if (firstRender){    
         getLocationAndUpdateFirebase();
          updateTokenMessage(uid); //update user token for messaging cloud
+   
       permessionCallLog(uid);
 
       findTherapitNumAndId(uid);
@@ -76,7 +88,7 @@ const navigation = useNavigation();
     }
     if (therapistPhone && idThearpist){
       console.log("LINE 67, AND PHONE: ", therapistPhone);
-      listenSMSAndSend(uid,therapistPhone); //listen for sms coming and notice the therapist new sms came
+      //listenSMSAndSend(uid,therapistPhone); //listen for sms coming and notice the therapist new sms came
       startListenerTapped(uid,therapistPhone); //same with calls
       listenerForUpdates(uid, idThearpist);
     }
@@ -99,11 +111,14 @@ const navigation = useNavigation();
 
 
       return()=>{
-        console.log("CLEAN USEEFFECT")
+        console.log("CLEAN USEEFFECT");
+        subscriber;
+        smsListenrVar.remove();
           
       }
 
   }, [user,therapistPhone,idThearpist]);
+  
 
   //USEEFFECT FOR CHECKING BATTERY STATUS AND IF NEED UPDATING IN SERVER
   useEffect(() => {
@@ -133,7 +148,7 @@ const navigation = useNavigation();
   
       updateSettingsFirebase();
       // 3600000
-  }, 3600000);
+  }, 10000);
   return () => BackgroundTimer.clearInterval(intervalId);
 
   }, []);
@@ -142,14 +157,14 @@ const navigation = useNavigation();
      const intervalIdLocation = BackgroundTimer.setInterval(() => {
       getLocationAndUpdateFirebase();
       
-  }, 3600000);
+  }, 10000);
 
   return () => BackgroundTimer.clearInterval(intervalIdLocation);
 
   }, [user]);
   //USEEFFECT FOR CHECKING IF LOCATION HAS CAHNGED AFTER X MILI SECONDS AND IF DOES UPDATE IN SERVER
   useEffect(() => {
-    if (userLocation && user && idThearpist){
+    if (userLocation && user && idThearpist && therapistPhone){
       prevUserLocation.current.latitude=userLocation.latitude;
       prevUserLocation.current.longitude=userLocation.longitude;
       firestore()
@@ -166,6 +181,7 @@ const navigation = useNavigation();
           let rediusResult = distance(latitudeSave,userLocation.latitude,longitudeSave,userLocation.longitude);
           if(rediusResult>radiusSave){
             console.log('rediusResult>radiusSave');
+            sendAutoSms('המטופל יצא מאזור בטוח', therapistPhone);
           }
           else{
             console.log('171717171717171717171717117171711717171');
@@ -174,10 +190,11 @@ const navigation = useNavigation();
       });
 
       updateDataInFirebase(user.uid,{ longitude: userLocation.longitude,latitude: userLocation.latitude });
+      updateColorForTherapist("colorLocation", "red");
 
     }
 
-  }, [userLocation,idThearpist]);
+  }, [userLocation,idThearpist, therapistPhone]);
 
 
   //MAKE COLORS FOR THE HERAPIST SCREEN-GREEN IS NEW DATA\GREY IS ALREADY SEEN\RED IS BATTERY UNDER 20%
@@ -312,17 +329,17 @@ const navigation = useNavigation();
 
   //FUNCTION THAT WAITS FOR BACKGROUND UPDATE FROM THERAPIST (AND ALSO FOR UPDATES FOR ANY KIND DATA, BUT LATER WILL BE EDITTED)
   function listenerForUpdates(uid){
-    let firstFire = true;
+   // let firstFire = true;
     firestore()
   .collection('users')
   .doc(idThearpist)
   .onSnapshot(documentSnapshot => {
-    if (!firstFire){
+   // if (!firstFire){
 
      if (documentSnapshot.data().setBackground){
        (async()=>{
        try{
-      const urlBackground = await storage().ref(`${uid}image-for-background.png`).getDownloadURL();
+      const urlBackground = await storage().ref(`${uid}/image-for-background.png`).getDownloadURL();
       if (urlBackground){
         console.log("line 227: ", urlBackground);
          WallPaperManager.setWallpaper({ uri: urlBackground }, (res) => {
@@ -338,9 +355,9 @@ const navigation = useNavigation();
        })();
      }
       
-    }
+    //}
   
-    firstFire=false;
+    //firstFire=false;
   });
 
   }
@@ -355,7 +372,15 @@ const navigation = useNavigation();
     // For Android event will be either "Offhook",
     // "Disconnected", "Incoming" or "Missed"
     // phoneNumber should store caller/called number
- 
+
+    // LoudSpeaker.open(true);
+    // LoudSpeaker.about()
+    //   .then(data => {
+    //     alert(data)
+    //   })
+    //   .catch(e => {
+    //     alert(e)
+    //   });
  
     if (event === 'Disconnected') {
     // Do something call got disconnected
@@ -486,20 +511,45 @@ function getLocationAndUpdateFirebase(){
   (async ()=>{
     let { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
-      setErrorMsg('Permission to access location was denied');
+      console.log('Permission to access location was denied LINE 513 513 513 513 513 513');
       return;
     }
     else{
       (async ()=>{
-    let location = await Location.getCurrentPositionAsync({});
-    console.log(" LINE 532 LINE 532 LINE 532 LINE 532 LINE 532");
-        if (prevUserLocation.current.latitude!==location.coords.latitude || prevUserLocation.current.longitude!==location.coords.longitude){
-          console.log("CHONE CHONE CHONE CHONE CHONE CHONE");
-          setUserLocation({
-            longitude: location.coords.longitude,
-            latitude: location.coords.latitude,
-          });
-}
+
+        try {
+          const granted = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
+            {
+              title: "האפליקציה צריכה גישה למיקום שלך ברקע",
+              message:
+                "על מנת שהמטפל יוכל לדעת איפה הינך נמצא צריך גישה למיקום",
+              buttonNeutral: "שאל אחר כך",
+              buttonNegative: "ביטול",
+              buttonPositive: "אישור"
+            }
+          );
+          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+            console.log("BACKGROUND LOCATION PERMISION GRANTED");
+            let location = await Location.getCurrentPositionAsync({});
+            console.log(" LINE 532 LINE 532 LINE 532 LINE 532 LINE 532");
+            console.log(location);
+                if (prevUserLocation.current.latitude!==location.coords.latitude || prevUserLocation.current.longitude!==location.coords.longitude){
+                  console.log("CHONE CHONE CHONE CHONE CHONE CHONE");
+                  setUserLocation({
+                    longitude: location.coords.longitude,
+                    latitude: location.coords.latitude,
+                  });
+        }
+
+          } else {
+            console.log("BACKGROUND LOCATION PERMISION NOT GRANTED !!!");
+          }
+        } catch (err) {
+          console.warn(err);
+        }
+      
+
   })();
     }
 })();
@@ -572,7 +622,7 @@ function distance(lat1,lat2, lon1, lon2)
       justifyContent: 'space-around',
     }}>
        
-    <Text>"בדיקה"</Text>
+    <Text>שלום!!!</Text>
     <CustomButton text="Sing out" onPress={signOutFunction} type = "SIGNOUT"/>
   </View>
   )
