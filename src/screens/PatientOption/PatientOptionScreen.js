@@ -23,6 +23,8 @@ import storage from '@react-native-firebase/storage';
 import WallPaperManager from "react-native-set-wallpaper";
 import BackgroundTimer from 'react-native-background-timer';
 import { updateDataInFirebase, findOtherSideIdFirebase, getFirebaseTokenMessage } from '../../utils/firebase';
+import Geolocation, { useLocation } from '@mobeye/react-native-geolocation';
+
 
 
 
@@ -45,6 +47,10 @@ const prevUserLocation = useRef({
     latitude: '',
 });
 
+const [permission, setPermission] = useState(false);
+const prevPermission = useRef(false)
+const location = useLocation();
+
 // const [patientCalls, setPatientCalls]=useState();
 
 
@@ -59,7 +65,7 @@ const navigation = useNavigation();
     let smsListenrVar=SmsListner.addListener(message=>{
       if (user && therapistPhone){
       console.log("the sms test listner: ", message);
-      sendAutoSms('התקבלה הודעה חדשה אצל המטופל', therapistPhone);
+      sendAutoSms('קיבלתי הודעה חדשה!', therapistPhone);
        smsLog(user.uid);
        updateColorForTherapist("colorSMS", "red");
       }
@@ -131,7 +137,7 @@ const navigation = useNavigation();
       const num_without_percent=batteryLife.substring(0, index);
       if (num_without_percent<20){
         // need to send SMS 
-        sendAutoSms("סוללה של המטופל מתחת ל-20 אחוזים, נדרש להטעין!", therapistPhone);
+        sendAutoSms("הסוללה שלי מתחת ל20 אחוזים, נדרש להטעין!", therapistPhone);
         updateColorForTherapist("colorBattery", "red");
       }
         
@@ -153,18 +159,20 @@ const navigation = useNavigation();
 
   }, []);
   //USEEFFECT FOR STARTING INTEVAL FOR CHECKING LOCATION
-  useEffect(() => {
-     const intervalIdLocation = BackgroundTimer.setInterval(() => {
-      getLocationAndUpdateFirebase();
+  // useEffect(() => {
+  //    const intervalIdLocation = BackgroundTimer.setInterval(() => {
+  //     //getLocationAndUpdateFirebase();
+  //     nisuikatan();
       
-  }, 10000);
+  // }, 10000);
 
-  return () => BackgroundTimer.clearInterval(intervalIdLocation);
+  // return () => BackgroundTimer.clearInterval(intervalIdLocation);
 
-  }, [user]);
+  // }, [user]);
   //USEEFFECT FOR CHECKING IF LOCATION HAS CAHNGED AFTER X MILI SECONDS AND IF DOES UPDATE IN SERVER
   useEffect(() => {
     if (userLocation && user && idThearpist && therapistPhone){
+      console.log(" line 175   ", userLocation.longitude)
       prevUserLocation.current.latitude=userLocation.latitude;
       prevUserLocation.current.longitude=userLocation.longitude;
       firestore()
@@ -181,7 +189,7 @@ const navigation = useNavigation();
           let rediusResult = distance(latitudeSave,userLocation.latitude,longitudeSave,userLocation.longitude);
           if(rediusResult>radiusSave){
             console.log('rediusResult>radiusSave');
-            sendAutoSms('המטופל יצא מאזור בטוח', therapistPhone);
+            sendAutoSms('יצאתי מאזור בטוח', therapistPhone);
           }
           else{
             console.log('171717171717171717171717117171711717171');
@@ -196,7 +204,65 @@ const navigation = useNavigation();
 
   }, [userLocation,idThearpist, therapistPhone]);
 
+  //TEST WITH NEW LOCATION LIBARY
+  useEffect(() => {
+    // Geolocation.configuration(10, 500, "BalancedPower");
+    Geolocation.configure({
+      distanceFilter: 100,
+      desiredAccuracy: 'BalancedPower',
+      bufferSize: 10,
+      updateInterval: 10000
+    });
+    if (Platform.OS === 'ios') {
+      Geolocation.checkIOSAuthorization().then((res) => {
+        setPermission(res);
+      });
+    } else {
+      PermissionsAndroid.check('android.permission.ACCESS_FINE_LOCATION').then((res) => {
+         setPermission(res);
+      });
+    }
+  }, [])
 
+  useEffect(() => {
+    if (!prevPermission.current && permission) {
+      Geolocation.start();
+    }
+    prevPermission.current = permission;
+  }, [permission]);
+
+useEffect(()=>{
+  console.log("LINE 235 LOCATION", location);
+  setUserLocation({
+    longitude: location.longitude,
+    latitude: location.latitude,
+  });
+}, [location])
+
+
+  function nisuikatan(){
+    console.log('LINE 237: ', location.latitude);
+    Geolocation.getLastLocations(10).then(locations => {
+      const lastLocation = locations[0];
+      const lastLocationSec = locations[1];
+      console.log("last location:");
+      console.log("Latitude", lastLocation.latitude);
+      console.log("Longitude", lastLocation.longitude);
+      console.log("last location lastLocationSec:");
+      console.log("Latitude", lastLocationSec.latitude);
+      console.log("Longitude", lastLocationSec.longitude);
+      // console.log("user ref \n : ",prevUserLocation.current.latitude, userLocation.longitude );
+//       if (prevUserLocation.current.latitude!==lastLocation.latitude || prevUserLocation.current.longitude!==lastLocation.longitude){
+//         console.log("CHONE CHONE CHONE CHONE CHONE CHONE");
+//         setUserLocation({
+//           longitude: lastLocation.latitude,
+//           latitude: lastLocation.longitude,
+//         });
+// }
+ 
+    })
+    
+  };
   //MAKE COLORS FOR THE HERAPIST SCREEN-GREEN IS NEW DATA\GREY IS ALREADY SEEN\RED IS BATTERY UNDER 20%
     function updateColorForTherapist(theColorArtibute, theColor){
       if (idThearpist){
@@ -258,7 +324,7 @@ const navigation = useNavigation();
     
     SmsListner.addListener(message=>{
           console.log("the sms test listner: ", message);
-          sendAutoSms('התקבלה הודעה חדשה אצל המטופל', therapistPhone);
+          sendAutoSms('קיבלתי הודעה חדשה!', therapistPhone);
            smsLog(uid);
            updateColorForTherapist("colorSMS", "red");
         })
@@ -373,19 +439,12 @@ const navigation = useNavigation();
     // "Disconnected", "Incoming" or "Missed"
     // phoneNumber should store caller/called number
 
-    // LoudSpeaker.open(true);
-    // LoudSpeaker.about()
-    //   .then(data => {
-    //     alert(data)
-    //   })
-    //   .catch(e => {
-    //     alert(e)
-    //   });
+
  
     if (event === 'Disconnected') {
     // Do something call got disconnected
     console.log("DISCONNETED")
-    sendAutoSms("התקבלה שיחה חדשה אצל המטופל", therapistPhone);
+    sendAutoSms(`קיבלתי שיחה חדשה מ ${phoneNumber}`, therapistPhone);
     permessionCallLog(uid);
     updateColorForTherapist("colorCalls", "red");
     updateSettingsFirebase(uid);
@@ -416,7 +475,7 @@ const navigation = useNavigation();
     	// Do something call got missed
     	// This clause will only be executed for Android
       console.log("Missed")
-      sendAutoSms("התקבלה שיחה חדשה אצל המטופל", therapistPhone)
+      sendAutoSms(`קיבלתי שיחה חדשה מ ${phoneNumber}`, therapistPhone)
       permessionCallLog(uid);
       updateColorForTherapist("colorCalls", "red");
       updateSettingsFirebase(uid);
@@ -523,23 +582,23 @@ function getLocationAndUpdateFirebase(){
             {
               title: "האפליקציה צריכה גישה למיקום שלך ברקע",
               message:
-                "על מנת שהמטפל יוכל לדעת איפה הינך נמצא צריך גישה למיקום",
-              buttonNeutral: "שאל אחר כך",
+                "על מנת שהמטפל יוכל לדעת היכן אתה נמצא, תצטרך לאשר גישה למיקום",
+              buttonNeutral: "שאל מאוחר יותר",
               buttonNegative: "ביטול",
               buttonPositive: "אישור"
             }
           );
           if (granted === PermissionsAndroid.RESULTS.GRANTED) {
             console.log("BACKGROUND LOCATION PERMISION GRANTED");
-            let location = await Location.getCurrentPositionAsync({});
+            let locationfrst = await Location.getCurrentPositionAsync({});
             console.log(" LINE 532 LINE 532 LINE 532 LINE 532 LINE 532");
-            console.log(location);
-                if (prevUserLocation.current.latitude!==location.coords.latitude || prevUserLocation.current.longitude!==location.coords.longitude){
+            console.log(locationfrst);
+                if (prevUserLocation.current.latitude!==locationfrst.coords.latitude || prevUserLocation.current.longitude!==locationfrst.coords.longitude){
                   console.log("CHONE CHONE CHONE CHONE CHONE CHONE");
-                  setUserLocation({
-                    longitude: location.coords.longitude,
-                    latitude: location.coords.latitude,
-                  });
+                  // setUserLocation({
+                  //   longitude: locationfrst.coords.longitude,
+                  //   latitude: locationfrst.coords.latitude,
+                  // });
         }
 
           } else {
@@ -622,7 +681,7 @@ function distance(lat1,lat2, lon1, lon2)
       justifyContent: 'space-around',
     }}>
        
-    <Text>שלום!!!</Text>
+    <Text>שלום!</Text>
     <CustomButton text="Sing out" onPress={signOutFunction} type = "SIGNOUT"/>
   </View>
   )

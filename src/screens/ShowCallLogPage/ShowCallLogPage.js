@@ -55,7 +55,7 @@ const ShowLogCall = ({route}) => {
     return (
       <View style={styles.container}>
         <Text style= {styles.text}>רשימת שיחות של המטופל</Text>
-        <FlatList
+        <FlatList nestedScrollEnabled
          data={thelist}
          //<Text style={styles.item}>{item.key}</Text>
           renderItem={({item}) =>{
@@ -92,13 +92,21 @@ const styles = StyleSheet.create({
     marginLeft: "11%",
     marginTop: 10,
     paddingTop: 20,
-    paddingBottom: 20,
+    paddingBottom: 10,
     backgroundColor: '#F0FFFF',
     borderRadius: 10,
-     borderWidth: 1,
-    borderColor: '#000',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+    elevation: 4,
+    shadowRadius:20,
     fontWeight: 'bold',
     color:'black',
+    width:315,
  
   },
 });

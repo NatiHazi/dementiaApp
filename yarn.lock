@@ -1802,6 +1802,11 @@
     "@types/yargs" "^15.0.0"
     "chalk" "^4.0.0"
 
+"@mobeye/react-native-geolocation@^1.6.0":
+  "integrity" "sha512-cu8do0jJ/LdkHggIpN+1MCv0R6b2c1eOfQHrkMpmK4mnhBISHZT8mikwgEuN00bDO13JtJtTB4QIzYCvc6RgNg=="
+  "resolved" "https://registry.npmjs.org/@mobeye/react-native-geolocation/-/react-native-geolocation-1.6.0.tgz"
+  "version" "1.6.0"
+
 "@nodelib/fs.scandir@2.1.5":
   "integrity" "sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g=="
   "resolved" "https://registry.npmjs.org/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz"
@@ -6491,6 +6496,11 @@
   "version" "2.3.1"
   dependencies:
     "react-localization" "^1.0.17"
+
+"react-native-loud-speaker@^1.0.4":
+  "integrity" "sha512-DFiQpzEBmaK0TWSSklKegDJrJ48dh+YAROT/OU2IgUBOM+KvehHbz5tM7T5xdmJzSfpRd5b4F8uDyxXMHbSuHQ=="
+  "resolved" "https://registry.npmjs.org/react-native-loud-speaker/-/react-native-loud-speaker-1.0.4.tgz"
+  "version" "1.0.4"
 
 "react-native-maps@0.28.1":
   "integrity" "sha512-Ytcc8ZK7Pp5oU1gbRgtXKvl5hIlTa1F7J/bEPeS1Ch/ad9/3gHP+uC/pNfe2Ava90nXqZ+ATIFTF2uVcTMogWg=="

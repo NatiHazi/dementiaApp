@@ -48,26 +48,13 @@ const ShowSMSLog = ({route}) => {
 
   }
   
-  
-  // SMSPatient = documentSnapshot.data().List_SMS;
-  // let emptyStr = "";
-  // let count = 1;
-  // for (let i=0; i<SMSPatient.length; i++){
-  //   if (i%2==0){
-  //     emptyStr = " " + count + ") ׳”׳•׳“׳¢׳” ׳”׳×׳§׳‘׳׳” ׳׳׳¡׳₪׳¨ - " + SMSPatient[i];
-  //   }
-  //   else{
-  //     emptyStr+="\n ׳₪׳™׳¨׳•׳˜ ׳”׳”׳•׳“׳¢׳” - " + SMSPatient[i];
-  //      setthelist(thelist=>[...thelist, {key:emptyStr}]);
-  //      count+=1;
-  //   }
-  //   }  
+
   
     return (
       <View style={styles.container}>
         
         <Text style= {styles.text}>רשימת הודעות של המטופל</Text>
-        <FlatList
+        <FlatList nestedScrollEnabled
          data={thelist}
          //<Text style={styles.item}>{item.key}</Text>
           renderItem={({item}) =>{
@@ -109,8 +96,15 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     backgroundColor: '#F0FFFF',
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#000',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.23,
+    shadowRadius: 2.62,
+    elevation: 4,
+    shadowRadius:20,
     fontWeight: 'bold',
     color:'black',
     width:315,
