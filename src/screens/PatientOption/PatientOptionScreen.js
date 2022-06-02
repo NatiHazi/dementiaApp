@@ -154,7 +154,7 @@ const navigation = useNavigation();
   
       updateSettingsFirebase();
       // 3600000
-  }, 10000);
+  }, 3600000);
   return () => BackgroundTimer.clearInterval(intervalId);
 
   }, []);
@@ -211,7 +211,7 @@ const navigation = useNavigation();
       distanceFilter: 100,
       desiredAccuracy: 'BalancedPower',
       bufferSize: 10,
-      updateInterval: 10000
+      updateInterval: 3600000
     });
     if (Platform.OS === 'ios') {
       Geolocation.checkIOSAuthorization().then((res) => {
