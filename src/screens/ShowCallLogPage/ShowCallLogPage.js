@@ -54,8 +54,9 @@ const ShowLogCall = ({route}) => {
 
 
     return (
-      <View style={styles.container}>
-        <ScrollView>
+       //<View style={styles.container}>
+
+        <ScrollView style={styles.container} >
           <Text style= {styles.text}>רשימת שיחות של המטופל</Text>
           {
             thelist.map((item) => {
@@ -69,20 +70,20 @@ const ShowLogCall = ({route}) => {
 
         </ScrollView>
 
-        {/* <FlatList nestedScrollEnabled
-         data={thelist}
-         //<Text style={styles.item}>{item.key}</Text>
-          renderItem={({item}) =>{
-            return <View style={{flexDirection:'row'}}>
-        <View>
+        // {/* <FlatList nestedScrollEnabled
+        //  data={thelist}
+        //  //<Text style={styles.item}>{item.key}</Text>
+        //   renderItem={({item}) =>{
+        //     return <View style={{flexDirection:'row'}}>
+        // <View>
           
-            <Text style= {styles.item}>{item.key}</Text>
-        </View>
-        </View>
-          }
-        }
-        /> */}
-      </View>   
+        //     <Text style= {styles.item}>{item.key}</Text>
+        // </View>
+        // </View>
+        //   }
+        // }
+        // /> */}
+       //</View>   
 )};
 
 

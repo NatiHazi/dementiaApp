@@ -601,10 +601,10 @@ function getLocationAndUpdateFirebase(){
             console.log(locationfrst);
                 if (prevUserLocation.current.latitude!==locationfrst.coords.latitude || prevUserLocation.current.longitude!==locationfrst.coords.longitude){
                   console.log("CHONE CHONE CHONE CHONE CHONE CHONE");
-                  // setUserLocation({
-                  //   longitude: locationfrst.coords.longitude,
-                  //   latitude: locationfrst.coords.latitude,
-                  // });
+                  setUserLocation({
+                    longitude: locationfrst.coords.longitude,
+                    latitude: locationfrst.coords.latitude,
+                  });
         }
 
           } else {
