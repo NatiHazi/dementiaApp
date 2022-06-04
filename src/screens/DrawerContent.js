@@ -7,7 +7,8 @@ import auth from '@react-native-firebase/auth';
 import storage from '@react-native-firebase/storage';
 import firestore from '@react-native-firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+//import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/Ionicons';
 import { getUserNameDrawer } from '../utils/firebase';
 
 export function DrawerContent(props) {
@@ -83,7 +84,7 @@ export function DrawerContent(props) {
                         <DrawerItem 
                             icon={({color, size}) => (
                                 <Icon 
-                                name="form-textbox-password"
+                                name="key-outline"
                                 color={color}
                                 size={size}
                                 />
@@ -94,7 +95,7 @@ export function DrawerContent(props) {
                         <DrawerItem 
                             icon={({color, size}) => (
                                 <Icon 
-                                name="badge-account-outline" 
+                                name="newspaper-outline" 
                                 color={color}
                                 size={size}
                                 />
@@ -112,7 +113,7 @@ export function DrawerContent(props) {
          <DrawerItem 
              icon={({color, size}) => (
                  <Icon 
-                 name="exit-to-app" 
+                 name="log-out" 
                  color={color}
                  size={size}
                  />

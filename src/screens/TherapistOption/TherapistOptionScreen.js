@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import { View ,Text ,ScrollView,StyleSheet,Alert,Image,Modal,Pressable,TextInput} from 'react-native';
+import { View ,Text ,ScrollView,StyleSheet,Alert,Image,Modal,Pressable,TextInput,Button} from 'react-native';
 import CustomButtonForTherapistScreen from '../../components/CustomButtonForTherapistScreen';
 import CustomInput from '../../components/CutomInput';
 import { useNavigation } from '@react-navigation/native';
@@ -14,8 +14,9 @@ import { findOtherSideIdFirebase,
    updateColorAfterReadFirebase,
     getPatientBatteryStatus,
      setBackgroundInFirebase,updateDataInFirebase} from '../../utils/firebase';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import Icon from 'react-native-vector-icons/Ionicons';
 import IconBadge from 'react-native-icon-badge';
+
 
 
 
@@ -188,20 +189,46 @@ const TherapistOptionScreen = () => {
             setRadius("");
          
           }
+
+        const askForUpdateLocation = () => {
+          if(user){
+            updateDataInFirebase(user.uid,{giveUpdateLocation:true});
+            alert("הפעולה עשויה להמשך מספר שניות");
+            }
+            else {
+              alert("זמנית השירות לא זמין, נסו מאוחר יותר.");
+            }
+          }
  
           
     return (
         <ScrollView keyboardShouldPersistTaps='handled'>
         <View style={styles.root}>
             <Text style={styles.title} >DementiaApp</Text>
-             <Text style={styles.text} ></Text>    
-             {/* <Circle id="location" color={color.location}/>            */}
+           
+             {/* <Circle id="location" color={color.location}/>    */}
              
+             <Icon style={styles.iconSec} onPress={()=>{askForUpdateLocation()}}
+                name="navigate-circle-outline"
+              
+             />
+            
              <IconBadge 
+          
+                icon={
+                  <Icon
+                    name="navigate-circle-outline"
+                    
+                  />
+                }
+               
               MainElement={
+              
              <CustomButtonForTherapistScreen text="לחץ לקבלת מיקום" onPress={()=>{findPatienPressed()}}/> 
             //  {/* <Circle id="calls" color={color.calls}/> */}
+            
                }
+           
                 IconBadgeStyle={{
                   marginTop:9,
                   top:1,
@@ -213,7 +240,7 @@ const TherapistOptionScreen = () => {
                   justifyContent: 'center',
                   backgroundColor:color.location,  
                   
-                }}
+                }} 
                />
              
              <IconBadge 
@@ -275,8 +302,11 @@ const TherapistOptionScreen = () => {
                {/* <Circle id="battery" color={color.battery}/>
              <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה" onPress={()=>{onBatteryStatusPressed()}}
              /> */}
+             
              <CustomButtonForTherapistScreen text="לחץ להגדרת רקע" onPress={()=>{setBackgroundForPatient()}}/>
+            
              <CustomButtonForTherapistScreen text="לחץ לשליחת תזכורת" onPress={()=>{onSendReminders()}}/> 
+
              {/* <CustomButtonForTherapistScreen text="הגדר מיקום בטוח" onPress={()=>{safeArea()}}/>  */}
             {/* <CustomButtonForTherapistScreen text="Therapist" onPress={onTherapistPressed}/> 
             <CustomButtonForTherapistScreen text="Patient" onPress={onTherapistPressed}/>  */}
@@ -440,6 +470,12 @@ const styles = StyleSheet.create({
       textAlign: "center",
       fontWeight:'bold',
       fontSize: 24,
+    },
+    iconSec: {
+      marginBottom: 6,
+      marginTop:15,
+      textAlign: "center",
+      fontSize: 30,
     },
 
 })

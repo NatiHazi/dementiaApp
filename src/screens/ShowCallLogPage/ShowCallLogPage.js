@@ -36,6 +36,7 @@ const ShowLogCall = ({route}) => {
     getPatientCallsFirebase(patientID).then((result)=>{
       if (result){
         let count = 1;
+        let emptyStr;
         for (let i=0; i<result.length; i++){
            if (i%2==0){
              emptyStr = " " + count + ") התקבלה בתאריך - " + result[i];
@@ -54,8 +55,21 @@ const ShowLogCall = ({route}) => {
 
     return (
       <View style={styles.container}>
-        <Text style= {styles.text}>רשימת שיחות של המטופל</Text>
-        <FlatList nestedScrollEnabled
+        <ScrollView>
+          <Text style= {styles.text}>רשימת שיחות של המטופל</Text>
+          {
+            thelist.map((item) => {
+              return(
+                <View key={item.key}>
+                   <Text style= {styles.item}>{item.key}</Text>
+                  </View>
+              )
+            })
+          }
+
+        </ScrollView>
+
+        {/* <FlatList nestedScrollEnabled
          data={thelist}
          //<Text style={styles.item}>{item.key}</Text>
           renderItem={({item}) =>{
@@ -67,7 +81,7 @@ const ShowLogCall = ({route}) => {
         </View>
           }
         }
-        />
+        /> */}
       </View>   
 )};
 

@@ -205,64 +205,64 @@ const navigation = useNavigation();
   }, [userLocation,idThearpist, therapistPhone]);
 
   //TEST WITH NEW LOCATION LIBARY
-  useEffect(() => {
-    // Geolocation.configuration(10, 500, "BalancedPower");
-    Geolocation.configure({
-      distanceFilter: 100,
-      desiredAccuracy: 'BalancedPower',
-      bufferSize: 10,
-      updateInterval: 3600000
-    });
-    if (Platform.OS === 'ios') {
-      Geolocation.checkIOSAuthorization().then((res) => {
-        setPermission(res);
-      });
-    } else {
-      PermissionsAndroid.check('android.permission.ACCESS_FINE_LOCATION').then((res) => {
-         setPermission(res);
-      });
-    }
-  }, [])
+  // useEffect(() => {
+  //   // Geolocation.configuration(10, 500, "BalancedPower");
+  //   Geolocation.configure({
+  //     distanceFilter: 100,
+  //     desiredAccuracy: 'BalancedPower',
+  //     bufferSize: 10,
+  //     updateInterval: 3600000
+  //   });
+  //   if (Platform.OS === 'ios') {
+  //     Geolocation.checkIOSAuthorization().then((res) => {
+  //       setPermission(res);
+  //     });
+  //   } else {
+  //     PermissionsAndroid.check('android.permission.ACCESS_FINE_LOCATION').then((res) => {
+  //        setPermission(res);
+  //     });
+  //   }
+  // }, [])
 
-  useEffect(() => {
-    if (!prevPermission.current && permission) {
-      Geolocation.start();
-    }
-    prevPermission.current = permission;
-  }, [permission]);
+  // useEffect(() => {
+  //   if (!prevPermission.current && permission) {
+  //     Geolocation.start();
+  //   }
+  //   prevPermission.current = permission;
+  // }, [permission]);
 
-useEffect(()=>{
-  console.log("LINE 235 LOCATION", location);
-  setUserLocation({
-    longitude: location.longitude,
-    latitude: location.latitude,
-  });
-}, [location])
+// useEffect(()=>{
+//   console.log("LINE 235 LOCATION", location);
+//   setUserLocation({
+//     longitude: location.longitude,
+//     latitude: location.latitude,
+//   });
+// }, [location])
 
 
-  function nisuikatan(){
-    console.log('LINE 237: ', location.latitude);
-    Geolocation.getLastLocations(10).then(locations => {
-      const lastLocation = locations[0];
-      const lastLocationSec = locations[1];
-      console.log("last location:");
-      console.log("Latitude", lastLocation.latitude);
-      console.log("Longitude", lastLocation.longitude);
-      console.log("last location lastLocationSec:");
-      console.log("Latitude", lastLocationSec.latitude);
-      console.log("Longitude", lastLocationSec.longitude);
-      // console.log("user ref \n : ",prevUserLocation.current.latitude, userLocation.longitude );
-//       if (prevUserLocation.current.latitude!==lastLocation.latitude || prevUserLocation.current.longitude!==lastLocation.longitude){
-//         console.log("CHONE CHONE CHONE CHONE CHONE CHONE");
-//         setUserLocation({
-//           longitude: lastLocation.latitude,
-//           latitude: lastLocation.longitude,
-//         });
-// }
+//   function nisuikatan(){
+//     console.log('LINE 237: ', location.latitude);
+//     Geolocation.getLastLocations(10).then(locations => {
+//       const lastLocation = locations[0];
+//       const lastLocationSec = locations[1];
+//       console.log("last location:");
+//       console.log("Latitude", lastLocation.latitude);
+//       console.log("Longitude", lastLocation.longitude);
+//       console.log("last location lastLocationSec:");
+//       console.log("Latitude", lastLocationSec.latitude);
+//       console.log("Longitude", lastLocationSec.longitude);
+//       // console.log("user ref \n : ",prevUserLocation.current.latitude, userLocation.longitude );
+// //       if (prevUserLocation.current.latitude!==lastLocation.latitude || prevUserLocation.current.longitude!==lastLocation.longitude){
+// //         console.log("CHONE CHONE CHONE CHONE CHONE CHONE");
+// //         setUserLocation({
+// //           longitude: lastLocation.latitude,
+// //           latitude: lastLocation.longitude,
+// //         });
+// // }
  
-    })
+//     })
     
-  };
+//   };
   //MAKE COLORS FOR THE HERAPIST SCREEN-GREEN IS NEW DATA\GREY IS ALREADY SEEN\RED IS BATTERY UNDER 20%
     function updateColorForTherapist(theColorArtibute, theColor){
       if (idThearpist){
@@ -420,6 +420,12 @@ useEffect(()=>{
        updateListersToFalseInTherDoc(idThearpist,"setBackground");
        })();
      }
+     if (documentSnapshot.data().giveUpdateLocation){
+      getLocationAndUpdateFirebase();
+      updateListersToFalseInTherDoc(idThearpist,"giveUpdateLocation");
+
+    }
+
       
     //}
   
