@@ -89,7 +89,7 @@ export function DrawerContent(props) {
                                 size={size}
                                 />
                             )}
-                            label="Change Password"
+                            label="שינוי סיסמא"
                             onPress={() => {props.navigation.navigate('ForgotPassword',{ isTherapist: true })}}
                         />
                         <DrawerItem 
@@ -100,7 +100,7 @@ export function DrawerContent(props) {
                                 size={size}
                                 />
                             )}
-                            label="Account Settings"
+                            label="הגדרות חשבון"
                             onPress={() => {props.navigation.navigate('AccountSettingScreen')}}
                         />
 
@@ -118,7 +118,7 @@ export function DrawerContent(props) {
                  size={size}
                  />
              )}
-             label="Sign Out"
+             label="התנתקות"
              onPress={() => {signOutFunction()}}
          />
      </Drawer.Section>
