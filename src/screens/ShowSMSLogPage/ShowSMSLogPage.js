@@ -51,22 +51,39 @@ const ShowSMSLog = ({route}) => {
 
   
     return (
-      <View style={styles.container}>
-        
-        <Text style= {styles.text}>רשימת הודעות של המטופל</Text>
-        <FlatList nestedScrollEnabled
-         data={thelist}
-         //<Text style={styles.item}>{item.key}</Text>
-          renderItem={({item}) =>{
-            return <View style={{flexDirection:'row'}}>
-        <View>
-            <Text style= {styles.item}>{item.key}</Text>
-        </View>
-        </View>
+
+      <SafeAreaView style={styles.container}>
+       <ScrollView contentContainerStyle={{flexGrow:1}}>
+       <Text style= {styles.text}>רשימת הודעות</Text>
+          {
+             thelist.map((item) => {
+               return(
+                 <View key={item.key}>
+                    <Text style= {styles.item}>{item.key}</Text>
+                    <Text></Text>
+                   </View>
+               )
+             })
           }
-        }
-        />
-      </View>
+       </ScrollView>
+     </SafeAreaView>
+
+      // <View style={styles.container}>
+        
+      //   <Text style= {styles.text}>רשימת הודעות</Text>
+      //   <FlatList nestedScrollEnabled
+      //    data={thelist}
+      //    //<Text style={styles.item}>{item.key}</Text>
+      //     renderItem={({item}) =>{
+      //       return <View style={{flexDirection:'row'}}>
+      //   <View>
+      //       <Text style= {styles.item}>{item.key}</Text>
+      //   </View>
+      //   </View>
+      //     }
+      //   }
+      //   />
+      // </View>
     );
     
 };
@@ -85,12 +102,12 @@ const styles = StyleSheet.create({
 },
   container: {
    flex: 1,
-   paddingTop: 50,
+   paddingTop: 10,
   },
   item: {
     flex: 1 ,
-    marginRight: "10%",
-    marginLeft: "11%",
+    marginRight: "9%",
+    marginLeft: "10%",
     marginTop: 10,
     paddingTop: 20,
     paddingBottom: 10,

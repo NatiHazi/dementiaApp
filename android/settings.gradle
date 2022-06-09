@@ -1,4 +1,8 @@
 rootProject.name = 'dementiaApp'
+include ':react-native-push-notification'
+project(':react-native-push-notification').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-push-notification/android')
+include ':react-native-loud-speaker'
+project(':react-native-loud-speaker').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-loud-speaker/android')
 include ':react-native-call-detection'
 project(':react-native-call-detection').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-call-detection/android')
 include ':react-native-background-timer'

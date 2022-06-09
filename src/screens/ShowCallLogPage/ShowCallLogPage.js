@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import { View,Image,Text ,ScrollView,StyleSheet,SafeAreaView,FlatList,StatusBar,Alert,Linking,Platform  } from 'react-native';
+import { View,Image,Text ,ScrollView,StyleSheet,SafeAreaView,FlatList,StatusBar,Alert,Linking,Platform,SectionList  } from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import auth from '@react-native-firebase/auth';
@@ -55,20 +55,36 @@ const ShowLogCall = ({route}) => {
 
     return (
        //<View style={styles.container}>
-
-        <ScrollView style={styles.container} >
-          <Text style= {styles.text}>רשימת שיחות של המטופל</Text>
+       <SafeAreaView style={styles.container}>
+       <ScrollView contentContainerStyle={{flexGrow:1}}>
+       <Text style= {styles.text}>רשימת שיחות</Text>
           {
-            thelist.map((item) => {
-              return(
-                <View key={item.key}>
-                   <Text style= {styles.item}>{item.key}</Text>
-                  </View>
-              )
-            })
+             thelist.map((item) => {
+               return(
+                 <View key={item.key}>
+                    <Text style= {styles.item}>{item.key}</Text>
+                    <Text></Text>
+                   </View>
+               )
+             })
           }
+       </ScrollView>
+     </SafeAreaView>
 
-        </ScrollView>
+
+        // <ScrollView style={styles.container} >
+        //   <Text style= {styles.text}>רשימת שיחות של המטופל</Text>
+        //   {
+        //     thelist.map((item) => {
+        //       return(
+        //         <View key={item.key}>
+        //            <Text style= {styles.item}>{item.key}</Text>
+        //           </View>
+        //       )
+        //     })
+        //   }
+
+        // </ScrollView>
 
         // {/* <FlatList nestedScrollEnabled
         //  data={thelist}
@@ -97,14 +113,18 @@ const styles = StyleSheet.create({
     textAlign:'center',
     color:'#051C60',
 },
+scrollView: {
+  backgroundColor: 'pink',
+  marginHorizontal: 10,
+},
   container: {
    flex: 1,
-   paddingTop: 50
+   paddingTop: 10
   },
   item: {
     flex: 1 ,
-    marginRight: "10%",
-    marginLeft: "11%",
+    marginRight: "9%",
+    marginLeft: "10%",
     marginTop: 10,
     paddingTop: 20,
     paddingBottom: 10,

@@ -7,6 +7,8 @@ import androidx.annotation.NonNull;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
+import com.loudspeaker.LoudSpeakerPackage;
 import com.pritesh.calldetection.CallDetectionManager;
 import com.ocetnik.timer.BackgroundTimerPackage;
 import com.imagepicker.ImagePickerPackage;

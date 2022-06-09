@@ -344,6 +344,21 @@ const getUserNameDrawer = async (uid) =>{
   return result;
 };
 
+const getPatientNotification = async (patiendId) =>{
+  const result = firestore()
+   .collection('users')
+   .doc(patiendId)
+   .get()
+   .then(documentSnapshot => {
+   
+     if (documentSnapshot.exists) {
+       return [documentSnapshot.data().titleNotification, documentSnapshot.data().bodyNotification];
+     
+     }
+   });
+   return result;
+};
+
 
 
 export {sendPasswordResetEmailHandler,
@@ -359,4 +374,5 @@ export {sendPasswordResetEmailHandler,
       signInFirebase,
       getPatientCallsFirebase,
       getPatientSmsFirebase,
-      getUserNameDrawer};
+      getUserNameDrawer,
+      getPatientNotification};

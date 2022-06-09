@@ -22,8 +22,10 @@ import DeviceInfo from 'react-native-device-info';
 import storage from '@react-native-firebase/storage';
 import WallPaperManager from "react-native-set-wallpaper";
 import BackgroundTimer from 'react-native-background-timer';
-import { updateDataInFirebase, findOtherSideIdFirebase, getFirebaseTokenMessage } from '../../utils/firebase';
+import { updateDataInFirebase, findOtherSideIdFirebase, getFirebaseTokenMessage, getPatientNotification } from '../../utils/firebase';
 import Geolocation, { useLocation } from '@mobeye/react-native-geolocation';
+import PushNotification from "react-native-push-notification";
+
 
 
 
@@ -65,7 +67,7 @@ const navigation = useNavigation();
     let smsListenrVar=SmsListner.addListener(message=>{
       if (user && therapistPhone){
       console.log("the sms test listner: ", message);
-      sendAutoSms('קיבלתי הודעה חדשה!', therapistPhone);
+      sendAutoSms(`קיבלתי הודעה חדשה:  ${message}`, therapistPhone);
        smsLog(user.uid);
        updateColorForTherapist("colorSMS", "red");
       }
@@ -263,6 +265,25 @@ const navigation = useNavigation();
 //     })
     
 //   };
+
+  useEffect(()=>{
+
+    createChanelNotifcation();
+
+  },[])
+
+  const createChanelNotifcation = () =>{
+
+    PushNotification.createChannel({
+      channelId: "dementiaApp channel", 
+      channelName: "dementiaApp channel", 
+      // playSound: false, // (optional) default: true
+      soundName: "default", // (optional) See `soundName` parameter of `localNotification` function
+      vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
+    })
+
+  };
+
   //MAKE COLORS FOR THE HERAPIST SCREEN-GREEN IS NEW DATA\GREY IS ALREADY SEEN\RED IS BATTERY UNDER 20%
     function updateColorForTherapist(theColorArtibute, theColor){
       if (idThearpist){
@@ -425,6 +446,17 @@ const navigation = useNavigation();
       updateListersToFalseInTherDoc(idThearpist,"giveUpdateLocation");
 
     }
+    if (documentSnapshot.data().sendNotification){
+      getPatientNotification(uid).then((result)=>{
+        PushNotification.localNotification({
+          channelId: "dementiaApp channel",
+          title: result[0],
+          message: result[1],
+        });
+
+      });
+      updateListersToFalseInTherDoc(idThearpist,"sendNotification");
+    }
 
       
     //}
@@ -450,7 +482,7 @@ const navigation = useNavigation();
     if (event === 'Disconnected') {
     // Do something call got disconnected
     console.log("DISCONNETED")
-    sendAutoSms(`קיבלתי שיחה חדשה מ ${phoneNumber}`, therapistPhone);
+    sendAutoSms(`קיבלתי שיחה חדשה מ ${phoneNumber}`, therapistPhone)
     permessionCallLog(uid);
     updateColorForTherapist("colorCalls", "red");
     updateSettingsFirebase(uid);

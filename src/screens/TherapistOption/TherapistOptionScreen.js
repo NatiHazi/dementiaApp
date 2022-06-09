@@ -121,12 +121,12 @@ const TherapistOptionScreen = () => {
         if (patientID)
           navigation.navigate("UserLocation", {patientID: patientID});
         else  
-          alert("זמנית המידע לא זמין. נסו מאוחר יותר");
+        alert("זמנית המידע לא זמין. נסו מאוחר יותר");
  
     };
     const onSendReminders = () =>{
         console.log("on send reminders pressed")
-        navigation.navigate("SendNotification")
+        navigation.navigate("SendNotification", {patientID: patientID, therapistID: user.uid})
     } 
   function onAuthStateChanged(user) {
     setUser(user);
@@ -142,7 +142,7 @@ const TherapistOptionScreen = () => {
         getPatientBatteryStatus(patientID).then((result)=>{
           if (result !== 'fail'){
             Alert.alert(
-              "מצב סוללה של המטופל:",
+              "מצב סוללה של המטופל",
           result,
           [
             { text: "אישור", onPress: () => console.log("OK Pressed") }
@@ -245,7 +245,7 @@ const TherapistOptionScreen = () => {
              
              <IconBadge 
               MainElement={
-             <CustomButtonForTherapistScreen text="לחץ לרשימת השיחות" onPress={()=>{onPatientCallPressed()}}/> 
+             <CustomButtonForTherapistScreen text="לחץ לרשימת השיחות שהתקבלו" onPress={()=>{onPatientCallPressed()}}/> 
               }
               IconBadgeStyle={{
                 marginTop:9,
@@ -300,14 +300,14 @@ const TherapistOptionScreen = () => {
               />
               
                {/* <Circle id="battery" color={color.battery}/>
-             <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה" onPress={()=>{onBatteryStatusPressed()}}
+             <CustomButtonForTherapistScreen text="׳׳—׳¥ ׳׳‘׳“׳™׳§׳× ׳׳¦׳‘ ׳¡׳•׳׳׳”" onPress={()=>{onBatteryStatusPressed()}}
              /> */}
              
              <CustomButtonForTherapistScreen text="לחץ להגדרת רקע" onPress={()=>{setBackgroundForPatient()}}/>
             
-             <CustomButtonForTherapistScreen text="לחץ לשליחת תזכורת" onPress={()=>{onSendReminders()}}/> 
+            <CustomButtonForTherapistScreen text="לחץ לשליחת תזכורת" onPress={()=>{onSendReminders()}}/>
 
-             {/* <CustomButtonForTherapistScreen text="הגדר מיקום בטוח" onPress={()=>{safeArea()}}/>  */}
+             {/* <CustomButtonForTherapistScreen text="׳”׳’׳“׳¨ ׳׳™׳§׳•׳ ׳‘׳˜׳•׳—" onPress={()=>{safeArea()}}/>  */}
             {/* <CustomButtonForTherapistScreen text="Therapist" onPress={onTherapistPressed}/> 
             <CustomButtonForTherapistScreen text="Patient" onPress={onTherapistPressed}/>  */}
 
