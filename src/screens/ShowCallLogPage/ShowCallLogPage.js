@@ -37,15 +37,29 @@ const ShowLogCall = ({route}) => {
       if (result){
         let count = 1;
         let emptyStr;
-        for (let i=0; i<result.length; i++){
-           if (i%2==0){
-             emptyStr = " " + count + ") התקבלה בתאריך - " + result[i];
-              }
+        for (let i=0; i<result.length; i+=3){
+          //  if (i%3==0){
+          //    emptyStr = " " + count + ") ׳”׳×׳§׳‘׳׳” ׳‘׳×׳׳¨׳™׳ - " + result[i];
+          //     }
+    //   else{
+    //     emptyStr+="\n ׳׳׳¡׳₪׳¨ ׳˜׳׳₪׳•׳ - " + result[i];
+    //     setthelist(thelist=>[...thelist, {key:emptyStr}]);
+    //     count+=1;
+    // }
+    if (result[i+2] === "OUTGOING"){
+      emptyStr = " " + count + ") יצאה בתאריך - " + result[i];
+      emptyStr+="\n למספר טלפון - " + result[i+1];
+      setthelist(thelist=>[...thelist, {key:emptyStr}]);
+      
+      }
+   
       else{
-        emptyStr+="\n ממספר טלפון - " + result[i];
+        emptyStr = " " + count + ") התקבלה בתאריך - " + result[i];
+        emptyStr+="\n ממספר טלפון - " + result[i+1];
         setthelist(thelist=>[...thelist, {key:emptyStr}]);
-        count+=1;
-    }
+      }
+   
+    count+=1;
     } 
       }
     });
@@ -73,7 +87,7 @@ const ShowLogCall = ({route}) => {
 
 
         // <ScrollView style={styles.container} >
-        //   <Text style= {styles.text}>רשימת שיחות של המטופל</Text>
+        //   <Text style= {styles.text}>׳¨׳©׳™׳׳× ׳©׳™׳—׳•׳× ׳©׳ ׳”׳׳˜׳•׳₪׳</Text>
         //   {
         //     thelist.map((item) => {
         //       return(

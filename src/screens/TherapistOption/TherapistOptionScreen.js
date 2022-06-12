@@ -41,7 +41,7 @@ const TherapistOptionScreen = () => {
   useEffect(
     () => {
        
-      subscriber=auth().onAuthStateChanged(onAuthStateChanged);  
+      const subscriber=auth().onAuthStateChanged(onAuthStateChanged);  
      if(user){
        console.log("user conected useEffect");
        const uid = user.uid;
@@ -49,6 +49,7 @@ const TherapistOptionScreen = () => {
         findPatientID(uid);
        listenForColor();
         setfirstRender(false);
+      
        }
      }
      if (!user){
@@ -67,6 +68,7 @@ const TherapistOptionScreen = () => {
     }
    
   };
+
 
   function listenForColor(){
     if (user){
@@ -94,7 +96,7 @@ const TherapistOptionScreen = () => {
     console.log('starting function findPatientID');
     //onUpdatePressed1();
     findOtherSideIdFirebase(uid).then((result)=>{
-      setPatientID(result[0]);
+      setPatientID(result[0][0]);
     })
   }
   
@@ -142,19 +144,19 @@ const TherapistOptionScreen = () => {
         getPatientBatteryStatus(patientID).then((result)=>{
           if (result !== 'fail'){
             Alert.alert(
-              "מצב סוללה של המטופל",
-          result,
-          [
-            { text: "אישור", onPress: () => console.log("OK Pressed") }
-          ]
-        );
-          };
-        });
-
-        }
-        else {
-          alert("זמנית המידע לא זמין. נסו מאוחר יותר");
-        } 
+              "מצב סוללה של המטופל:",
+              result,
+              [
+                { text: "אישור", onPress: () => console.log("OK Pressed") }
+              ]
+            );
+              };
+            });
+    
+            }
+            else {
+              alert("זמנית המידע לא זמין. נסו מאוחר יותר");
+            }
       }
         const setBackgroundForPatient = () =>{
       
@@ -224,7 +226,7 @@ const TherapistOptionScreen = () => {
                
               MainElement={
               
-             <CustomButtonForTherapistScreen text="לחץ לקבלת מיקום" onPress={()=>{findPatienPressed()}}/> 
+                <CustomButtonForTherapistScreen text="לחץ לקבלת מיקום" onPress={()=>{findPatienPressed()}}/>
             //  {/* <Circle id="calls" color={color.calls}/> */}
             
                }
@@ -245,7 +247,7 @@ const TherapistOptionScreen = () => {
              
              <IconBadge 
               MainElement={
-             <CustomButtonForTherapistScreen text="לחץ לרשימת השיחות שהתקבלו" onPress={()=>{onPatientCallPressed()}}/> 
+                <CustomButtonForTherapistScreen text="לחץ לרשימת השיחות" onPress={()=>{onPatientCallPressed()}}/>
               }
               IconBadgeStyle={{
                 marginTop:9,
@@ -263,7 +265,7 @@ const TherapistOptionScreen = () => {
 
              <IconBadge 
               MainElement={
-             <CustomButtonForTherapistScreen text="לחץ לרשימת ההודעות שהתקבלו" onPress={()=>{onPatientSMSPressed()}}/> 
+                <CustomButtonForTherapistScreen text="לחץ לרשימת ההודעות שהתקבלו" onPress={()=>{onPatientSMSPressed()}}/>
               }
               IconBadgeStyle={{
                 marginTop:9,
@@ -280,7 +282,7 @@ const TherapistOptionScreen = () => {
 
             <IconBadge 
               MainElement={
-                <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה"  onPress={()=>{onBatteryStatusPressed()}}              
+                <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה"  onPress={()=>{onBatteryStatusPressed()}}             
                 />
              }
              
@@ -299,17 +301,17 @@ const TherapistOptionScreen = () => {
             
               />
               
-               {/* <Circle id="battery" color={color.battery}/>
-             <CustomButtonForTherapistScreen text="׳׳—׳¥ ׳׳‘׳“׳™׳§׳× ׳׳¦׳‘ ׳¡׳•׳׳׳”" onPress={()=>{onBatteryStatusPressed()}}
+              {/* <Circle id="battery" color={color.battery}/>
+             <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה" onPress={()=>{onBatteryStatusPressed()}}
              /> */}
              
              <CustomButtonForTherapistScreen text="לחץ להגדרת רקע" onPress={()=>{setBackgroundForPatient()}}/>
             
-            <CustomButtonForTherapistScreen text="לחץ לשליחת תזכורת" onPress={()=>{onSendReminders()}}/>
+            <CustomButtonForTherapistScreen text="לחץ לשליחת תזכורת" onPress={()=>{onSendReminders()}}/> 
 
-             {/* <CustomButtonForTherapistScreen text="׳”׳’׳“׳¨ ׳׳™׳§׳•׳ ׳‘׳˜׳•׳—" onPress={()=>{safeArea()}}/>  */}
-            {/* <CustomButtonForTherapistScreen text="Therapist" onPress={onTherapistPressed}/> 
-            <CustomButtonForTherapistScreen text="Patient" onPress={onTherapistPressed}/>  */}
+            {/* <CustomButtonForTherapistScreen text="הגדר מיקום בטוח" onPress={()=>{safeArea()}}/>  */}
+           {/* <CustomButtonForTherapistScreen text="Therapist" onPress={onTherapistPressed}/> 
+           <CustomButtonForTherapistScreen text="Patient" onPress={onTherapistPressed}/>  */}
 
 
 <Modal
@@ -481,7 +483,8 @@ const styles = StyleSheet.create({
 })
 
 
-export default TherapistOptionScreen
+export default TherapistOptionScreen;
+
 
 
 

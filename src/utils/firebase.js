@@ -47,17 +47,17 @@ const sendPasswordResetEmailHandler = async (userName) =>{
     })
     .catch(error => {
     if (error.code === 'auth/email-already-in-use') {
-        alert('מייל זה נמצא כבר בשימוש במערכת');
+      alert('מייל זה נמצא כבר בשימוש במערכת');
     }
 
     if (error.code === 'auth/invalid-email') {
-        alert('מייל זה לא חוקי');
+      alert('מייל זה לא חוקי');;
     }
     if (error.code === 'The email address is badly formatted'){
-        alert ("הפורמט של המייל לא תקין");
+      alert ("הפורמט של המייל לא תקין");
     }
     if (error.code === 'auth/weak-password'){
-        alert ("הסיסמא חייבת להכיל לפחות שישה תווים");
+      alert ("הסיסמא חייבת להכיל לפחות שישה תווים");
     }
     console.log(error.code);
     console.error(error);
@@ -93,18 +93,28 @@ const sendPasswordResetEmailHandler = async (userName) =>{
 };
 
 //##################33
-const createNewDocumentForUser = async (uid, isTherapist, yourNum, otherSideNum, username) =>{
+const createNewDocumentForUser = async (user, isTherapist, yourNum, otherSideNum, username, patientMail) =>{
+  let objToPut, mailString, theMail;
+  if (patientMail){
+    mailString='patientMail';
+    theMail=patientMail;
+  }
+  else{
+    mailString='myMail';
+    theMail=user.email;
+  }
+  objToPut={
+    id:  user.uid,
+    isTherapist:isTherapist,
+    myNum: yourNum,
+    otherSidePhoneNum: otherSideNum,
+    userName: username,
+    [mailString]: theMail
+  }
     firestore()
     .collection('users')
-    .doc(uid)
-    .set({
-        id:  uid,
-        isTherapist:isTherapist,
-        myNum: yourNum,
-        otherSidePhoneNum: otherSideNum,
-        userName: username
-
-    })
+    .doc(user.uid)
+    .set(objToPut)
     .then(() => {
         console.log('User added!');
     });
@@ -118,35 +128,49 @@ const findOtherSideIdFirebase = async (uid) =>{
     .get()
     .then(documentSnapshot => {
     console.log('User exists: ', documentSnapshot.exists);
-
     if (documentSnapshot.exists) {
      // console.log('User data: ', documentSnapshot.data());
-     let myPhone =  documentSnapshot.data().myNum;
-     
-    const result2= firestore()
-    .collection('users')
-    .get()
-    .then(querySnapshot => {
-        let id='';
-        let therapistphone='';
-    querySnapshot.forEach(documentSnapshot => {
-     // console.log('User ID: ', documentSnapshot.id, documentSnapshot.data());
-      if(documentSnapshot.data().otherSidePhoneNum === myPhone){
-         id = documentSnapshot.data().id;  
-         let therapistphone2=documentSnapshot.data().myNum;
-       console.log(" therapistphone2 ", therapistphone2);
-       console.log(documentSnapshot.data().otherSidePhoneNum);
-       therapistphone = "+972" + therapistphone2.slice(1) ;
-      }
-   
-    });
-    
-        return [id, therapistphone];
-    
-  });
-  return result2;
+     let email='';
+    if (!documentSnapshot.data().isTherapist){
+      email=documentSnapshot.data().myMail;
+      const result2=firestore()
+      .collection('users')
+      // Filter results
+      .where('patientMail', '==', email)
+      .get()
+      .then(querySnapshot => {
+        /* ... */
+        let returnIDandPhones=[];
+       querySnapshot.forEach(doc=>{
+        //console.log(" LI NE 144 FIRE BASE: ", doc.data().patientMail, "\n", doc.data().myNum)
+        returnIDandPhones.push([doc.data().id, doc.data().myNum]);
+       })
+       //console.log(" LINE 148 FIRE BASE : ",returnIDandPhones)
+       return returnIDandPhones;
+      });
+      return result2;
+    }
+    else{
+      email=documentSnapshot.data().patientMail;
+      const result2=firestore()
+      .collection('users')
+      // Filter results
+      .where('myMail', '==', email)
+      .get()
+      .then(querySnapshot => {
+        /* ... */
+        let returnIDandPhones=[];
+       querySnapshot.forEach(doc=>{
+        //console.log(" LI NE 144 FIRE BASE: ", doc.data().patientMail, "\n", doc.data().myNum)
+        returnIDandPhones.push([doc.data().id, doc.data().myNum]);
+       })
+       //console.log(" LINE 148 FIRE BASE : ",returnIDandPhones)
+       return returnIDandPhones;
+      });
+      return result2;
     }
     
+     }
   });
   
   return result;

@@ -16,6 +16,7 @@ const SignUpScreen = ({ route }) => {
     const [passwordRepeat, setPasswordRepeat] = useState('');
     const [otherSideNum, setotherSideNum] = useState('');
     const [yourNum, setYourNum] = useState('');
+    const [patientMail, setPatientMail] = useState('');
 
     const navigation = useNavigation();
 
@@ -25,13 +26,13 @@ const SignUpScreen = ({ route }) => {
 
 
     const onRegisterPressed = () =>{
-        if (username==='' || email==='' || password==='' || passwordRepeat==='' || otherSideNum==='' || yourNum==='')
+        if (username==='' || email==='' || password==='' || passwordRepeat==='' || otherSideNum==='' || yourNum==='' || (isTherapist && patientMail===''))
         alert("כל השדות הינם חובה");
         else{
             createUserWithEmailAndPasswordHandler(email,password).then((result)=>{
                 console.log("AFTER");
                 if (result!=='fail'){
-                    createNewDocumentForUser(result.uid, isTherapist, yourNum, otherSideNum, username).then(()=>{
+                    createNewDocumentForUser(result, isTherapist, yourNum, otherSideNum, username, patientMail).then(()=>{
                         navigation.navigate("signIn", {isTherapist: isTherapist});
                     });
                 
@@ -103,6 +104,16 @@ const SignUpScreen = ({ route }) => {
               secureTextEntry={false}
               style={styles.input}
               />
+              {isTherapist? 
+                  <CustomInput
+                  placeholder="מייל של המטופל. שים לב המטופל צריך להרשם לפניך"
+                  value={patientMail}
+                  setValue={setPatientMail} 
+                  secureTextEntry={false}
+                  style={styles.input}
+                  />
+                  : null  
+            }
 
             <CustomButton text="הרשם"  onPress={()=>onRegisterPressed()}/>
 

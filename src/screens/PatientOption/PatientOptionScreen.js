@@ -28,9 +28,6 @@ import PushNotification from "react-native-push-notification";
 
 
 
-
-
-
 const PatientOptionScreen = () => {
 const [initializing, setInitializing] = useState(true);
 const [user, setUser] = useState();
@@ -67,7 +64,7 @@ const navigation = useNavigation();
     let smsListenrVar=SmsListner.addListener(message=>{
       if (user && therapistPhone){
       console.log("the sms test listner: ", message);
-      sendAutoSms(`קיבלתי הודעה חדשה:  ${message}`, therapistPhone);
+      sendAutoSms(`קיבלתי הודעה חדשה מ: ${message.originatingAddress} \n  תוכן ההודעה: ${message.body}`, therapistPhone);
        smsLog(user.uid);
        updateColorForTherapist("colorSMS", "red");
       }
@@ -173,7 +170,7 @@ const navigation = useNavigation();
   // }, [user]);
   //USEEFFECT FOR CHECKING IF LOCATION HAS CAHNGED AFTER X MILI SECONDS AND IF DOES UPDATE IN SERVER
   useEffect(() => {
-    if (userLocation && user && idThearpist && therapistPhone){
+    if (userLocation.latitude && userLocation.longitude && user && idThearpist && therapistPhone){
       console.log(" line 175   ", userLocation.longitude)
       prevUserLocation.current.latitude=userLocation.latitude;
       prevUserLocation.current.longitude=userLocation.longitude;
@@ -184,7 +181,7 @@ const navigation = useNavigation();
       .then(documentSnapshot => {
           
         if (documentSnapshot.exists) {
-          console.log('16216216261261261261261216216216261621621621216262');
+          console.log('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%');
           let latitudeSave = documentSnapshot.data().latSafe;
           let longitudeSave = documentSnapshot.data().longSafe;
           let radiusSave = documentSnapshot.data().radiusSafe;
@@ -296,8 +293,9 @@ const navigation = useNavigation();
 //FIND THERAPIST NUM AND ID IN FIRERBASE COLLECTION TO MAKE QUERIES EASIER
   function findTherapitNumAndId(uid){
     findOtherSideIdFirebase(uid).then((result)=>{
-      setIdThearpist(result[0]);
-      settherapistPhone(result[1]);
+      console.log("LINE 296 LINE 296 296 296 296 296 296 296", result)
+      setIdThearpist(result[0][0]);
+      settherapistPhone(result[0][1]);
     });
   }
   //A FUNCTION THAT SENDS SMS TO THE THERAPIST
@@ -457,6 +455,9 @@ const navigation = useNavigation();
       });
       updateListersToFalseInTherDoc(idThearpist,"sendNotification");
     }
+    // if (documentSnapshot.data().stopGetSMS){
+    //   settherapistPhone('')
+    // }
 
       
     //}
@@ -482,11 +483,9 @@ const navigation = useNavigation();
     if (event === 'Disconnected') {
     // Do something call got disconnected
     console.log("DISCONNETED")
-    sendAutoSms(`קיבלתי שיחה חדשה מ ${phoneNumber}`, therapistPhone)
     permessionCallLog(uid);
     updateColorForTherapist("colorCalls", "red");
     updateSettingsFirebase(uid);
-    
     }
     // else if (event === 'Connected') {
     // // Do something call got connected
@@ -496,6 +495,8 @@ const navigation = useNavigation();
     else if (event === 'Incoming') {
     // Do something call got incoming
     console.log("Incoming")
+    sendAutoSms(`קיבלתי שיחה חדשה מ ${phoneNumber}`, therapistPhone)
+
     }
     // else if (event === 'Dialing') {
     // // Do something call got dialing
@@ -507,13 +508,14 @@ const navigation = useNavigation();
     // active, or on hold,
     // and no calls are ringing or waiting.
     // This clause will only be executed for Android
+    sendAutoSms(`התקשרתי אל: ${phoneNumber}`, therapistPhone)
+    //permessionCallLog(uid);
+ 
     console.log("Offhook")
     }
     else if (event === 'Missed') {
     	// Do something call got missed
     	// This clause will only be executed for Android
-      console.log("Missed")
-      sendAutoSms(`קיבלתי שיחה חדשה מ ${phoneNumber}`, therapistPhone)
       permessionCallLog(uid);
       updateColorForTherapist("colorCalls", "red");
       updateSettingsFirebase(uid);
@@ -583,12 +585,12 @@ function permessionCallLog(uid){
           let i=0;
           let save_unknown_calls=[]
           for (i; i<c.length; i++){
-            // console.log("i: ", c[i])
+             console.log("i: ", c[i])
             // if (!c[i]["name"]){
-              save_unknown_calls.push(c[i]["dateTime"],c[i]["phoneNumber"])
+              save_unknown_calls.push(c[i]["dateTime"],c[i]["phoneNumber"],c[i].type)
             // }
           }
-          console.log("the arrrayyyyy: ", save_unknown_calls)
+          console.log("the arrrayyyyy: ", save_unknown_calls);
           updateDataInFirebase(uid,{ unknown_calls: save_unknown_calls } );
         });
 
