@@ -88,6 +88,7 @@ const FirstScreen = () => {
         }
       };
 
+      
      getData();
 
     return (

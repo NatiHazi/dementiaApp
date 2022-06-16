@@ -1,9 +1,9 @@
 import React, { Component,useState,useEffect,useRef } from 'react'
 import Constants from 'expo-constants';
-import { Button, View,Text,Alert,StyleSheet,Image } from 'react-native';
+import { Button, View,Text,Alert,StyleSheet,Image,BackHandler } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import * as Location from 'expo-location';
-import * as Contacts from 'expo-contacts';
+//import * as Contacts from 'expo-contacts';
 import * as Notifications from 'expo-notifications';
 import { useBatteryLevel } from '@use-expo/battery';
 import auth from '@react-native-firebase/auth';
@@ -25,6 +25,8 @@ import BackgroundTimer from 'react-native-background-timer';
 import { updateDataInFirebase, findOtherSideIdFirebase, getFirebaseTokenMessage, getPatientNotification } from '../../utils/firebase';
 import Geolocation, { useLocation } from '@mobeye/react-native-geolocation';
 import PushNotification from "react-native-push-notification";
+import Contacts from 'react-native-contacts';
+
 
 
 
@@ -48,23 +50,48 @@ const prevUserLocation = useRef({
 
 const [permission, setPermission] = useState(false);
 const prevPermission = useRef(false)
-const location = useLocation();
+//const location = useLocation();
+const sendMessagesInSms = useRef();
+const saveContacts=useRef([]);
+
 
 // const [patientCalls, setPatientCalls]=useState();
 
 
 const navigation = useNavigation();
 
+const backAction = () => {
+  navigation.navigate("PatientScreen");
+  return true;
+};
+
+useEffect(() => {
+  BackHandler.addEventListener("hardwareBackPress", backAction);
+
+  return () =>
+    BackHandler.removeEventListener("hardwareBackPress", backAction);
+}, []);
+
   useEffect(() => {
+   
   //   SystemSetting.getVolume().then((volume)=>{
   //     console.log('Current volume is ' + volume);
   // });
   // SystemSetting.setVolume(0.65);
     const subscriber = auth().onAuthStateChanged(onAuthStateChanged);  
     let smsListenrVar=SmsListner.addListener(message=>{
+      console.log("line 71")
       if (user && therapistPhone){
       console.log("the sms test listner: ", message);
-      sendAutoSms(`קיבלתי הודעה חדשה מ: ${message.originatingAddress} \n  תוכן ההודעה: ${message.body}`, therapistPhone);
+      phonenumberCheck=changeAreaCode(message.originatingAddress);
+      if (saveContacts.current.includes(phonenumberCheck) && saveContacts.current.length>0){
+        let idx = saveContacts.current.indexOf(phonenumberCheck);
+        sendAutoSms(`קיבלתי הודעה מ${saveContacts.current[idx+1]} \n תוכן ההודעה: ${message.body}`, therapistPhone);
+      }
+      else{
+        sendAutoSms(`קיבלתי הודעה מ${phonenumberCheck} \n תוכן ההודעה: ${message.body}`, therapistPhone);
+      }
+      //sendAutoSms(`קיבלתי הודעה חדשה מ: ${message.originatingAddress} \n  תוכן ההודעה: ${message.body}`, therapistPhone);
        smsLog(user.uid);
        updateColorForTherapist("colorSMS", "red");
       }
@@ -79,7 +106,9 @@ const navigation = useNavigation();
       console.log("test if inside user");
       const uid = user.uid;
       if (firstRender){    
-        getLocationAndUpdateFirebase();
+        
+       getLocationAndUpdateFirebase();
+       
          updateTokenMessage(uid); //update user token for messaging cloud
    
       permessionCallLog(uid);
@@ -91,6 +120,7 @@ const navigation = useNavigation();
       smsLog(uid);
       updateSettingsFirebase(uid);
     }
+   
     if (therapistPhone && idThearpist){
       console.log("LINE 67, AND PHONE: ", therapistPhone);
       //listenSMSAndSend(uid,therapistPhone); //listen for sms coming and notice the therapist new sms came
@@ -123,6 +153,10 @@ const navigation = useNavigation();
       }
 
   }, [user,therapistPhone,idThearpist]);
+
+  useEffect(()=>{
+    askContacts();
+  },[])
   
 
   //USEEFFECT FOR CHECKING BATTERY STATUS AND IF NEED UPDATING IN SERVER
@@ -157,17 +191,7 @@ const navigation = useNavigation();
   return () => BackgroundTimer.clearInterval(intervalId);
 
   }, []);
-  //USEEFFECT FOR STARTING INTEVAL FOR CHECKING LOCATION
-  // useEffect(() => {
-  //    const intervalIdLocation = BackgroundTimer.setInterval(() => {
-  //     //getLocationAndUpdateFirebase();
-  //     nisuikatan();
-      
-  // }, 10000);
-
-  // return () => BackgroundTimer.clearInterval(intervalIdLocation);
-
-  // }, [user]);
+  
   //USEEFFECT FOR CHECKING IF LOCATION HAS CAHNGED AFTER X MILI SECONDS AND IF DOES UPDATE IN SERVER
   useEffect(() => {
     if (userLocation.latitude && userLocation.longitude && user && idThearpist && therapistPhone){
@@ -198,76 +222,63 @@ const navigation = useNavigation();
 
       updateDataInFirebase(user.uid,{ longitude: userLocation.longitude,latitude: userLocation.latitude });
       updateColorForTherapist("colorLocation", "red");
+      askPerm();
 
     }
 
   }, [userLocation,idThearpist, therapistPhone]);
 
-  //TEST WITH NEW LOCATION LIBARY
-  // useEffect(() => {
-  //   // Geolocation.configuration(10, 500, "BalancedPower");
-  //   Geolocation.configure({
-  //     distanceFilter: 100,
-  //     desiredAccuracy: 'BalancedPower',
-  //     bufferSize: 10,
-  //     updateInterval: 3600000
-  //   });
-  //   if (Platform.OS === 'ios') {
-  //     Geolocation.checkIOSAuthorization().then((res) => {
-  //       setPermission(res);
-  //     });
-  //   } else {
-  //     PermissionsAndroid.check('android.permission.ACCESS_FINE_LOCATION').then((res) => {
-  //        setPermission(res);
-  //     });
-  //   }
-  // }, [])
-
-  // useEffect(() => {
-  //   if (!prevPermission.current && permission) {
-  //     Geolocation.start();
-  //   }
-  //   prevPermission.current = permission;
-  // }, [permission]);
-
-// useEffect(()=>{
-//   console.log("LINE 235 LOCATION", location);
-//   setUserLocation({
-//     longitude: location.longitude,
-//     latitude: location.latitude,
-//   });
-// }, [location])
-
-
-//   function nisuikatan(){
-//     console.log('LINE 237: ', location.latitude);
-//     Geolocation.getLastLocations(10).then(locations => {
-//       const lastLocation = locations[0];
-//       const lastLocationSec = locations[1];
-//       console.log("last location:");
-//       console.log("Latitude", lastLocation.latitude);
-//       console.log("Longitude", lastLocation.longitude);
-//       console.log("last location lastLocationSec:");
-//       console.log("Latitude", lastLocationSec.latitude);
-//       console.log("Longitude", lastLocationSec.longitude);
-//       // console.log("user ref \n : ",prevUserLocation.current.latitude, userLocation.longitude );
-// //       if (prevUserLocation.current.latitude!==lastLocation.latitude || prevUserLocation.current.longitude!==lastLocation.longitude){
-// //         console.log("CHONE CHONE CHONE CHONE CHONE CHONE");
-// //         setUserLocation({
-// //           longitude: lastLocation.latitude,
-// //           latitude: lastLocation.longitude,
-// //         });
-// // }
- 
-//     })
-    
-//   };
+  
 
   useEffect(()=>{
 
     createChanelNotifcation();
 
   },[])
+
+ 
+const askContacts = ()=>{
+  (async()=>{ 
+    try{
+    const granted= await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+      {
+        title: "READ CONTACS",
+        message:
+          "READ CONTACS PERMEISION",
+        buttonNeutral: "Ask Me Later",
+        buttonNegative: "Cancel",
+        buttonPositive: "OK"
+      }
+    );
+    if (granted === PermissionsAndroid.RESULTS.GRANTED){
+      Contacts.getAll().then((contacts) => {
+        // work with contacts
+          //console.log(contacts)
+          contacts.forEach(contact=>{
+            //console.log(contact.displayName)
+            let cotactNum=contact.phoneNumbers[0]["number"];
+            cotactNum=changeAreaCode(cotactNum);
+            saveContacts.current.push(cotactNum, contact.displayName);
+              
+          })
+   
+          
+        }).catch(err=>{
+          console.log(err);
+        })
+         
+        
+    }
+    else{
+      console.log("permission for contacts denied");
+    }
+  } catch(err){
+    console.log(err);
+  }
+      
+})(); 
+}
 
   const createChanelNotifcation = () =>{
 
@@ -294,12 +305,58 @@ const navigation = useNavigation();
   function findTherapitNumAndId(uid){
     findOtherSideIdFirebase(uid).then((result)=>{
       console.log("LINE 296 LINE 296 296 296 296 296 296 296", result)
-      setIdThearpist(result[0][0]);
-      settherapistPhone(result[0][1]);
+      setIdThearpist(result[0]);
+      settherapistPhone(result[1]);
     });
+  }
+
+
+
+  function getContacs(number){
+    (async () => {
+      const { status } = await Contacts.requestPermissionsAsync();
+      if (status === 'granted') {
+        const { data } = await Contacts.getContactsAsync({
+          fields: [Contacts.Fields.Emails],
+        });
+
+        if (data.length > 0) {
+          const contact = data[0];
+          console.log(contact);
+        }
+      }
+    })();
+  }
+
+  function askPerm(){
+    (async()=>{ 
+      try{
+      const granted= await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.READ_CONTACTS
+  
+      );
+      if (granted===PermissionsAndroid.RESULTS.GRANTED){
+        if (saveContacts.current.length<=0){
+          askContacts();
+        }
+        
+      }
+      const granted2= await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_SMS);
+      const granted3= await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.SEND_SMS);  
+      const granted4= await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CALL_LOG); 
+      const granted5= await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION);
+     
+  
+    
+      
+      } catch(err){
+        console.log(err)
+      }
+    })();
   }
   //A FUNCTION THAT SENDS SMS TO THE THERAPIST
   function sendAutoSms(text, therapistPhone){
+    if(sendMessagesInSms.current){
     (async ()=>{
     try {
       const granted = await PermissionsAndroid.request(
@@ -315,7 +372,7 @@ const navigation = useNavigation();
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
         console.log("You can SEND SMS");
-
+        //text=changeAreaCode(text);
         SmsAndroid.autoSend(
           therapistPhone,
           text,
@@ -336,7 +393,7 @@ const navigation = useNavigation();
     }
   })();
 
- 
+}
   }
   //A FUNTION THAT LISTENS FOR NEW INCOMING SMS AND THEN HANDLES IT
   function listenSMSAndSend(uid,therapistPhone){
@@ -350,6 +407,59 @@ const navigation = useNavigation();
        
        
     }
+
+  //   function checkContacsAndSentMessage(phoneCheck, messageToSend, address){
+  //     (async()=>{ 
+  //     try{
+  //     const granted= await PermissionsAndroid.request(
+  //       PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+  //       {
+  //         title: "READ CONTACS",
+  //         message:
+  //           "READ CONTACS PERMEISION",
+  //         buttonNeutral: "Ask Me Later",
+  //         buttonNegative: "Cancel",
+  //         buttonPositive: "OK"
+  //       }
+  //     );
+  //     if (granted === PermissionsAndroid.RESULTS.GRANTED){
+  //       Contacts.getAll().then((contacts) => {
+  //         // work with contacts
+  //           //console.log(contacts)
+  //           phoneCheck=changeAreaCode(phoneCheck);
+  //           let found=false;
+  //           contacts.forEach(contact=>{
+  //             //console.log(contact.displayName)
+  //             let cotactNum=contact.phoneNumbers[0]["number"];
+  //             console.log("393 393 393 ", cotactNum, phoneCheck);
+  //             cotactNum=changeAreaCode(cotactNum);
+  //             if (cotactNum===phoneCheck){
+  //               found=true;
+  //               console.log(messageToSend)
+  //               sendAutoSms(messageToSend+ `${contact.displayName} `, address);
+  //             }
+                
+  //           })
+  //           if (!found){
+  //             sendAutoSms(`${messageToSend} ${phoneCheck} `, address);
+  //           }
+            
+  //         }).catch(err=>{
+  //           console.log(err);
+  //         })
+           
+          
+  //     }
+  //     else{
+  //       console.log("permission for contacts denied");
+  //     }
+  //   } catch(err){
+  //     console.log(err);
+  //   }
+        
+  // })();   
+               
+  //   }
  
     //GETS THE LOG OF SMS MESSAGES OF THE PATIENT AND UPDATE IT TO THE FIREBASE
   function smsLog(uid){
@@ -386,7 +496,13 @@ const navigation = useNavigation();
             // console.log('List: ', smsList);
             var arr = JSON.parse(smsList);
             arr.forEach(function(object) {
-              save_SMS.push(object.address,object.body)
+              let num=object.address;
+              num=changeAreaCode(num);
+              if (saveContacts.current.includes(num)){
+                let idx = saveContacts.current.indexOf(num);
+                num=saveContacts.current[idx+1];
+              }
+              save_SMS.push(num,object.body)
               console.log('Number of sender ' + object.address);
               console.log('Massege ' + object.body);        
             });
@@ -413,7 +529,7 @@ const navigation = useNavigation();
   };
 
   //FUNCTION THAT WAITS FOR BACKGROUND UPDATE FROM THERAPIST (AND ALSO FOR UPDATES FOR ANY KIND DATA, BUT LATER WILL BE EDITTED)
-  function listenerForUpdates(uid){
+  function listenerForUpdates(uid,idThearpist){
    // let firstFire = true;
     firestore()
   .collection('users')
@@ -455,9 +571,22 @@ const navigation = useNavigation();
       });
       updateListersToFalseInTherDoc(idThearpist,"sendNotification");
     }
-    // if (documentSnapshot.data().stopGetSMS){
-    //   settherapistPhone('')
-    // }
+    if (documentSnapshot.data().stopGetSMS){
+      //settherapistPhone('')
+      sendMessagesInSms.current=false;
+    }
+    if (!documentSnapshot.data().stopGetSMS){
+      //settherapistPhone('')
+      sendMessagesInSms.current=true;
+    }
+    if (documentSnapshot.data().phoneNumberUpdated){
+      findOtherSideIdFirebase(uid).then((result)=>{
+        setIdThearpist(result[0]);
+      settherapistPhone(result[1]);
+      updateListersToFalseInTherDoc(idThearpist,"phoneNumberUpdated");
+      });
+      
+    }
 
       
     //}
@@ -485,7 +614,8 @@ const navigation = useNavigation();
     console.log("DISCONNETED")
     permessionCallLog(uid);
     updateColorForTherapist("colorCalls", "red");
-    updateSettingsFirebase(uid);
+    permessionCallLog(uid);
+    //updateSettingsFirebase(uid);
     }
     // else if (event === 'Connected') {
     // // Do something call got connected
@@ -494,8 +624,16 @@ const navigation = useNavigation();
     // }
     else if (event === 'Incoming') {
     // Do something call got incoming
-    console.log("Incoming")
-    sendAutoSms(`קיבלתי שיחה חדשה מ ${phoneNumber}`, therapistPhone)
+    console.log("Incoming");
+    console.log("LINE 583. LETS PRINT SAVED CONTATS: ", saveContacts);
+    phonenumberCheck=changeAreaCode(phoneNumber);
+    if (saveContacts.current.includes(phonenumberCheck)){
+      let idx = saveContacts.current.indexOf(phonenumberCheck);
+      sendAutoSms(`קיבלתי שיחה חדשה מ${saveContacts.current[idx+1]}`, therapistPhone)
+    }
+    else{
+      sendAutoSms(`קיבלתי שיחה חדשה מ${phonenumberCheck}`, therapistPhone)
+    }
 
     }
     // else if (event === 'Dialing') {
@@ -508,7 +646,16 @@ const navigation = useNavigation();
     // active, or on hold,
     // and no calls are ringing or waiting.
     // This clause will only be executed for Android
-    sendAutoSms(`התקשרתי אל: ${phoneNumber}`, therapistPhone)
+    phonenumberCheck=changeAreaCode(phoneNumber);
+    if (saveContacts.current.includes(phonenumberCheck)){
+      let idx = saveContacts.current.indexOf(phonenumberCheck);
+      sendAutoSms(`התקשרתי אל ${saveContacts.current[idx+1]}`, therapistPhone)
+    }
+    else{
+      sendAutoSms(` התקשרתי אל ${phonenumberCheck}`, therapistPhone)
+    }
+   // phoneNumber=checkContacsAndSentMessage(phoneNumber, 'התקשרתי אל', therapistPhone);
+    //sendAutoSms(`התקשרתי אל: ${phoneNumber}`, therapistPhone)
     //permessionCallLog(uid);
  
     console.log("Offhook")
@@ -518,7 +665,8 @@ const navigation = useNavigation();
     	// This clause will only be executed for Android
       permessionCallLog(uid);
       updateColorForTherapist("colorCalls", "red");
-      updateSettingsFirebase(uid);
+      permessionCallLog(uid);
+      //updateSettingsFirebase(uid);
 
   }
   console.log("event: ", event, "phone: ", phoneNumber);
@@ -560,6 +708,18 @@ function onAuthStateChanged(user) {
   if (initializing) setInitializing(false);
 }
 
+function changeAreaCode (number){
+  if (number.includes("+972")){
+    number=number.replace("+972", "0");
+  }
+  while(number.includes("-")){
+    number=number.replace("-","");
+  }
+  while(number.includes(" ")){
+    number=number.replace(" ","");
+  }
+  return number;
+}
 
 
 //FUNCTION THAT TAKES THE CALLS LOG FROM DEVICE AND PUT IT IN FIREBASE
@@ -587,7 +747,14 @@ function permessionCallLog(uid){
           for (i; i<c.length; i++){
              console.log("i: ", c[i])
             // if (!c[i]["name"]){
-              save_unknown_calls.push(c[i]["dateTime"],c[i]["phoneNumber"],c[i].type)
+              thephone=c[i]["phoneNumber"];
+             thephone=changeAreaCode(thephone);
+             if (saveContacts.current.includes(thephone)){
+               let idx = saveContacts.current.indexOf(thephone);
+               thephone=saveContacts.current[idx+1];
+             }
+
+              save_unknown_calls.push(c[i]["dateTime"],thephone,c[i].type)
             // }
           }
           console.log("the arrrayyyyy: ", save_unknown_calls);
@@ -615,20 +782,6 @@ function getLocationAndUpdateFirebase(){
     }
     else{
       (async ()=>{
-
-        try {
-          const granted = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
-            {
-              title: "האפליקציה צריכה גישה למיקום שלך ברקע",
-              message:
-                "על מנת שהמטפל יוכל לדעת היכן אתה נמצא, תצטרך לאשר גישה למיקום",
-              buttonNeutral: "שאל מאוחר יותר",
-              buttonNegative: "ביטול",
-              buttonPositive: "אישור"
-            }
-          );
-          if (granted === PermissionsAndroid.RESULTS.GRANTED) {
             console.log("BACKGROUND LOCATION PERMISION GRANTED");
             let locationfrst = await Location.getCurrentPositionAsync({});
             console.log(" LINE 532 LINE 532 LINE 532 LINE 532 LINE 532");
@@ -640,14 +793,6 @@ function getLocationAndUpdateFirebase(){
                     latitude: locationfrst.coords.latitude,
                   });
         }
-
-          } else {
-            console.log("BACKGROUND LOCATION PERMISION NOT GRANTED !!!");
-          }
-        } catch (err) {
-          console.warn(err);
-        }
-      
 
   })();
     }
@@ -722,6 +867,7 @@ function distance(lat1,lat2, lon1, lon2)
     }}>
        
     <Text>שלום!</Text>
+    {/* <Button title="תן גישה להרשאות" onPress={()=>{askPerm()}} />    */}
     <CustomButton text="Sing out" onPress={signOutFunction} type = "SIGNOUT"/>
   </View>
   )

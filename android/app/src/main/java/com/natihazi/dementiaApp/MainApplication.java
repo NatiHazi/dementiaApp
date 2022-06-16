@@ -7,6 +7,7 @@ import androidx.annotation.NonNull;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.rt2zz.reactnativecontacts.ReactNativeContacts;
 import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.loudspeaker.LoudSpeakerPackage;
 import com.pritesh.calldetection.CallDetectionManager;

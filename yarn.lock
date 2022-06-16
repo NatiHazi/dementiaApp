@@ -6449,6 +6449,11 @@
     "jscodeshift" "^0.11.0"
     "nullthrows" "^1.1.1"
 
+"react-native-contacts@^7.0.4":
+  "integrity" "sha512-x6K9TMC0XBH/yyfqYh5BGS9JI1PpA2Ac/XHVVFVP8F8lPLNexQ0qPsNBo1cy9l2pPqlijpC33+FU0ty/N5iOWA=="
+  "resolved" "https://registry.npmjs.org/react-native-contacts/-/react-native-contacts-7.0.4.tgz"
+  "version" "7.0.4"
+
 "react-native-device-info@^8.5.0":
   "integrity" "sha512-Y5mSYWvVvlpKbN3hkA+mDBqXvcgeR/jiIFaJZrsYw4LF+e3fwFl+vQgPz21IroDi9JXkA26BpxaXu3lj1P1GGg=="
   "resolved" "https://registry.npmjs.org/react-native-device-info/-/react-native-device-info-8.5.0.tgz"
@@ -6593,7 +6598,7 @@
     "normalize-css-color" "^1.0.2"
     "prop-types" "^15.6.0"
 
-"react-native@*", "react-native@^0.0.0-0 || 0.60 - 0.67 || 1000.0.0", "react-native@^0.44.0", "react-native@>= 0.51", "react-native@>= 0.62", "react-native@>=0.26.0", "react-native@>=0.33", "react-native@>=0.42.0", "react-native@>=0.47.0", "react-native@>=0.58.4", "react-native@>=0.64.0-rc.0 || 0.0.0-*", "react-native@>=0.8.0", "react-native@>0.64", "react-native@0.64.3":
+"react-native@*", "react-native@^0.0.0-0 || 0.60 - 0.67 || 1000.0.0", "react-native@^0.44.0", "react-native@>= 0.51", "react-native@>= 0.62", "react-native@>=0.26.0", "react-native@>=0.33", "react-native@>=0.42.0", "react-native@>=0.47.0", "react-native@>=0.58.4", "react-native@>=0.64.0", "react-native@>=0.64.0-rc.0 || 0.0.0-*", "react-native@>=0.8.0", "react-native@>0.64", "react-native@0.64.3":
   "integrity" "sha512-2OEU74U0Ek1/WeBzPbg6XDsCfjF/9fhrNX/5TFgEiBKd5mNc9LOZ/OlMmkb7iues/ZZ/oc51SbEfLRQdcW0fVw=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.64.3.tgz"
   "version" "0.64.3"

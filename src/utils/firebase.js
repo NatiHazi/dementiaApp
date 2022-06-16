@@ -3,6 +3,7 @@ import firestore from '@react-native-firebase/firestore';
 import firebase from '@react-native-firebase/app';
 import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import storage from '@react-native-firebase/storage';
+import {Alert} from 'react-native';
 
 
 const SUCCESS="success";
@@ -47,17 +48,17 @@ const sendPasswordResetEmailHandler = async (userName) =>{
     })
     .catch(error => {
     if (error.code === 'auth/email-already-in-use') {
-      alert('מייל זה נמצא כבר בשימוש במערכת');
+        alert('מייל זה נמצא כבר בשימוש במערכת');
     }
 
     if (error.code === 'auth/invalid-email') {
-      alert('מייל זה לא חוקי');;
+        alert('מייל זה לא חוקי');
     }
     if (error.code === 'The email address is badly formatted'){
-      alert ("הפורמט של המייל לא תקין");
+        alert ("הפורמט של המייל לא תקין");
     }
     if (error.code === 'auth/weak-password'){
-      alert ("הסיסמא חייבת להכיל לפחות שישה תווים");
+        alert ("הסיסמא חייבת להכיל לפחות שישה תווים");
     }
     console.log(error.code);
     console.error(error);
@@ -109,7 +110,8 @@ const createNewDocumentForUser = async (user, isTherapist, yourNum, otherSideNum
     myNum: yourNum,
     otherSidePhoneNum: otherSideNum,
     userName: username,
-    [mailString]: theMail
+    [mailString]: theMail,
+    stopGetSMS: true
   }
     firestore()
     .collection('users')
@@ -143,7 +145,7 @@ const findOtherSideIdFirebase = async (uid) =>{
         let returnIDandPhones=[];
        querySnapshot.forEach(doc=>{
         //console.log(" LI NE 144 FIRE BASE: ", doc.data().patientMail, "\n", doc.data().myNum)
-        returnIDandPhones.push([doc.data().id, doc.data().myNum]);
+        returnIDandPhones.push(doc.data().id, doc.data().myNum);
        })
        //console.log(" LINE 148 FIRE BASE : ",returnIDandPhones)
        return returnIDandPhones;
@@ -162,7 +164,7 @@ const findOtherSideIdFirebase = async (uid) =>{
         let returnIDandPhones=[];
        querySnapshot.forEach(doc=>{
         //console.log(" LI NE 144 FIRE BASE: ", doc.data().patientMail, "\n", doc.data().myNum)
-        returnIDandPhones.push([doc.data().id, doc.data().myNum]);
+        returnIDandPhones.push(doc.data().id, doc.data().myNum);
        })
        //console.log(" LINE 148 FIRE BASE : ",returnIDandPhones)
        return returnIDandPhones;
@@ -273,7 +275,7 @@ const getFirebaseTokenMessage = async (uid) =>{
   });
 };
 //###############
-const signInFirebase = async (username, password) =>{
+const signInFirebase = async (username, password,isTherapist) =>{
   const result=auth().signInWithEmailAndPassword(username, password)
   .then((userCredential) => {
   const user = userCredential.user;
@@ -290,8 +292,27 @@ const signInFirebase = async (username, password) =>{
       .doc(uid)
       .get()
       .then(documentSnapshot => {
-    
+        console.log("linr 294")
         if (documentSnapshot.exists) {
+          console.log("linr 296")
+          let terOrPat2 = "מטפל";
+          let terOrPat = "מטופל";
+          if(isTherapist){
+            console.log("linr 300")
+            terOrPat = "מטפל";
+            terOrPat2 = "מטופל";
+          }
+          if(isTherapist !== documentSnapshot.data().isTherapist){
+            console.log("linr 305")
+            Alert.alert(
+              "שגיאת בחירה",
+              `זוהתה כניסה כ${terOrPat} אך סופקו פרטים של ${terOrPat2}`,
+              [
+                { text: "הבנתי", onPress: () => console.log("OK Pressed") }
+              ]
+            );
+            return FAILURE
+          }
           return documentSnapshot.data().isTherapist;
         }
       });

@@ -40,6 +40,7 @@
     "react-native-background-timer": "^2.4.1",
     "react-native-call-detection": "^1.9.0",
     "react-native-call-log": "^2.1.2",
+    "react-native-contacts": "^7.0.4",
     "react-native-device-info": "^8.5.0",
     "react-native-easy-localization-and-rtl": "^1.1.0",
     "react-native-gesture-handler": "~1.10.2",

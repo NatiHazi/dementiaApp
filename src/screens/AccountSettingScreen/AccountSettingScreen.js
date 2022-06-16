@@ -1,5 +1,5 @@
 import React,{useState, useEffect} from 'react';
-import { View, Text, StyleSheet, useWindowDimensions,ScrollView,I18nManager} from 'react-native';
+import { View, Text, StyleSheet, useWindowDimensions,ScrollView,I18nManager,Switch} from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
@@ -18,6 +18,7 @@ const AccountSettingScreen = () => {
     const [yourNum, setYourNum] = useState('');
     const [initializing, setInitializing] = useState(true);
     const [userNameFirebase, setUserNameFirebase]=useState('');
+    const [isEnabled, setIsEnabled] = useState(false);
     const navigation = useNavigation();
 
     useEffect(
@@ -36,7 +37,7 @@ const AccountSettingScreen = () => {
                 setUsernameSec(documentSnapshot.data().userName);
                 setYourNum(documentSnapshot.data().myNum);
                 setotherSideNum(documentSnapshot.data().otherSidePhoneNum);
-
+                setIsEnabled(documentSnapshot.data().stopGetSMS)
 
 
               }
@@ -60,12 +61,23 @@ const AccountSettingScreen = () => {
               updateDataInFirebase(user.uid, {userName: username, myNum: yourNum, otherSidePhoneNum: otherSideNum }).then((reuslt)=>{
             
                  updateDataInFirebase(saveOtherSideID, {userName: username, myNum: otherSideNum , otherSidePhoneNum: yourNum }).then((result)=>{
-                navigation.navigate("TherapistScreen");  
+                  updateDataInFirebase(user.uid, {phoneNumberUpdated: true}).then((result)=>{
+                    
+                    navigation.navigate("TherapistScreen");
+                  })
+                  
               })
             });
           });
            
           }
+      };
+      const toggleSwitch = () => {
+        updateDataInFirebase(user.uid, {stopGetSMS: !isEnabled }).then((result)=>{
+           setIsEnabled(previousState => !previousState);
+        });
+        
+      
       };
 
     return (
@@ -96,7 +108,16 @@ const AccountSettingScreen = () => {
               secureTextEntry={false}
               style={styles.input}
               />
-
+              <View>
+                <Text>קבל עדכונים אודות שיחות והודעות נכנסות אצל המטופל</Text>
+              <Switch
+              trackColor={{ false: "#767577", true: "#81b0ff" }}
+              thumbColor={isEnabled ? "green" : "#f4f3f4"}
+              onValueChange={toggleSwitch}
+              value={isEnabled}
+              style={styles.input}
+            />
+            </View>
             <CustomButton text="שמור" onPress={()=>{updateDetails()}}/>
     
         </View>
@@ -138,4 +159,3 @@ const styles = StyleSheet.create({
 
 
 export default AccountSettingScreen
-

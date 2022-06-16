@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import { View ,Text ,ScrollView,StyleSheet,Alert,Image,Modal,Pressable,TextInput,Button} from 'react-native';
+import { View ,Text ,ScrollView,StyleSheet,Alert,Image,Modal,Pressable,TextInput,Button,BackHandler} from 'react-native';
 import CustomButtonForTherapistScreen from '../../components/CustomButtonForTherapistScreen';
 import CustomInput from '../../components/CutomInput';
 import { useNavigation } from '@react-navigation/native';
@@ -16,6 +16,7 @@ import { findOtherSideIdFirebase,
      setBackgroundInFirebase,updateDataInFirebase} from '../../utils/firebase';
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconBadge from 'react-native-icon-badge';
+import DeviceInfo from 'react-native-device-info';
 
 
 
@@ -37,6 +38,18 @@ const TherapistOptionScreen = () => {
   const [lat, setLat] = useState("");
   const [radius, setRadius] = useState("");
   const [w, setW] = useState("");
+  
+  const backAction = () => {
+    navigation.navigate("TherapistScreen");
+    return true;
+  };
+
+  useEffect(() => {
+    BackHandler.addEventListener("hardwareBackPress", backAction);
+
+    return () =>
+      BackHandler.removeEventListener("hardwareBackPress", backAction);
+  }, []);
 
   useEffect(
     () => {
@@ -48,8 +61,25 @@ const TherapistOptionScreen = () => {
        if(firstRender){
         findPatientID(uid);
        listenForColor();
+       DeviceInfo.getPhoneNumber().then((phoneNumber) => {
+        if (phoneNumber.includes("+972")){
+          phoneNumber.replace("+972","0");
+        }
+        Alert.alert(
+          "זוהה מספר מטפל חדש",
+          `זוהה מספר חדש. האם תרצה לקבל עדכוני הודעות למספר ${phoneNumber}?`,
+          [
+            {
+              text: "לא",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel"
+            },
+            { text: "כן", onPress: () => updateTherapistNum(phoneNumber)}
+          ]
+        );
+      });
         setfirstRender(false);
-      
+        
        }
      }
      if (!user){
@@ -61,6 +91,21 @@ const TherapistOptionScreen = () => {
     },
     [user]
   );
+  const updateTherapistNum = (phoneRecognized) =>{
+    findOtherSideIdFirebase(user.uid).then((result)=>{
+      const saveOtherSideID=result[0];
+      updateDataInFirebase(user.uid, {myNum: phoneRecognized}).then((reuslt)=>{
+    
+         updateDataInFirebase(saveOtherSideID, {otherSidePhoneNum: phoneRecognized }).then((result)=>{
+          updateDataInFirebase(user.uid, {phoneNumberUpdated: true}).then((result)=>{
+            
+            navigation.navigate("TherapistScreen");
+          })
+          
+      })
+    });
+  });
+  }
 
   function updateColorAfterRead(theColorArtibute){
     if (user){
@@ -96,7 +141,8 @@ const TherapistOptionScreen = () => {
     console.log('starting function findPatientID');
     //onUpdatePressed1();
     findOtherSideIdFirebase(uid).then((result)=>{
-      setPatientID(result[0][0]);
+      console.log("line 99 , ", result)
+      setPatientID(result[0]);
     })
   }
   
@@ -123,7 +169,7 @@ const TherapistOptionScreen = () => {
         if (patientID)
           navigation.navigate("UserLocation", {patientID: patientID});
         else  
-        alert("זמנית המידע לא זמין. נסו מאוחר יותר");
+          alert("זמנית המידע לא זמין. נסו מאוחר יותר");
  
     };
     const onSendReminders = () =>{
@@ -145,18 +191,18 @@ const TherapistOptionScreen = () => {
           if (result !== 'fail'){
             Alert.alert(
               "מצב סוללה של המטופל:",
-              result,
-              [
-                { text: "אישור", onPress: () => console.log("OK Pressed") }
-              ]
-            );
-              };
-            });
-    
-            }
-            else {
-              alert("זמנית המידע לא זמין. נסו מאוחר יותר");
-            }
+          result,
+          [
+            { text: "אישור", onPress: () => console.log("OK Pressed") }
+          ]
+        );
+          };
+        });
+
+        }
+        else {
+          alert("זמנית המידע לא זמין. נסו מאוחר יותר");
+        } 
       }
         const setBackgroundForPatient = () =>{
       
@@ -226,7 +272,7 @@ const TherapistOptionScreen = () => {
                
               MainElement={
               
-                <CustomButtonForTherapistScreen text="לחץ לקבלת מיקום" onPress={()=>{findPatienPressed()}}/>
+             <CustomButtonForTherapistScreen text="לחץ לקבלת מיקום" onPress={()=>{findPatienPressed()}}/> 
             //  {/* <Circle id="calls" color={color.calls}/> */}
             
                }
@@ -247,7 +293,7 @@ const TherapistOptionScreen = () => {
              
              <IconBadge 
               MainElement={
-                <CustomButtonForTherapistScreen text="לחץ לרשימת השיחות" onPress={()=>{onPatientCallPressed()}}/>
+             <CustomButtonForTherapistScreen text="לחץ לרשימת השיחות" onPress={()=>{onPatientCallPressed()}}/> 
               }
               IconBadgeStyle={{
                 marginTop:9,
@@ -265,7 +311,7 @@ const TherapistOptionScreen = () => {
 
              <IconBadge 
               MainElement={
-                <CustomButtonForTherapistScreen text="לחץ לרשימת ההודעות שהתקבלו" onPress={()=>{onPatientSMSPressed()}}/>
+             <CustomButtonForTherapistScreen text="לחץ לרשימת ההודעות שהתקבלו" onPress={()=>{onPatientSMSPressed()}}/> 
               }
               IconBadgeStyle={{
                 marginTop:9,
@@ -282,7 +328,7 @@ const TherapistOptionScreen = () => {
 
             <IconBadge 
               MainElement={
-                <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה"  onPress={()=>{onBatteryStatusPressed()}}             
+                <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה"  onPress={()=>{onBatteryStatusPressed()}}              
                 />
              }
              
@@ -301,17 +347,17 @@ const TherapistOptionScreen = () => {
             
               />
               
-              {/* <Circle id="battery" color={color.battery}/>
+               {/* <Circle id="battery" color={color.battery}/>
              <CustomButtonForTherapistScreen text="לחץ לבדיקת מצב סוללה" onPress={()=>{onBatteryStatusPressed()}}
              /> */}
              
              <CustomButtonForTherapistScreen text="לחץ להגדרת רקע" onPress={()=>{setBackgroundForPatient()}}/>
             
-            <CustomButtonForTherapistScreen text="לחץ לשליחת תזכורת" onPress={()=>{onSendReminders()}}/> 
+             <CustomButtonForTherapistScreen text="לחץ לשליחת תזכורת" onPress={()=>{onSendReminders()}}/> 
 
-            {/* <CustomButtonForTherapistScreen text="הגדר מיקום בטוח" onPress={()=>{safeArea()}}/>  */}
-           {/* <CustomButtonForTherapistScreen text="Therapist" onPress={onTherapistPressed}/> 
-           <CustomButtonForTherapistScreen text="Patient" onPress={onTherapistPressed}/>  */}
+             {/* <CustomButtonForTherapistScreen text="הגדר מיקום בטוח" onPress={()=>{safeArea()}}/>  */}
+            {/* <CustomButtonForTherapistScreen text="Therapist" onPress={onTherapistPressed}/> 
+            <CustomButtonForTherapistScreen text="Patient" onPress={onTherapistPressed}/>  */}
 
 
 <Modal
@@ -484,8 +530,3 @@ const styles = StyleSheet.create({
 
 
 export default TherapistOptionScreen;
-
-
-
-
-

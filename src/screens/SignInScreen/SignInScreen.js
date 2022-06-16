@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import { View ,Image, StyleSheet,ScrollView,Text,I18nManager} from 'react-native';
+import { View ,Image, StyleSheet,ScrollView,Text,I18nManager,Alert} from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import CustomInputWithEye from '../../components/CutomInputWithEye/CustomInputWithEye';
@@ -20,7 +20,18 @@ const SignInScreen = ({ route }) => {
 
  
     const onSignInPressed = () =>{
-      signInFirebase(username, password).then((result)=>{
+      if (username === '' || password === ''){
+        Alert.alert(
+          "שגיאת התחברות",
+          "כל השדות הינם חובה",
+          [
+           
+            { text: "אישור", onPress: () => console.log("OK Pressed") }
+          ]
+        );
+      }
+      else{
+        signInFirebase(username, password,isTherapist).then((result)=>{
         if (result!== 'fail'){
           if (result === true)
             navigation.navigate("TherapistScreen");
@@ -29,7 +40,7 @@ const SignInScreen = ({ route }) => {
 
         }
       });
-
+    }
     };
         
     const onForgotPasswordPresed = () => {
@@ -168,4 +179,3 @@ const styles = StyleSheet.create({
 })
 
 export default SignInScreen
-
