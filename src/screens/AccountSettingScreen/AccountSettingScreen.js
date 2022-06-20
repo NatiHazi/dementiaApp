@@ -37,7 +37,7 @@ const AccountSettingScreen = () => {
                 setUsernameSec(documentSnapshot.data().userName);
                 setYourNum(documentSnapshot.data().myNum);
                 setotherSideNum(documentSnapshot.data().otherSidePhoneNum);
-                setIsEnabled(documentSnapshot.data().stopGetSMS)
+                setIsEnabled(!documentSnapshot.data().stopGetSMS)
 
 
               }

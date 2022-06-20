@@ -17,6 +17,7 @@ import { findOtherSideIdFirebase,
 import Icon from 'react-native-vector-icons/Ionicons';
 import IconBadge from 'react-native-icon-badge';
 import DeviceInfo from 'react-native-device-info';
+import { PermissionsAndroid } from 'react-native';
 
 
 
@@ -60,24 +61,7 @@ const TherapistOptionScreen = () => {
        const uid = user.uid;
        if(firstRender){
         findPatientID(uid);
-       listenForColor();
-       DeviceInfo.getPhoneNumber().then((phoneNumber) => {
-        if (phoneNumber.includes("+972")){
-          phoneNumber.replace("+972","0");
-        }
-        Alert.alert(
-          "זוהה מספר מטפל חדש",
-          `זוהה מספר חדש. האם תרצה לקבל עדכוני הודעות למספר ${phoneNumber}?`,
-          [
-            {
-              text: "לא",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel"
-            },
-            { text: "כן", onPress: () => updateTherapistNum(phoneNumber)}
-          ]
-        );
-      });
+       listenForColor(); 
         setfirstRender(false);
         
        }
@@ -91,6 +75,7 @@ const TherapistOptionScreen = () => {
     },
     [user]
   );
+
   const updateTherapistNum = (phoneRecognized) =>{
     findOtherSideIdFirebase(user.uid).then((result)=>{
       const saveOtherSideID=result[0];
@@ -106,6 +91,8 @@ const TherapistOptionScreen = () => {
     });
   });
   }
+
+
 
   function updateColorAfterRead(theColorArtibute){
     if (user){

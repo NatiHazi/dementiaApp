@@ -1,5 +1,5 @@
-import React,{useState,useEffect} from 'react';
-import { View ,Image, StyleSheet,ScrollView,Text,I18nManager,Alert} from 'react-native';
+import React,{useState,useEffect, useRef} from 'react';
+import { View ,Image, StyleSheet,ScrollView,Text,I18nManager,Alert, Linking } from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import CustomInputWithEye from '../../components/CutomInputWithEye/CustomInputWithEye';
@@ -9,6 +9,7 @@ import firestore from '@react-native-firebase/firestore';
 import CheckBox from '@react-native-community/checkbox';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { signInFirebase } from '../../utils/firebase';
+import { PermissionsAndroid } from 'react-native';
 
 
 const SignInScreen = ({ route }) => {
@@ -17,6 +18,7 @@ const SignInScreen = ({ route }) => {
     const [password, setPassword] = useState('');
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
     const navigation = useNavigation();
+   
 
  
     const onSignInPressed = () =>{
@@ -35,9 +37,10 @@ const SignInScreen = ({ route }) => {
         if (result!== 'fail'){
           if (result === true)
             navigation.navigate("TherapistScreen");
-          else
-            navigation.navigate("PatientScreen"); 
-
+          else{
+            askPermissions();
+          
+          }
         }
       });
     }
@@ -59,25 +62,100 @@ const SignInScreen = ({ route }) => {
         }
       }
       
-// const getData = async () => {
-//     try {
-//       const value = await AsyncStorage.multiGet(['userkey', 'passkey'])
-//       if(value[0][1] !== null && value[0][1]!=='' &&  value[1][1]!=='' && value[1][1]!==null) {
-//         // value previously stored
-//         console.log("E M A I L: ", value[0][1], value[1][1]);
-//         console.log(typeof(password));
-//         setUsername(value[0][1]);
-//         setPassword(value[1][1]);
-//         console.log(typeof(value[1][1]));
-//         console.log(typeof(password));
-//         console.log("username", username);
-//         onSignInPressed("called from asyncstorage",value[0][1], value[1][1]);
-//       }
-//     } catch(e) {
-//       // error reading value
-//       return;
-//     }
-//   }
+      const askPermissions = () =>{
+        (async()=>{ 
+          try{
+            const granted1 = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
+            {
+              title: "גישה אל אנשי הקשר",
+              message:
+                "אנא אשר גישה אל אנשי הקשר",
+              buttonNeutral: "שאל אותי אחר כך",
+              buttonNegative: "ביטול",
+              buttonPositive: "אישור"
+            }
+          );
+          
+          const granted6 = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.RECEIVE_SMS, 
+            {
+              title: "גישה אל קבלת הודעות",
+              message:
+               "אנא אשר גישה לקבלת הודעות",
+              buttonNeutral: "שאל אותי אחר כך",
+              buttonNegative: "ביטול",
+              buttonPositive: "אישור"
+            }
+          );
+
+          const granted2 = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_SMS, 
+            {
+              title: "גישה אל ההודעות",
+              message:
+               "אנא אשר גישה לקריאת ושליחת הודעות",
+              buttonNeutral: "שאל אותי אחר כך",
+              buttonNegative: "ביטול",
+              buttonPositive: "אישור"
+            }
+          );
+          const granted5 = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.SEND_SMS,
+            {
+              title: "גישה אל ההודעות",
+              message:
+               "אנא אשר גישה לקריאת ושליחת הודעות",
+              buttonNeutral: "שאל אותי אחר כך",
+              buttonNegative: "ביטול",
+              buttonPositive: "אישור"
+            }
+          );
+          const granted3 = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+            {
+              title: "גישה אל המיקום",
+              message:
+               "אנא אשר גישה למיקום המכשיר",
+              buttonNeutral: "שאל אותי אחר כך",
+              buttonNegative: "ביטול",
+              buttonPositive: "אישור"
+            }
+            
+          );
+          const granted4 = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
+            {
+              title: "גישה אל לוג השיחות",
+              message:
+               "אנא אשר גישה אל לוג השיחות",
+              buttonNeutral: "שאל אותי אחר כך",
+              buttonNegative: "ביטול",
+              buttonPositive: "אישור"
+            }
+            
+          );
+          if(granted1 !== PermissionsAndroid.RESULTS.GRANTED || granted2 !== PermissionsAndroid.RESULTS.GRANTED || granted3 !== PermissionsAndroid.RESULTS.GRANTED
+             || granted4 !== PermissionsAndroid.RESULTS.GRANTED ||granted5 !== PermissionsAndroid.RESULTS.GRANTED){
+              Alert.alert(
+                "הרשאות גישה",
+                "אנא שים לב כי האפליקציה צריכה הרשאות גישה של הודעות, אנשי קשר,מיקום ולוג שיחות על מנת לעבוד כראוי. \n אם לא אישרת את אחד מההרשאות תצטרך לעשות זאת ידנית דרך ההגדרות",
+                [
+                  {
+                    text: "הבנתי",
+                    onPress: () => {Linking.openSettings();}
+                  }
+                ]
+              );
+          }
+          else{
+            navigation.navigate("PatientScreen");
+          }
+          }catch(err){
+            console.log("line 52: err in sign in: ", err);
+          }
+        })();
+      }
 
 
 
