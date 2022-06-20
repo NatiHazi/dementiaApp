@@ -18,7 +18,7 @@ const AccountSettingScreen = () => {
     const [yourNum, setYourNum] = useState('');
     const [initializing, setInitializing] = useState(true);
     const [userNameFirebase, setUserNameFirebase]=useState('');
-    const [isEnabled, setIsEnabled] = useState(false);
+    const [isEnabled, setIsEnabled] = useState(null);
     const navigation = useNavigation();
 
     useEffect(
@@ -73,7 +73,7 @@ const AccountSettingScreen = () => {
           }
       };
       const toggleSwitch = () => {
-        updateDataInFirebase(user.uid, {stopGetSMS: !isEnabled }).then((result)=>{
+        updateDataInFirebase(user.uid, {stopGetSMS: isEnabled }).then((result)=>{
            setIsEnabled(previousState => !previousState);
         });
         
@@ -113,8 +113,8 @@ const AccountSettingScreen = () => {
               <Switch
               trackColor={{ false: "#767577", true: "#81b0ff" }}
               thumbColor={isEnabled ? "green" : "#f4f3f4"}
-              onValueChange={toggleSwitch}
               value={isEnabled}
+              onValueChange={toggleSwitch}
               style={styles.input}
             />
             </View>

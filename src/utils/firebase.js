@@ -111,7 +111,7 @@ const createNewDocumentForUser = async (user, isTherapist, yourNum, otherSideNum
     otherSidePhoneNum: otherSideNum,
     userName: username,
     [mailString]: theMail,
-    stopGetSMS: true
+    stopGetSMS: false
   }
     firestore()
     .collection('users')

@@ -80,25 +80,27 @@ useEffect(()=>{
   console.log("line 80 line 80 line 80");
   let smsListenrVar=SmsListner.addListener(message=>{
     console.log("line 71");
-    if (therapistphoneUseRef.current && userUseRef.current){
+    if (user && therapistPhone){
     console.log("the sms test listner: ", message);
     phonenumberCheck=changeAreaCode(message.originatingAddress);
     if (saveContacts.current.includes(phonenumberCheck) && saveContacts.current.length>0){
       let idx = saveContacts.current.indexOf(phonenumberCheck);
-      sendAutoSms(`קיבלתי הודעה מ ${saveContacts.current[idx+1]} \n תוכן ההודעה: ${message.body}`, therapistphoneUseRef.current);
+      sendAutoSms(`קיבלתי הודעה מ${saveContacts.current[idx+1]} \n תוכן ההודעה: ${message.body}`, therapistPhone
+      );
     }
     else{
-      sendAutoSms(`קיבלתי הודעה מ ${phonenumberCheck} \n תוכן ההודעה: ${message.body}`, therapistphoneUseRef.current);
+      sendAutoSms(`קיבלתי הודעה מ${phonenumberCheck} \n תוכן ההודעה: ${message.body}`, therapistPhone
+      );
     }
     //sendAutoSms(`קיבלתי הודעה חדשה מ: ${message.originatingAddress} \n  תוכן ההודעה: ${message.body}`, therapistPhone);
-     smsLog(userUseRef.current.uid);
+     smsLog(user.uid);
      updateColorForTherapist("colorSMS", "red");
     }
     else
       console.log("LINE 67 LINE 67 LINE 67 LINE 67 LINE 67 LINE 67");
   });
   return () => smsListenrVar.remove();
-},[])
+},[user, therapistPhone])
 
   useEffect(() => {
    
@@ -540,11 +542,12 @@ const askContacts = ()=>{
          
             updateDataInFirebase(uid, {List_SMS: save_SMS});
             
+            
           },
         );
         
       } else {
-        console.log("Camera permission denied");
+        console.log("SMS PERMISSION DENIED");
       }
     } catch (err) {
       console.warn(err);
@@ -660,10 +663,10 @@ const askContacts = ()=>{
     phonenumberCheck=changeAreaCode(phoneNumber);
     if (saveContacts.current.includes(phonenumberCheck)){
       let idx = saveContacts.current.indexOf(phonenumberCheck);
-      sendAutoSms(`קיבלתי שיחה חדשה מ ${saveContacts.current[idx+1]}`, therapistPhone)
+      sendAutoSms(`קיבלתי שיחה חדשה מ${saveContacts.current[idx+1]}`, therapistPhone)
     }
     else{
-      sendAutoSms(`קיבלתי שיחה חדשה מ ${phonenumberCheck}`, therapistPhone)
+      sendAutoSms(`קיבלתי שיחה חדשה מ${phonenumberCheck}`, therapistPhone)
     }
 
     }
@@ -680,7 +683,7 @@ const askContacts = ()=>{
     phonenumberCheck=changeAreaCode(phoneNumber);
     if (saveContacts.current.includes(phonenumberCheck)){
       let idx = saveContacts.current.indexOf(phonenumberCheck);
-      sendAutoSms(`התקשרתי אל ${saveContacts.current[idx+1]}`, therapistPhone)
+      sendAutoSms(` התקשרתי אל ${saveContacts.current[idx+1]}`, therapistPhone)
     }
     else{
       sendAutoSms(` התקשרתי אל ${phonenumberCheck}`, therapistPhone)
