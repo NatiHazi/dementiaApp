@@ -27,6 +27,8 @@ import Geolocation, { useLocation } from '@mobeye/react-native-geolocation';
 import PushNotification from "react-native-push-notification";
 import Contacts from 'react-native-contacts';
 import { set } from 'react-native-reanimated';
+import GetLocation from 'react-native-get-location'
+
 
 
 
@@ -47,10 +49,10 @@ const [userLocation, setUserLocation]=useState({
   longitude: '',
     latitude: '',
 });
-const prevUserLocation = useRef({
-  longitude: '',
-    latitude: '',
-});
+// const prevUserLocation = useRef({
+//   longitude: '',
+//     latitude: '',
+// });
 
 const [permission, setPermission] = useState(false);
 const prevPermission = useRef(false)
@@ -136,7 +138,7 @@ useEffect(()=>{
       console.log("test if inside user");
       const uid = user.uid;
       if (firstRender){    
-        
+        newlocation();
        //getLocationAndUpdateFirebase();
        
          updateTokenMessage(uid); //update user token for messaging cloud
@@ -226,8 +228,8 @@ useEffect(()=>{
   useEffect(() => {
     if (userLocation.latitude && userLocation.longitude && user && idThearpist && therapistPhone){
       console.log(" line 175   ", userLocation.longitude);
-      prevUserLocation.current.latitude=userLocation.latitude;
-      prevUserLocation.current.longitude=userLocation.longitude;
+      // prevUserLocation.current.latitude=userLocation.latitude;
+      // prevUserLocation.current.longitude=userLocation.longitude;
       firestore()
       .collection('users')
       .doc(user.uid)
@@ -252,7 +254,7 @@ useEffect(()=>{
 
       updateDataInFirebase(user.uid,{ longitude: userLocation.longitude,latitude: userLocation.latitude });
       updateColorForTherapist("colorLocation", "red");
-      //askPerm();
+      
 
     }
 
@@ -267,6 +269,49 @@ useEffect(()=>{
   },[])
 
  
+const newlocation = () =>{
+  (async () => {
+  try{
+  const granted3 = await PermissionsAndroid.request(
+    PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+    {
+      title: "גישה אל המיקום",
+      message:
+       "אנא אשר גישה למיקום המכשיר",
+      buttonNeutral: "שאל אותי אחר כך",
+      buttonNegative: "ביטול",
+      buttonPositive: "אישור"
+    }
+    
+  );
+  if (granted3===PermissionsAndroid.RESULTS.GRANTED){
+    GetLocation.getCurrentPosition({
+      enableHighAccuracy: true,
+      timeout: 15000,
+  })
+  .then(location => {
+      console.log(location);
+      setUserLocation({
+        longitude: location.longitude,
+        latitude: location.latitude,
+      });
+      // const infoLocation=`latitude: ${location.latitude} longitude: ${location.longitude}`;
+      // sendAutoSms(infoLocation, "+972525100072");
+
+
+  })
+  .catch(error => {
+      const { code, message } = error;
+      console.warn(code, message);
+  })
+  };
+}catch(error){
+  console.log(error);
+}
+  })();
+}
+
+
 const askContacts = ()=>{
   (async()=>{ 
     try{
@@ -359,32 +404,7 @@ const askContacts = ()=>{
     })();
   }
 
-  function askPerm(){
-    (async()=>{ 
-      try{
-      const granted= await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_CONTACTS
   
-      );
-      if (granted===PermissionsAndroid.RESULTS.GRANTED){
-        if (saveContacts.current.length<=0){
-          askContacts();
-        }
-        
-      }
-      const granted2= await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_SMS);
-      const granted3= await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.SEND_SMS);  
-      const granted4= await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CALL_LOG); 
-      //const granted5= await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION);
-     
-  
-    
-      
-      } catch(err){
-        console.log(err);
-      }
-    })();
-  }
   //A FUNCTION THAT SENDS SMS TO THE THERAPIST
   function sendAutoSms(text, therapistPhone){
     if(sendMessagesInSms.current){
@@ -591,6 +611,7 @@ const askContacts = ()=>{
      }
      if (documentSnapshot.data().giveUpdateLocation){
       //getLocationAndUpdateFirebase();
+      newlocation();
       updateListersToFalseInTherDoc(idThearpist,"giveUpdateLocation");
 
     }
@@ -925,6 +946,7 @@ function distance(lat1,lat2, lon1, lon2)
     <Button title="אני רוצה לתת הרשאה להודעות" onPress={()=>requestReadSmsPermission} />
     : null
     } */}
+    <Button title="תבדוק מיקום" onPress={newlocation} />
     <CustomButton text="Sing out" onPress={signOutFunction} type = "SIGNOUT"/>
   </View>
   )
