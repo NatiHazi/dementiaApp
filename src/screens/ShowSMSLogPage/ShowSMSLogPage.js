@@ -33,7 +33,7 @@ const ShowSMSLog = ({route}) => {
           let count = 1;
           for (let i=0; i<result.length; i++){
             if (i%2==0){
-              emptyStr = " " + count + ") הודעה התקבלה ממספר - " + result[i];
+              emptyStr = " " + count + ") הודעה התקבלה מ - " + result[i];
             }
             else{
               emptyStr+="\n פירוט ההודעה - " + result[i];

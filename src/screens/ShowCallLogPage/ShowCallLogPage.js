@@ -48,14 +48,14 @@ const ShowLogCall = ({route}) => {
     // }
     if (result[i+2] === "OUTGOING"){
     emptyStr = " " + count + ") יצאה בתאריך - " + result[i];
-    emptyStr+="\n למספר טלפון - " + result[i+1];
+    emptyStr+="\n אל - " + result[i+1];
     setthelist(thelist=>[...thelist, {key:emptyStr}]);
     
     }
  
     else{
       emptyStr = " " + count + ") התקבלה בתאריך - " + result[i];
-      emptyStr+="\n ממספר טלפון - " + result[i+1];
+      emptyStr+="\n מ - " + result[i+1];
       setthelist(thelist=>[...thelist, {key:emptyStr}]);
     }
    
