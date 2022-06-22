@@ -1,5 +1,5 @@
-import React,{useState} from 'react';
-import { View,Image,Text ,ScrollView,StyleSheet,Modal,Pressable} from 'react-native';
+import React,{useState,useEffect} from 'react';
+import { View,Image,Text ,ScrollView,StyleSheet,Modal,Pressable,BackHandler} from 'react-native';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,6 +16,16 @@ const MainScreeen = () => {
         navigation.navigate("signIn",{
             isTherapist: true});
     };
+    const backAction = () => {
+      navigation.navigate("MainScreen");
+      return true;
+    };
+    useEffect(() => {
+      BackHandler.addEventListener("hardwareBackPress", backAction);
+  
+      return () =>
+        BackHandler.removeEventListener("hardwareBackPress", backAction);
+    }, []);
     const onPatientPressed = () =>{
         navigation.navigate("signIn", {isTherapist: false});
     };
