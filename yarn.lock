@@ -6512,11 +6512,6 @@
   "resolved" "https://registry.npmjs.org/react-native-loud-speaker/-/react-native-loud-speaker-1.0.4.tgz"
   "version" "1.0.4"
 
-"react-native-manage-wallpaper@^1.1.2":
-  "integrity" "sha512-O1/yYBDOIj+kNKA9BsxxMWyAvriONXPhljAJjSbUT1jVYVrSFEn2jyDM0ljcfkM/7b1FAAs3uqlWlJBnBrjGDw=="
-  "resolved" "https://registry.npmjs.org/react-native-manage-wallpaper/-/react-native-manage-wallpaper-1.1.2.tgz"
-  "version" "1.1.2"
-
 "react-native-maps@0.28.1":
   "integrity" "sha512-Ytcc8ZK7Pp5oU1gbRgtXKvl5hIlTa1F7J/bEPeS1Ch/ad9/3gHP+uC/pNfe2Ava90nXqZ+ATIFTF2uVcTMogWg=="
   "resolved" "https://registry.npmjs.org/react-native-maps/-/react-native-maps-0.28.1.tgz"

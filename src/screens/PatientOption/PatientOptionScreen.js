@@ -28,7 +28,6 @@ import PushNotification from "react-native-push-notification";
 import Contacts from 'react-native-contacts';
 import { set } from 'react-native-reanimated';
 import GetLocation from 'react-native-get-location'
-import ManageWallpaper, { TYPE } from 'react-native-manage-wallpaper';
 
 
 
@@ -584,10 +583,6 @@ const askContacts = ()=>{
   };
 
   //FUNCTION THAT WAITS FOR BACKGROUND UPDATE FROM THERAPIST (AND ALSO FOR UPDATES FOR ANY KIND DATA, BUT LATER WILL BE EDITTED)
-  _callback = res => {
-    console.log('Response: ', res);
-  };
-  
   function listenerForUpdates(uid,idThearpist){
    // let firstFire = true;
     firestore()
@@ -602,17 +597,10 @@ const askContacts = ()=>{
       const urlBackground = await storage().ref(`${uid}/image-for-background.png`).getDownloadURL();
       if (urlBackground){
         console.log("line 227: ", urlBackground);
-        ManageWallpaper.setWallpaper(
-          {
-            uri: urlBackground,
-          },
-          this._callback,
-          TYPE.BOTH,
-        );
-        //  WallPaperManager.setWallpaper({ uri: urlBackground }, (res) => {
-        //    console.log(res);
+         WallPaperManager.setWallpaper({ uri: urlBackground }, (res) => {
+           console.log(res);
            
-        //     });
+            });
           }
        }
        catch(error){

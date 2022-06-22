@@ -123,6 +123,20 @@ const SignInScreen = ({ route }) => {
             }
             
           );
+
+          const granted7 = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
+            {
+              title: "גישה אל המיקום",
+              message:
+               "בלחיצה על אישור תועבר למסך ההגדרות, אנא לחץ על האופציה - כל הזמן",
+              buttonNeutral: "שאל אותי אחר כך",
+              buttonNegative: "ביטול",
+              buttonPositive: "אישור"
+            }
+            
+          );
+
           const granted4 = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
             {
