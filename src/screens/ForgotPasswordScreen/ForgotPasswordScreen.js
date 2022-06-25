@@ -14,6 +14,7 @@ const ForgotPasswordScreen = ({ route }) => {
 
     const navigation = useNavigation();
 
+   
     const onSendPressed = () =>{
        
             sendPasswordResetEmailHandler(userName).then((result)=>{
@@ -24,10 +25,11 @@ const ForgotPasswordScreen = ({ route }) => {
            
     };
 
-    const onSignInPressed = () => {
-        navigation.navigate("signIn", {isTherapist: isTherapist});
-    };
+    // const onSignInPressed = () => {
+    //     navigation.navigate("signIn", {isTherapist: isTherapist});
+    // };
 
+   
 
 
     return (
@@ -45,11 +47,7 @@ const ForgotPasswordScreen = ({ route }) => {
              
             <CustomButton text="שלח" onPress={onSendPressed}/>
 
-            <CustomButton
-            text="חזור למסך התחברות"
-            onPress={onSignInPressed}
-            type = "TERTIARY"
-            />
+           
 
             
         </View>

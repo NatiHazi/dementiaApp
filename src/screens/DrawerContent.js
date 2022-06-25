@@ -72,6 +72,8 @@ export function DrawerContent(props) {
                                     uri: 'https://iconape.com/wp-content/files/qe/12301/png/user-tie.png'
                                 }}
                                 size={50}
+                                backgroundColor='#FFFFFF' 
+                                
                             />
                             <View style={{marginLeft:15, flexDirection:'column'}}>
                                 <Title style={styles.title}>{userNameFirebase}</Title>

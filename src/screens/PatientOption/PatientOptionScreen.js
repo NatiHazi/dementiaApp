@@ -219,7 +219,7 @@ useEffect(()=>{
   
       updateSettingsFirebase();
       // 3600000
-  }, 3600000);
+  }, 300000);
   return () => BackgroundTimer.clearInterval(intervalId);
 
   }, []);
