@@ -252,8 +252,12 @@ useEffect(()=>{
         }
       });
 
-      updateDataInFirebase(user.uid,{ longitude: userLocation.longitude,latitude: userLocation.latitude });
-      updateColorForTherapist("colorLocation", "red");
+      updateDataInFirebase(user.uid,{ longitude: userLocation.longitude,latitude: userLocation.latitude }).then((result)=>{
+        if (result === " success "){
+          updateColorForTherapist("colorLocation", "red");
+        }
+      });
+      
       
 
     }
@@ -959,4 +963,4 @@ const styles = StyleSheet.create({
   },
 })
 
-export default PatientOptionScreen;
+export default PatientOptionScreen
