@@ -19,15 +19,12 @@ const SignInScreen = ({ route }) => {
     const [toggleCheckBox, setToggleCheckBox] = useState(false);
     const navigation = useNavigation();
    
-
- 
     const onSignInPressed = () =>{
       if (username === '' || password === ''){
         Alert.alert(
           "שגיאת התחברות",
           "כל השדות הינם חובה",
           [
-           
             { text: "אישור", onPress: () => console.log("OK Pressed") }
           ]
         );
@@ -68,9 +65,9 @@ const SignInScreen = ({ route }) => {
             const granted1 = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
             {
-              title: "גישה אל אנשי הקשר",
+              title: "אפליקצית DementiaApp רוצה הרשאות לאנשי קשר",
               message:
-                "אנא אשר גישה אל אנשי הקשר",
+                "אפליקצית DementiaApp אוספת נתוני אנשי קשר כדי לזהות שיחות",
               buttonNeutral: "שאל אותי אחר כך",
               buttonNegative: "ביטול",
               buttonPositive: "אישור"
@@ -80,9 +77,9 @@ const SignInScreen = ({ route }) => {
           const granted6 = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.RECEIVE_SMS, 
             {
-              title: "גישה אל קבלת הודעות",
+              title: "אפליקצית DementiaApp רוצה הרשאות להודעות נכנסות",
               message:
-               "אנא אשר גישה לקבלת הודעות",
+                "אפליקצית DementiaApp אוספת נתוני הודעות נכנסות כדי לזהות הודעות זדוניות",
               buttonNeutral: "שאל אותי אחר כך",
               buttonNegative: "ביטול",
               buttonPositive: "אישור"
@@ -92,9 +89,9 @@ const SignInScreen = ({ route }) => {
           const granted2 = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.READ_SMS, 
             {
-              title: "גישה אל ההודעות",
+              title: "אפליקצית DementiaApp רוצה הרשאות לקרוא הודעות",
               message:
-               "אנא אשר גישה לקריאת ושליחת הודעות",
+                "אפליקצית DementiaApp אוספת נתוני הודעות כדי לזהות הודעות זדוניות",
               buttonNeutral: "שאל אותי אחר כך",
               buttonNegative: "ביטול",
               buttonPositive: "אישור"
@@ -103,9 +100,9 @@ const SignInScreen = ({ route }) => {
           const granted5 = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.SEND_SMS,
             {
-              title: "גישה אל ההודעות",
+              title: "אפליקצית DementiaApp רוצה הרשאות לשליחת הודעות",
               message:
-               "אנא אשר גישה לקריאת ושליחת הודעות",
+                "אפליקצית DementiaApp שולחת הודעות כדי לעדכן את המטפל",
               buttonNeutral: "שאל אותי אחר כך",
               buttonNegative: "ביטול",
               buttonPositive: "אישור"
@@ -114,22 +111,9 @@ const SignInScreen = ({ route }) => {
           const granted3 = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
             {
-              title: "גישה אל המיקום",
+              title: "אפליקצית DementiaApp רוצה הרשאות למיקום",
               message:
-               "אנא אשר גישה למיקום המכשיר",
-              buttonNeutral: "שאל אותי אחר כך",
-              buttonNegative: "ביטול",
-              buttonPositive: "אישור"
-            }
-            
-          );
-
-          const granted7 = await PermissionsAndroid.request(
-            PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
-            {
-              title: "גישה אל המיקום",
-              message:
-               "בלחיצה על אישור תועבר למסך ההגדרות, אנא לחץ על האופציה - כל הזמן",
+                "אפליקצית DementiaApp מבקשת הרשאות למיקום כדי לעדכן את המטפל",
               buttonNeutral: "שאל אותי אחר כך",
               buttonNegative: "ביטול",
               buttonPositive: "אישור"
@@ -140,9 +124,22 @@ const SignInScreen = ({ route }) => {
           const granted4 = await PermissionsAndroid.request(
             PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
             {
-              title: "גישה אל לוג השיחות",
+              title: "אפליקצית DementiaApp רוצה הרשאות ליומן שיחות",
               message:
-               "אנא אשר גישה אל לוג השיחות",
+                "אפליקצית DementiaApp מבקשת הרשאות ליומן שיחות בשביל לזהות שיחות לא מזוהות",
+              buttonNeutral: "שאל אותי אחר כך",
+              buttonNegative: "ביטול",
+              buttonPositive: "אישור"
+            }
+            
+          );
+
+          const granted7 = await PermissionsAndroid.request(
+            PermissionsAndroid.PERMISSIONS.ACCESS_BACKGROUND_LOCATION,
+            {
+              title: "אפליקצית DementiaApp רוצה הרשאות למיקום ברקע",
+              message:
+                "אפליקצית DementiaApp מבקשת הרשאות למיקום ברקע כדי לעדכן את המטפל, ההרשאה תפעל כאשר האפליקציה פתוחה ברקע",
               buttonNeutral: "שאל אותי אחר כך",
               buttonNegative: "ביטול",
               buttonPositive: "אישור"
@@ -157,7 +154,8 @@ const SignInScreen = ({ route }) => {
                 [
                   {
                     text: "הבנתי",
-                    onPress: () => {Linking.openSettings();}
+                    onPress: () => {navigation.navigate("PatientScreen");}
+                   // onPress: () => {Linking.openSettings();}
                   }
                 ]
               );

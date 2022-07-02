@@ -1,12 +1,12 @@
 import React,{useState,useEffect} from 'react';
-import { View, Text, StyleSheet, useWindowDimensions,ScrollView,I18nManager} from 'react-native';
+import { View, Text, StyleSheet, useWindowDimensions,ScrollView,I18nManager,Alert} from 'react-native';
 import CustomInput from '../../components/CutomInput';
 import CustomButton from '../../components/CustomButton';
 import { useNavigation } from '@react-navigation/native';
 //import {getAuth,createUserWithEmailAndPassword,sendEmailVerification,getFirestore,collection, addDoc,setDoc,doc } from '../../../db/firebase'
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
-import { createUserWithEmailAndPasswordHandler, createNewDocumentForUser } from '../../utils/firebase';
+import { createUserWithEmailAndPasswordHandler, createNewDocumentForUser, checkIfPatientHasTherapist } from '../../utils/firebase';
 
 const SignUpScreen = ({ route }) => {
     const { isTherapist} = route.params;
@@ -23,26 +23,61 @@ const SignUpScreen = ({ route }) => {
    //const user = userCredential.user;
 //    const [initializing, setInitializing] = useState(true);
 //    const [user, setUser] = useState();
+const createUser = () =>{
+    createUserWithEmailAndPasswordHandler(email,password).then((result)=>{
+        console.log("AFTER");
+        if (result!=='fail'){
+            createNewDocumentForUser(result, isTherapist, yourNum, otherSideNum, username, patientMail).then(()=>{
+                navigation.navigate("signIn", {isTherapist: isTherapist});
+            });
+        
+       
+        }
+    }).catch(error =>{
+        console.log(error);
+    })
+};
+
+const checkPassword=(str)=>{
+    console.log(str)
+    var re = /^(?=.*[0-9])(?=.*[!@#$%^&*])[a-zA-Z0-9!@#$%^&*]{6,10}$/;
+    console.log(re.test(str))
+    return re.test(str);
+}
 
 
     const onRegisterPressed = () =>{
         if (username==='' || email==='' || password==='' || passwordRepeat==='' || otherSideNum==='' || yourNum==='' || (isTherapist && patientMail===''))
         alert("כל השדות הינם חובה");
+        if(!checkPassword(password)){
+            Alert.alert("סיסמה חלשה","הסיסמה צריכה להיות מינימום באורך 6 ועד 10.\n וחייבת להכיל אות גדולה,אות קטנה, מספר, וסימן מיוחד",
+                    [
+                        { text: "הבנתי" }
+                      ]
+                      );
+        }
         else{
-            createUserWithEmailAndPasswordHandler(email,password).then((result)=>{
-                console.log("AFTER");
-                if (result!=='fail'){
-                    createNewDocumentForUser(result, isTherapist, yourNum, otherSideNum, username, patientMail).then(()=>{
-                        navigation.navigate("signIn", {isTherapist: isTherapist});
-                    });
-                
-               
+            if(isTherapist){
+            checkIfPatientHasTherapist(patientMail).then((result)=>{
+                if (result>0){
+                    Alert.alert("שגיאת הרשמה",`כבר קיים מטפל למטופל המכיל את המייל ${patientMail}`,
+                    [
+                        { text: "הבנתי" }
+                      ]
+                      );
                 }
-            }).catch(error =>{
-                console.log(error);
+                else{
+                    createUser();
+                }
             })
-            console.log("BEFORE");
-   
+        }
+        else{
+            createUser();
+        }
+
+       
+         console.log("BEFORE");
+
     }
     };
 

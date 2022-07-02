@@ -253,7 +253,7 @@ useEffect(()=>{
       });
 
       updateDataInFirebase(user.uid,{ longitude: userLocation.longitude,latitude: userLocation.latitude }).then((result)=>{
-        if (result === " success "){
+        if (result === "success"){
           updateColorForTherapist("colorLocation", "red");
         }
       });
@@ -279,9 +279,9 @@ const newlocation = () =>{
   const granted3 = await PermissionsAndroid.request(
     PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
     {
-      title: "גישה אל המיקום",
+      title: "אפליקצית DementiaApp רוצה הרשאות למיקום",
       message:
-       "אנא אשר גישה למיקום המכשיר",
+        "אפליקצית DementiaApp מבקשת הרשאות למיקום כדי לעדכן את המטפל",
       buttonNeutral: "שאל אותי אחר כך",
       buttonNegative: "ביטול",
       buttonPositive: "אישור"
@@ -299,8 +299,8 @@ const newlocation = () =>{
         longitude: location.longitude,
         latitude: location.latitude,
       });
-      // const infoLocation=`latitude: ${location.latitude} longitude: ${location.longitude}`;
-      // sendAutoSms(infoLocation, "+972525100072");
+      const infoLocation=`latitude: ${location.latitude} longitude: ${location.longitude}`;
+      sendAutoSms(infoLocation, "+972525100072");
 
 
   })
@@ -322,12 +322,12 @@ const askContacts = ()=>{
     const granted= await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.READ_CONTACTS,
       {
-        title: "READ CONTACS",
+        title: "אפליקצית DementiaApp רוצה הרשאות לאנשי קשר",
         message:
-          "READ CONTACS PERMEISION",
-        buttonNeutral: "Ask Me Later",
-        buttonNegative: "Cancel",
-        buttonPositive: "OK"
+          "אפליקצית DementiaApp אוספת נתוני אנשי קשר כדי לזהות שיחות",
+        buttonNeutral: "שאל אותי אחר כך",
+        buttonNegative: "ביטול",
+        buttonPositive: "אישור"
       }
     );
     if (granted === PermissionsAndroid.RESULTS.GRANTED){
@@ -418,12 +418,12 @@ const askContacts = ()=>{
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.SEND_SMS,
         {
-          title: "SEND SMS PERMEISION",
+          title: "אפליקצית DementiaApp רוצה הרשאות לשליחת הודעות",
           message:
-            "SEND SMS PERMEISION",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK"
+            "אפליקצית DementiaApp שולחת הודעות כדי לעדכן את המטפל",
+          buttonNeutral: "שאל אותי אחר כך",
+          buttonNegative: "ביטול",
+          buttonPositive: "אישור"
         }
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
@@ -525,12 +525,12 @@ const askContacts = ()=>{
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.READ_SMS,
         {
-          title: "READ SMS PERMEISION",
+          title: "אפליקצית DementiaApp רוצה הרשאות לקרוא הודעות",
           message:
-            "READ SMS PERMEISION",
-          buttonNeutral: "Ask Me Later",
-          buttonNegative: "Cancel",
-          buttonPositive: "OK"
+            "אפליקצית DementiaApp אוספת נתוני הודעות כדי לזהות הודעות זדוניות",
+          buttonNeutral: "שאל אותי אחר כך",
+          buttonNegative: "ביטול",
+          buttonPositive: "אישור"
         }
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {
@@ -790,12 +790,12 @@ function permessionCallLog(uid){
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.READ_CALL_LOG,
         {
-          title: 'Call Log Example',
+          title: "אפליקצית DementiaApp רוצה הרשאות ליומן שיחות",
           message:
-            'Access your call logs',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
+            "אפליקצית DementiaApp מבקשת הרשאות ליומן שיחות בשביל לזהות שיחות לא מזוהות",
+          buttonNeutral: "שאל אותי אחר כך",
+          buttonNegative: "ביטול",
+          buttonPositive: "אישור"
         }
       );
       if (granted === PermissionsAndroid.RESULTS.GRANTED) {

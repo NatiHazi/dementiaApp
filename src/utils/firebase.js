@@ -6,6 +6,7 @@ import storage from '@react-native-firebase/storage';
 import {Alert} from 'react-native';
 
 
+
 const SUCCESS="success";
 const FAILURE="fail";
 //########################################################################
@@ -179,6 +180,20 @@ const findOtherSideIdFirebase = async (uid) =>{
   
 };
 //###########
+
+const checkIfPatientHasTherapist = async (email) =>{
+ const result = firestore()
+  .collection('users')
+  // Filter results
+  .where('patientMail', '==', email)
+  .get()
+  .then(querySnapshot => {
+    return querySnapshot.docs.length;
+    /* ... */
+  });
+
+return result;
+}
 
 const updateColorAfterReadFirebase = async (theColorArtibute,uid) =>{
 
@@ -420,4 +435,5 @@ export {sendPasswordResetEmailHandler,
       getPatientCallsFirebase,
       getPatientSmsFirebase,
       getUserNameDrawer,
-      getPatientNotification};
+      getPatientNotification,
+      checkIfPatientHasTherapist};
